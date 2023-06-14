@@ -1,6 +1,6 @@
-# A mobile robot network for exploring power and potential of cooperative robotics
+# A robot network for exploring power and potential of cooperative robotics
 
-We are building a low-cost mobile robot network for exploring the
+We are building a low-cost network of mobile robots for exploring the
 power and potential of cooperative robotics. Our broad aim is to
 investigate multiagent systems and various sensor fusion
 mechanisms. We are particularly interested in visual sensing and
