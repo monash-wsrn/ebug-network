@@ -1,0 +1,21 @@
+[0.559s] Invoking command in '/home/kelvinku/networked_robotics/ros2_localization/src/control': PYTHONPATH=/home/kelvinku/networked_robotics/ros2_localization/build/control/prefix_override:/home/kelvinku/networked_robotics/ros2_localization/install/control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/control build --build-base /home/kelvinku/networked_robotics/ros2_localization/build/control/build install --record /home/kelvinku/networked_robotics/ros2_localization/build/control/install.log --single-version-externally-managed
+[0.681s] running egg_info
+[0.681s] writing ../../build/control/control.egg-info/PKG-INFO
+[0.682s] writing dependency_links to ../../build/control/control.egg-info/dependency_links.txt
+[0.682s] writing entry points to ../../build/control/control.egg-info/entry_points.txt
+[0.682s] writing requirements to ../../build/control/control.egg-info/requires.txt
+[0.692s] writing top-level names to ../../build/control/control.egg-info/top_level.txt
+[0.692s] reading manifest file '../../build/control/control.egg-info/SOURCES.txt'
+[0.693s] writing manifest file '../../build/control/control.egg-info/SOURCES.txt'
+[0.693s] running build
+[0.693s] running build_py
+[0.693s] running install
+[0.693s] running install_lib
+[0.694s] running install_data
+[0.694s] running install_egg_info
+[0.695s] removing '/home/kelvinku/networked_robotics/ros2_localization/install/control/lib/python3.10/site-packages/control-0.0.0-py3.10.egg-info' (and everything under it)
+[0.695s] Copying ../../build/control/control.egg-info to /home/kelvinku/networked_robotics/ros2_localization/install/control/lib/python3.10/site-packages/control-0.0.0-py3.10.egg-info
+[0.695s] running install_scripts
+[0.706s] Installing robot script to /home/kelvinku/networked_robotics/ros2_localization/install/control/lib/control
+[0.706s] writing list of installed files to '/home/kelvinku/networked_robotics/ros2_localization/build/control/install.log'
+[0.743s] Invoked command in '/home/kelvinku/networked_robotics/ros2_localization/src/control' returned '0': PYTHONPATH=/home/kelvinku/networked_robotics/ros2_localization/build/control/prefix_override:/home/kelvinku/networked_robotics/ros2_localization/install/control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/control build --build-base /home/kelvinku/networked_robotics/ros2_localization/build/control/build install --record /home/kelvinku/networked_robotics/ros2_localization/build/control/install.log --single-version-externally-managed
