@@ -20,3 +20,6 @@ down. Each robot consists of:
 * A Raspberry Pi 4 single board computer
 * A romi 32U4 control board
 * 2 USB cameras for robots to see their surroundings, and
+
+
+[Setup guide](https://github.com/monash-wsrn/ebug_network/blob/main/README_old.md)
