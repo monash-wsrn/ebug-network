@@ -1,2 +1,0 @@
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
-sudo apt-get install ros-humble-image-pipeline
