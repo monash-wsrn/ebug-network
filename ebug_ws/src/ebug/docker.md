@@ -2,12 +2,7 @@
 
 ## Clone Respository
 ```
-git clone https://github.com/MonashRobotics/networked_robotics.git
-```
-
-## Checkout into Kelvin's Branch
-```
-git checkout Kelvin
+git clone https://github.com/monash-wsrn/ebug_network.git
 ```
 
 ## Download Docker
@@ -17,7 +12,7 @@ sudo apt install docker.io
 
 ## Build the Docker Image
 ```
-cd networked_robotics
+cd ebug_network/ebug_ws/src/ebug
 sudo docker build . -t light_robot:1.0
 ```
 Takes some time to build the docker image, so please be patient.
