@@ -1,2 +1,0 @@
-[usb_cam_node_exe-1] [mjpeg @ 0xaaaaf77d1520] unable to decode APP fields: Invalid data found when processing input
-[usb_cam_node_exe-1] [swscaler @ 0xaaaaf78c2170] No accelerated colorspace conversion found from yuv422p to rgb24.
