@@ -21,6 +21,8 @@ down. Each robot consists of:
 * A Romi 32U4 control board
 * 2 USB cameras for robots to see their surroundings, and
 
+Project details and documentation can be found in its [https://github.com/monash-wsrn/ebug-network/wiki](Wiki pages) (we are updating them quite frequently).
+
 Below are copied from the old README.md, we will transfer the contents
 to Wiki soon. 
 
