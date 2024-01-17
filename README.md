@@ -2,12 +2,7 @@
 
 We are building a network of mobile robots to explore the power and potential of cooperative robotics. Our broad aim is to investigate multiagent systems and various sensor fusion mechanisms, with a particular focus on visual sensing and multi-camera processing in a distributed manner. There are quite a lot of interesting avenues for research.
 
-The first stage is to create the hardware and software infrastructure
-that will allow the robots localize themselves and others around
-them. After this, as a demonstration, we will implement [Boids
-algorithm](https://en.wikipedia.org/wiki/Boids). The robot network
-will then behave like a school of fish or flock of birds.
-
+The first stage is to create the hardware and software infrastructure that will enable the robots to localize themselves and others around them. Following this, as a demonstration, we will implement the  [Boids algorithm](https://en.wikipedia.org/wiki/Boids) algorithm. The robot network will then behave like a school of fish or a flock of birds.
 
 We have intentionally chosen off-the-shelf hardware to keep the costs
 down. Each robot consists of:
