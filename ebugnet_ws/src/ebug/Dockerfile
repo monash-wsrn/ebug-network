@@ -14,6 +14,8 @@ RUN apt-get -y update && apt-get install -y \
     ros-humble-usb-cam \
     ros-humble-image-pipeline \
     ros-humble-apriltag-ros \
+    ros-humble-demo-nodes.py \
+    ros-humble-demo-nodes.cpp \
     i2c-tools \
     python3 \
     python3-flask \
@@ -37,8 +39,8 @@ RUN echo "export ROS_DOMAIN_ID=13" >> ~/.bashrc
 # RUN echo 'KERNEL=="i2c-[0-9]*", GROUP="i2c"' >> /etc/udev/rules.d/10-local_i2c_group.rules
 
 
-# # Make the prompt a little nicer
-# RUN echo "PS1='${debian_chroot:+($debian_chroot)}\u@:\w\$ '" >> /etc/bash.bashrc  
+# Make the prompt a little nicer
+RUN echo "PS1='${debian_chroot:+($debian_chroot)}\u@:\w\$ '" >> /etc/bash.bashrc  
 
 # Project specific dependencies
 ENV WORKSPACE=/networked_robotics
