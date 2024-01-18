@@ -44,7 +44,8 @@ RUN echo "PS1='${debian_chroot:+($debian_chroot)}\u@:\w\$ '" >> /etc/bash.bashrc
 
 # Project specific dependencies
 ENV WORKSPACE=/networked_robotics
-WORKDIR ${WORKSPACE}/ros2_localization
+ENV WORKDIR=${WORKSPACE}/ros2_localization
+RUN echo "${WORKDIR} ${WORKSPACE}"
 COPY ./calibration ${WORKSPACE}/calibration
 COPY ./ros2_localization/src ${WORKSPACE}/ros2_localization/src
 
