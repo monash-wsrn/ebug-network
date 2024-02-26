@@ -1,4 +1,0 @@
-[console_scripts]
-converter = localization.converter:main
-poller = localization.poller:main
-
