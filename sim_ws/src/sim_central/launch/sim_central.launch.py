@@ -6,8 +6,6 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
-
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_sim_time',
@@ -21,6 +19,8 @@ def generate_launch_description():
             name='BoidsService',
         ),
 
+
+        # TODO temp, to remove
         # This node is the connector between the central controller and an individual robot.
         # Simply duplicate this node and set the robot_id parameter appropriately
         Node(
@@ -30,5 +30,6 @@ def generate_launch_description():
             parameters=[
                 {"robot_id": '0'},
                 {"service_name": 'BoidsService'}
-            ]),
+            ]
+        ),
     ])
