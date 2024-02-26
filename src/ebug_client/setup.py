@@ -2,7 +2,7 @@ import os
 from glob import glob
 from setuptools import find_packages, setup
 
-package_name = 'ebug_principal'
+package_name = 'ebug_client'
 
 setup(
     name=package_name,
@@ -24,7 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'BoidsService = ebug_principal.BoidsService:main'
+            'CameraPoller = ebug_client.CameraPoller:main',
+            'RobotController = ebug_client.RobotController:main',
         ],
     },
 )

@@ -5,7 +5,7 @@ from rclpy.qos import QoSProfile
 from ebug_interfaces.srv import ComputeTarget
 from geometry_msgs.msg import PoseWithCovarianceStamped, Twist
 
-class RobotController(Node):
+class MovementController(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
 
@@ -16,7 +16,7 @@ class RobotController(Node):
         # TODO shouldn't be the service module but rather the DTO and the service name
         self.client = self.create_client(ComputeTarget, self.service_name)
 
-        self.declare_parameter('robot_id', '0')
+        self.declare_parameter('robot_id', 'default')
         self.robot_id = self.get_parameter('robot_id').get_parameter_value().string_value
 
         # Ideally we'd update our robots to interact directly with the BoidsService
@@ -24,12 +24,12 @@ class RobotController(Node):
         # architecture to utilise a the service model
         qos_profile = QoSProfile(depth=10)
         self.sub_location = self.create_subscription(PoseWithCovarianceStamped, 
-                "robot_{}/pose".format(self.robot_id), self.compute_target, qos_profile)
+                f"{self.robot_id}/pose", self.compute_target, qos_profile)
         self.pub_target = self.create_publisher(Twist, 
-                "robot_{}/cmd_vel".format(self.robot_id), qos_profile)
+                f"{self.robot_id}/cmd_vel", qos_profile)
         
         
-        self.get_logger().info("Created RobotController (ID: {}) using {}".format(self.robot_id, self.service_name))
+        self.get_logger().info(f"Created MovementController (ID: {self.robot_id}) using {self.service_name}")
     
 
     """
@@ -60,7 +60,7 @@ class RobotController(Node):
 
 def main():
     rclpy.init()
-    node = RobotController()
+    node = MovementController()
     
     try:
         rclpy.spin(node)

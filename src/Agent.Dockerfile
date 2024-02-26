@@ -1,6 +1,6 @@
 # Create container
 FROM osrf/ros:humble-desktop
-ENV ENV_ROS_PKG="ebug_principal"
+ENV ENV_ROS_PKG="ebug_agent"
 
 
 RUN sudo apt-get upgrade
@@ -10,7 +10,11 @@ RUN sudo apt-get update
 RUN sudo apt-get install -y \
     ros-humble-ament-cmake-clang-format \
     python3-colcon-common-extensions \
-    python3-pip
+    python3-pip \
+    ros-humble-tf2-tools \
+    ros-humble-tf-transformations \
+    ros-humble-image-pipeline \
+    ros-humble-apriltag-ros
 
 
 RUN mkdir -p "/ws/src/"

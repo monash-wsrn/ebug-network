@@ -2,7 +2,7 @@ import os
 from glob import glob
 from setuptools import find_packages, setup
 
-package_name = 'ebug_principal'
+package_name = 'ebug_agent'
 
 setup(
     name=package_name,
@@ -24,7 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'BoidsService = ebug_principal.BoidsService:main'
+            'TransformConverter = ebug_agent.TransformConverter:main',
+            'MovementController = ebug_principal.MovementController:main',
         ],
     },
 )

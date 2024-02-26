@@ -20,16 +20,6 @@ def generate_launch_description():
         ),
 
 
-        # TODO temp, to remove
-        # This node is the connector between the central controller and an individual robot.
-        # Simply duplicate this node and set the robot_id parameter appropriately
-        Node(
-            package='ebug_principal',
-            executable='RobotController',
-            name='RobotController',
-            parameters=[
-                {"robot_id": '0'},
-                {"service_name": 'BoidsService'}
-            ]
-        ),
+        # TODO add remote nodes launch (i.e., static_transform_publisher instances)
+        # View /legacy/ebugnet_ws/src/ebug/ros2_localization/src/localization/launch/remote_nodes.launch.py
     ])
