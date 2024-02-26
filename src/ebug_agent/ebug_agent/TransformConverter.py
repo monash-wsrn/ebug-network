@@ -108,10 +108,16 @@ class TransformConverter(Node):
                 
 def main():
     rclpy.init()
-    node = TransformTransformConverter()
+    node = TransformConverter()
+    
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        pass
+        return
+    finally:
+        node.destroy_node()
 
     rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

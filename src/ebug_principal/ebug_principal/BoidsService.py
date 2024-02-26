@@ -72,6 +72,8 @@ def main():
         executor.spin()
     except KeyboardInterrupt:
         return
+    finally:
+        node.destroy_node()
 
     rclpy.shutdown()
 

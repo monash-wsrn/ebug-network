@@ -9,10 +9,14 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.actions import LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
+from launch_ros.substitutions import FindPackageShare  
 
 def generate_launch_description():
     ROBOT_ID = "robot_0"        # TODO use os.environ['ROBOT_ID'] instead
     ROBOT_ALGO = "BoidsService" # TODO use os.environ['ROBOT_ALGO'] instead
+
+    PKG_SHARE = FindPackageShare(package='ebug_agent').find('ebug_agent')
+    APRIL_TAG_PATH = os.path.join(PKG_SHARE, 'config/aprilTag.yaml') 
 
 
     # launch the image processing nodes
@@ -37,7 +41,7 @@ def generate_launch_description():
         executable = 'apriltag_node',
         name=f'{ROBOT_ID}_AprilTag',
         
-        parameters=[ '/home/ubuntu/networked_robotics/ros2_localization/src/localization/config/aprilTag.yaml' ],
+        parameters=[ APRIL_TAG_PATH ],
 
         remappings=[
             # Subscrube
@@ -64,15 +68,23 @@ def generate_launch_description():
     # This node is the connector between the central controller and an individual robot.
     # Simply duplicate this node and set the robot_id parameter appropriately
     MovementControllerNode = Node(
-        package='ebug_principal',
-        executable='RobotController',
-        name=f'{ROBOT_ID}_RobotController',
+        package='ebug_agent',
+        executable='MovementController',
+        name=f'{ROBOT_ID}_MovementController',
         parameters=[
             {"robot_id": ROBOT_ID},
             {"service_name": ROBOT_ALGO}
         ]
     )
 
+
+    ContainerLaunchArg = DeclareLaunchArgument(
+        name='container', default_value='',
+        description=(
+            'Name of an existing node container to load launched nodes into. '
+            'If unset, a new container will be created.'
+        )
+    )
 
     # If an existing container is not provided, start a container and load nodes into it
     ImageProcContainer = ComposableNodeContainer(
@@ -100,6 +112,7 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
 
+        ContainerLaunchArg,
         ImageProcContainer,
         LoadComposable,
         AprilTagNode,

@@ -148,16 +148,17 @@ class CameraPoller(Node):
 
 
 
-        
-
-
 def main():
     rclpy.init()
+    node = CameraPoller()
+    
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        return
+    finally:
+        node.destroy_node()
 
-    minimal_client = CameraPoller()
-    rclpy.spin(minimal_client)
-
-    minimal_client.destroy_node()
     rclpy.shutdown()
 
 

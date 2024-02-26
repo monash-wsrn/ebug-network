@@ -211,14 +211,21 @@ class RobotController(Node):
         duty_cycle_l,duty_cycle_r = self.drive(self.desired_v, self.desired_w, self.wl, self.wr)
         self.motors(duty_cycle_l, duty_cycle_r)
 
-def main(args=None):
-    rclpy.init(args=args)
-    robot=RobotController()
-    print("Starting...\n")
-    rclpy.spin(robot) 
+
+
+def main():
+    rclpy.init()
+    node = RobotController()
+    
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        return
+    finally:
+        node.destroy_node()
+
     rclpy.shutdown()
-    print("Finished\n")
+
 
 if __name__ == '__main__':
-    #initalize the processes
     main()
