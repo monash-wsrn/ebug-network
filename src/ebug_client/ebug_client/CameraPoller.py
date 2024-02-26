@@ -31,12 +31,14 @@ class CameraPoller(Node):
         # self.cli_list = [self.cli_0, self.cli_1, self.cli_2, self.cli_3]
         self.cli_list = [self.cli_0]
 
-        while not self.cli_0.wait_for_service(timeout_sec=1.0):
-        # or not self.cli_1.wait_for_service(timeout_sec=1.0) \
-        # or not self.cli_2.wait_for_service(timeout_sec=1.0) \
-        # or not self.cli_3.wait_for_service(timeout_sec=1.0) :
-            self.get_logger().info('service not available, waiting again...')
-
+        try:
+            while not self.cli_0.wait_for_service(timeout_sec=1.0):
+            # or not self.cli_1.wait_for_service(timeout_sec=1.0) \
+            # or not self.cli_2.wait_for_service(timeout_sec=1.0) \
+            # or not self.cli_3.wait_for_service(timeout_sec=1.0) :
+                self.get_logger().info('service not available, waiting again...')
+        except KeyboardInterrupt:
+            return
 
         
         self.det = self.create_subscription(
