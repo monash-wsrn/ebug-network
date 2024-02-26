@@ -1,5 +1,5 @@
 ## Overview
-![Component Architecure]("component_architecture.png")
+![Component Architecure](component_architecture.png)
 
 ## Principal
 This ROS2 container implements Boids in a global scope. 
