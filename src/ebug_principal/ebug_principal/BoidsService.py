@@ -30,25 +30,33 @@ class BoidsService(Node):
 
 
     def compute_target(self, payload:ComputeTarget):
-        first_update = payload.robot_id in self.robot_poses     # String
-        self.robot_poses[payload.robot_id] = payload.pose       # PoseWithCovarianceStamped
+        first_update = payload.robot_id in self.robot_poses         # String
 
-        result = Twist()                                        # Twist
+        self.robot_poses[payload.robot_id] = payload.pose.pose.pose # Pull Pose from PoseWithCovarianceStamped
+                                                                    # Contains (Point) 'position' and (Quaternion) 'orientation' 
+
+        result = Twist()                                            # Twist
         result.linear.x = 0
         result.angular.z = 0
 
         if not first_update:
-            # TODO on every update, after the first, execute Boids logic
-            # use the robot_poses map to get the current pose for each robot_id 
 
-            # The real robots expect the following response parameters to be set,
-            # as best as I can tell, this refers to the velocities and not the 
-            # absolute deltas (i.e., speed not distance)
+            other_poses = []
+            for key, value in self.robot_poses.items():
+                if not key == payload.robot_id:
+                    other_poses.append(value)               # Array of Pose (position & orientation)
+
+            this_pose = self.robot_poses[payload.robot_id]  # Pose (position & orientation)
 
             # It could also just be left wheel power and right wheel power???
-            
-            sleep(2000)  # TODO remove sleep
-            #pass
+            desired_x, desired_y = BoidsAlgorithm.next_step(this_pose, other_poses)
+
+            # TODO return should be in format of linear velocity (linear.x) and angular velocity (angular.z)
+            result.linear.x = 0
+            result.angular.z = 0
+
+            # TODO maybe apply temporal component to return value so that robots don't overshoot ??
+            # result.linear.z = temporal ???
         
         return result
 
