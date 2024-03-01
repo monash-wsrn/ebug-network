@@ -13,12 +13,11 @@ RUN sudo apt-get install -y \
     python3-pip \
     ros-humble-robot-localization \
     ros-humble-usb-cam \
-    i2c-tools 
-    
-    # \
+    i2c-tools \
     # python3 \
     # python3-flask \
-    # python3-smbus 
+    python3-smbus 
+    
 
 
 RUN mkdir -p "/ws/src/"

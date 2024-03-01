@@ -2,7 +2,7 @@
 Handles the PID controller of the robot and i2c communication with Romi board
 """
 
-from a_star import AStar
+from ebug_client.util.AStar import AStar
 import rclpy
 from rclpy.node import Node
 import numpy as np
