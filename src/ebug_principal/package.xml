@@ -8,7 +8,7 @@
   <license>GPL-3.0-only</license>
 
   <depend>rclpy</depend>
-
+  <depend>tf_transformations</depend>
   <depend>geometry_msgs</depend>
   <depend>ebug_interfaces</depend>
 
