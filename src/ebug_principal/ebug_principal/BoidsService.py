@@ -8,7 +8,7 @@ from rclpy.callback_groups import ReentrantCallbackGroup
 
 from ebug_interfaces.srv import ComputeTarget
 from geometry_msgs.msg import PoseWithCovarianceStamped, Twist
-import ebug_principal.BoidsFunction
+import ebug_principal.BoidsFunction as Boids
 
 class BoidsService(Node):
     def __init__(self):
@@ -49,7 +49,7 @@ class BoidsService(Node):
             this_pose = self.robot_poses[payload.robot_id]  # Pose (position & orientation)
 
             # It could also just be left wheel power and right wheel power???
-            linear_x, angular_z = BoidsFunction.next_step(this_pose, other_poses)
+            linear_x, angular_z = Boids.next(this_pose, other_poses)
 
             result.linear.x = linear_x  # poll time is the time it takes before the robot sends another service request
             result.angular.z = angular_z

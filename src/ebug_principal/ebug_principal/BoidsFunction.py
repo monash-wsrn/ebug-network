@@ -31,7 +31,7 @@ def sign(num):
     return -1 if num < 0 else 1
 
 # Function to implement Boid rules
-def next_step(main_boid, other_boids):
+def next(main_boid, other_boids):
     cohesion = [0, 0]
     alignment = [0, 0]
     separation = [0, 0]
