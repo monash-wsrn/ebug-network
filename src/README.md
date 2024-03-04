@@ -47,8 +47,9 @@ The Principal must be run individually on each robot in the swarm.
     # Build the client container, with src as the working directory
     docker build -t ebug_client . -f Client.Dockerfile
 
-    # Run the client container
-    docker run -it ebug_client
+    # Run the client container, passing through I2C-1
+    # ebug_client.util.AStar creates an SMBus on I2C-1
+    docker run -it ebug_client --device /dev/i2c-1
 ```
 
 
