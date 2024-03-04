@@ -67,16 +67,9 @@ class BoidsService(Node):
 def main():
     rclpy.init()
     node = BoidsService()
-
-    ## TODO define executor affinity via environment variable
-    executor = MultiThreadedExecutor(num_threads=8)
-    executor.add_node(node)
-
-    node.get_logger().info("Created MultiThreadedExecutor for BoidsService!")
     
     try:
-        # rclpy.spin(node)
-        executor.spin()
+        rclpy.spin(node)
     except KeyboardInterrupt:
         return
     finally:
