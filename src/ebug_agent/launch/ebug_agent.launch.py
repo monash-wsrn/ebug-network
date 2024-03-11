@@ -12,8 +12,8 @@ from launch_ros.descriptions import ComposableNode
 from launch_ros.substitutions import FindPackageShare  
 
 def generate_launch_description():
-    ROBOT_ID = "robot_0"        # TODO use os.environ['ROBOT_ID'] instead
-    ROBOT_ALGO = "BoidsService" # TODO use os.environ['ROBOT_ALGO'] instead
+    ROBOT_ID = os.getenv('ROBOT_ID', "default")
+    ROBOT_ALGO = os.getenv('ROBOT_ALGO', "BoidsService")
 
     PKG_SHARE = FindPackageShare(package='ebug_agent').find('ebug_agent')
     APRIL_TAG_PATH = os.path.join(PKG_SHARE, 'config/aprilTag.yaml') 

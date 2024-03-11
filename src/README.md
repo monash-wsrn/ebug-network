@@ -21,15 +21,17 @@ An Agent should be instantiated for each corresponding Client.
 
 The Agent can either be run on each robot' Raspberry Pi, or on the central compute server.
 
-*Please note: Currently the ROBOT_ID is hardcoded in `ebug_agent/launch/ebug_agent.launch.py`.*
-*This will change in future to be an environment variable, configurable via docker-compose.*
+The robot ID should be passed in as an environment variable, `ROBOT_ID`, using docker run or docker-compose.
+
+The robot algorithm can also be passed in as an environment variable, `ROBOT_ALGO`, using docker run or docker-compose.
+If left blank, ROBOT_ALGO will default to 'BoidsService'.
 
 ```sh
     # Build the agent container, with src as the working directory
     docker build -t ebug_agent . -f Agent.Dockerfile
 
     # Run the agent container
-    docker run -it ebug_agent
+    docker run -it ebug_agent -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService'
 ```
 
 ## Client
@@ -38,10 +40,9 @@ A Client should be instantiated for each robot in the swarm, corresponding with 
 
 The Principal must be run individually on each robot in the swarm.
 
-*Please note: Currently the ROBOT_ID is hardcoded in `ebug_client/launch/ebug_client.launch.py`.*
-*This will change in future to be an environment variable, configurable via docker-compose.*
+The robot ID should be passed in as an environment variable, `ROBOT_ID`, using docker run or docker-compose.
 
-*Please note: Currently the Client container does not enable the I2C connection, causing SMBus errors.*
+*Please note: Currently the I2C connection has not been validated.*
 
 ```sh
     # Build the client container, with src as the working directory
@@ -49,7 +50,7 @@ The Principal must be run individually on each robot in the swarm.
 
     # Run the client container, passing through I2C-1
     # ebug_client.util.AStar creates an SMBus on I2C-1
-    docker run -it ebug_client --device /dev/i2c-1
+    docker run -it ebug_client -e ROBOT_ID='robot_0' --device /dev/i2c-1
 ```
 
 

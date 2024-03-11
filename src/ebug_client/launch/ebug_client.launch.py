@@ -5,7 +5,7 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare  
 
 def generate_launch_description():
-    ROBOT_ID = "robot_0"        # TODO use os.environ['ROBOT_ID'] instead
+    ROBOT_ID = os.getenv('ROBOT_ID', "default")
     
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
     EKF_ODOM_PATH = os.path.join(PKG_SHARE, 'config/ekf_odom.yaml') 
