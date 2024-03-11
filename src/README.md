@@ -42,6 +42,9 @@ The Principal must be run individually on each robot in the swarm.
 
 The robot ID should be passed in as an environment variable, `ROBOT_ID`, using docker run or docker-compose.
 
+By default, camera polling is disabled, it can be enabled by setting the environment variable `CAMERA_POLLING` to `enabled`.
+Doing so will enable the remaining three cameras on the robot, as well as the polling logic to alternate between them.
+
 *Please note: Currently the I2C connection has not been validated.*
 
 ```sh
