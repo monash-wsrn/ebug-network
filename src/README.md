@@ -31,7 +31,7 @@ If left blank, ROBOT_ALGO will default to 'BoidsService'.
     docker build -t ebug_agent . -f Agent.Dockerfile
 
     # Run the agent container
-    docker run -it ebug_agent -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService'
+    docker run -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' -it ebug_agent 
 ```
 
 ## Client
@@ -50,7 +50,7 @@ The robot ID should be passed in as an environment variable, `ROBOT_ID`, using d
 
     # Run the client container, passing through I2C-1
     # ebug_client.util.AStar creates an SMBus on I2C-1
-    docker run -it ebug_client -e ROBOT_ID='robot_0' --device /dev/i2c-1
+    docker run -e ROBOT_ID='robot_0' --device /dev/i2c-1 -it ebug_client 
 ```
 
 
