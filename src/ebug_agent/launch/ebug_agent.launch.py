@@ -23,64 +23,52 @@ def generate_launch_description():
     ImageProcNode = ComposableNode(
         package = 'image_proc',
         plugin = 'image_proc::RectifyNode',
-        name=f'{ROBOT_ID}_RectifyColorNode',
-        # Remap subscribers and publishers
-        remappings=[
-            # Subscribe
-            ('image',       f'{ROBOT_ID}/image_raw'),
-            ('camera_info', f'{ROBOT_ID}/camera_info'),
+        name = 'RectifyColorNode',
+        namespace = ROBOT_ID,
 
-            # Publish
-            ('image_rect',  f'{ROBOT_ID}/image_rect')
-        ],
+        remappings = [
+            ('image', '/image_raw')
+        ]
     )
 
     # launch the apriltag nodes
     AprilTagNode =  Node(
         package = 'apriltag_ros',
         executable = 'apriltag_node',
-        name=f'{ROBOT_ID}_AprilTag',
+        name = 'AprilTag',
+        namespace = ROBOT_ID,
         
-        parameters=[ APRIL_TAG_PATH ],
-
-        remappings=[
-            # Subscrube
-            ('camera_info', f'{ROBOT_ID}/camera_info'),
-            ('image_rect',  f'{ROBOT_ID}/image_rect'),
-
-            # Publish
-            ('tf',          f'{ROBOT_ID}/tf_detections'),
-            ('detections',  f'{ROBOT_ID}/detections')
+        parameters = [ APRIL_TAG_PATH ],
+        remappings = [
+            ('tf', '/tf_detections'),
         ]
-        
     )
 
-        # converter node to invert the transform of cam->tag
+    # converter node to invert the transform of cam->tag
     TransformConverterNode = Node(
-        package='ebug_agent',
-        executable='TransformConverter',
-        name=f'{ROBOT_ID}_TransformConverter',
-        parameters=[
-            {'robot_id': ROBOT_ID}
-        ]
+        package = 'ebug_agent',
+        executable = 'TransformConverter',
+        name = 'TransformConverter',
+        namespace = ROBOT_ID,
     )
 
     # This node is the connector between the central controller and an individual robot.
-    # Simply duplicate this node and set the robot_id parameter appropriately
     MovementControllerNode = Node(
-        package='ebug_agent',
-        executable='MovementController',
-        name=f'{ROBOT_ID}_MovementController',
-        parameters=[
-            {"robot_id": ROBOT_ID},
+        package = 'ebug_agent',
+        executable = 'MovementController',
+        name = 'MovementController',
+        namespace = ROBOT_ID,
+
+        parameters = [
             {"service_name": ROBOT_ALGO}
         ]
     )
 
 
     ContainerLaunchArg = DeclareLaunchArgument(
-        name='container', default_value='',
-        description=(
+        name = 'container', 
+        default_value = '',
+        description = (
             'Name of an existing node container to load launched nodes into. '
             'If unset, a new container will be created.'
         )
@@ -88,21 +76,21 @@ def generate_launch_description():
 
     # If an existing container is not provided, start a container and load nodes into it
     ImageProcContainer = ComposableNodeContainer(
-        condition=LaunchConfigurationEquals('container', ''),
-        name='image_proc_container',
-        namespace='',   # TODO requires ROBOT_ID ??
-        package='rclcpp_components',
-        executable='component_container',
-        composable_node_descriptions=[ImageProcNode],
-        output='screen'
+        condition = LaunchConfigurationEquals('container', ''),
+        name = 'image_proc_container',
+        namespace = '', # TODO maybe ROBOT_ID ??
+        package = 'rclcpp_components',
+        executable = 'component_container',
+        composable_node_descriptions = [ ImageProcNode ],
+        output = 'screen'
     )
 
     # If an existing container name is provided, load composable nodes into it
     # This will block until a container with the provided name is available and nodes are loaded
     LoadComposable = LoadComposableNodes(
-        condition=LaunchConfigurationNotEquals('container', ''),
-        composable_node_descriptions=[ImageProcNode],
-        target_container=LaunchConfiguration('container'),
+        condition = LaunchConfigurationNotEquals('container', ''),
+        composable_node_descriptions = [ ImageProcNode ],
+        target_container = LaunchConfiguration('container'),
     )
 
 

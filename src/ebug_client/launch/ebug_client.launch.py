@@ -12,44 +12,42 @@ def generate_launch_description():
     EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
     
 
-    CameraNode0 = create_camera_node(ROBOT_ID, "cam_0",
+    CameraNode0 = create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE,
         '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0-video-index0')
 
-    # CameraNode1 = create_camera_node(ROBOT_ID, "cam_1",
+    # CameraNode1 = create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE,
     #     '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2:1.0-video-index0')
 
-    # CameraNode2 = create_camera_node(ROBOT_ID, "cam_2",
+    # CameraNode2 = create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE,
     #     '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0-video-index0')
 
-    # CameraNode3 = create_camera_node(ROBOT_ID, "cam_3",
+    # CameraNode3 = create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE,
     #     '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.4:1.0-video-index0')
 
     CameraPollerNode = Node(
         package = 'ebug_client',
         executable = 'CameraPoller',
-        name = f'{ROBOT_ID}_CameraPoller',
-        parameters=[
-            {'robot_id': ROBOT_ID}
-        ]
+        name = 'CameraPoller',
+        namespace = ROBOT_ID
     )
 
 
     RobotControllerNode = Node(
         package = 'ebug_client',
         executable = 'RobotController',
-        name = f'{ROBOT_ID}_RobotController',
-        parameters=[
-            {'robot_id': ROBOT_ID}
-        ]
+        name = 'RobotController',
+        namespace = ROBOT_ID
     )
 
     EKFOdom = Node(
         package = 'robot_localization',
         executable = 'ekf_node',
         name = 'ekf_filter_node_odom',
+        namespace = ROBOT_ID,
+
         parameters = [ EKF_ODOM_PATH ],
         remappings = [
-            ('odometry/filtered', f'{ROBOT_ID}/filtered_odom'),
+            ('odometry/filtered', '/filtered_odom'),
             ('diagnostics', 'diagnostics_odom'), 
         ]
     )
@@ -58,9 +56,11 @@ def generate_launch_description():
         package = 'robot_localization',
         executable = 'ekf_node',
         name = 'ekf_filter_node_pose',
+        namespace = ROBOT_ID,
+
         parameters = [ EKF_POSE_PATH ],
-        remappings=[
-            ('odometry/filtered', f'{ROBOT_ID}/filtered_pose'),
+        remappings = [
+            ('odometry/filtered', '/filtered_pose'),
             ('diagnostics', 'diagnostics_pose'),  
         ]
     )
@@ -83,31 +83,30 @@ def generate_launch_description():
 
 
 
-def create_camera_node(ROBOT_ID, CAM_ID, VIDEO_DEVICE):
+def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
     FRAME_RATE = 10.0
     WIDTH = 640
     HEIGHT = 480
+    CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 
 
     return Node(
         package = 'usb_cam',
         executable = 'usb_cam_node_exe',
-        name = f'{ROBOT_ID}_{CAM_ID}',
+        name = CAM_ID,
+        namespace = ROBOT_ID,
+
         parameters=[
-            {'video_device': VIDEO_DEVICE}, # '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0-video-index0'
-            {'camera_name': f'{ROBOT_ID}/{CAM_ID}'},
-            {'camera_info_url': f'file:///ws/src/ebug_client/calibration/{CAM_ID}.yaml'},
-            {'frame_id': f'{ROBOT_ID}/{CAM_ID}'},
-            {'pixel_format':'mjpeg2rgb'},
-            {'framerate': FRAME_RATE},
-            {'image_height': HEIGHT},
-            {'image_width':WIDTH},
+            {'video_device':    VIDEO_DEVICE        },
+            {'camera_name':     CAM_ID              },
+            {'camera_info_url': f'file://{CAM_INFO}'},
+            {'frame_id':        CAM_ID              },
+            {'pixel_format':    'mjpeg2rgb'         },
+            {'framerate':       FRAME_RATE          },
+            {'image_height':    HEIGHT              },
+            {'image_width':     WIDTH               },
         ],
         remappings=[
             # Subscribe
-            ('set_capture',f'{ROBOT_ID}/{CAM_ID}/set_capture'),
-
-            # Publish
-            ('image_raw', f'{ROBOT_ID}/image_raw'),
-            ('camera_info', f'{ROBOT_ID}/camera_info'),
+            ('set_capture', f'{CAM_ID}/set_capture'),
         ]
     )

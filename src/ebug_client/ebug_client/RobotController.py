@@ -21,20 +21,15 @@ ENCODER=12*3952/33 # constant for encoder (readings per revolution)
 class RobotController(Node):
 
     def __init__(self):
-        super().__init__('robot_control')
-
-        self.declare_parameter('robot_id', 'default')
-
-        self.robot_id = self.get_parameter('robot_id').get_parameter_value().string_value
+        super().__init__(self.__class__.__name__)
 
         self.a_star = AStar()
-        #self.planner = NaivePlanner(self.robot_id)
 
         self.timer = self.create_timer(0.1, self.odom_pose_update)
 
-        self.odom_pub=self.create_publisher(Odometry, f'{self.robot_id}/odometry', 10)
+        self.odom_pub=self.create_publisher(Odometry, '/odometry', 10)
 
-        # self.imu_pub = self.create_publisher(Imu, f'{self.robot_id}/imu', 10)
+        # self.imu_pub = self.create_publisher(Imu, '/imu', 10)
 
         self.cmd_vel_sub =  self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 10)
         self.start = 1
@@ -136,9 +131,9 @@ class RobotController(Node):
 
             t = self.get_clock().now().to_msg()
             odom = Odometry()
-            odom.header.frame_id = f'{self.robot_id}/odom'
+            odom.header.frame_id = 'robot/odom'
             odom.header.stamp = t
-            odom.child_frame_id =f'{self.robot_id}'
+            odom.child_frame_id ='robot'
             q = R.from_euler('xyz',[.0, .0, self.odom_th]).as_quat().astype('float')
             odom.pose.pose.position.x = self.odom_x
             odom.pose.pose.position.y = self.odom_y
@@ -159,7 +154,7 @@ class RobotController(Node):
 
 
             # imu = Imu()
-            # imu.header.frame_id = f'{self.robot_id}/odom'
+            # imu.header.frame_id = 'robot/odom'
             # imu.header.stamp = t
 
             # imu.orientation.x, imu.orientation.y, imu.orientation.z, imu.orientation.w = 0.0,0.0,0.0,0.0

@@ -16,20 +16,15 @@ class MovementController(Node):
         # TODO shouldn't be the service module but rather the DTO and the service name
         self.client = self.create_client(ComputeTarget, self.service_name)
 
-        self.declare_parameter('robot_id', 'default')
-        self.robot_id = self.get_parameter('robot_id').get_parameter_value().string_value
-
         # Ideally we'd update our robots to interact directly with the BoidsService
         # as opposed to this roundabout way that allows the existing pub-sub
         # architecture to utilise a the service model
         qos_profile = QoSProfile(depth=10)
-        self.sub_location = self.create_subscription(PoseWithCovarianceStamped, 
-                f"{self.robot_id}/pose", self.compute_target, qos_profile)
-        self.pub_target = self.create_publisher(Twist, 
-                f"{self.robot_id}/cmd_vel", qos_profile)
+        self.sub_location = self.create_subscription(PoseWithCovarianceStamped, "/pose", self.compute_target, qos_profile)
+        self.pub_target = self.create_publisher(Twist, "/cmd_vel", qos_profile)
         
         
-        self.get_logger().info(f"Created MovementController (ID: {self.robot_id}) using {self.service_name}")
+        self.get_logger().info(f"Created MovementController (ID: {self.get_namespace()}) using {self.service_name}")
     
 
     """
@@ -43,7 +38,7 @@ class MovementController(Node):
             return
         
         request = ComputeTarget.Request()
-        request.robot_id = self.robot_id
+        request.robot_id = self.get_namespace()
         request.pose = payload
 
         future = self.client.call_async(request)

@@ -67,8 +67,8 @@
         #     3b. MAKE SURE something else is generating the odom->base_link transform. Note that this can even be another state
         #         estimation node from robot_localization! However, that instance should *not* fuse the global data.
         map_frame: map              # Defaults to "map" if unspecified
-        odom_frame: robot_0/odom           # Defaults to "odom" if unspecified
-        base_link_frame: robot_0  # Defaults to "base_link" if unspecified
+        odom_frame: robot/odom           # Defaults to "odom" if unspecified
+        base_link_frame: robot  # Defaults to "base_link" if unspecified
         world_frame: map    # Defaults to the value of odom_frame if unspecified
 
         # The filter accepts an arbitrary number of inputs from each input message type (nav_msgs/Odometry,
@@ -76,7 +76,7 @@
         # sensor_msgs/Imu). To add an input, simply append the next number in the sequence to its "base" name, e.g., odom0,
         # odom1, twist0, twist1, imu0, imu1, imu2, etc. The value should be the topic name. These parameters obviously have no
         # default values, and must be specified.
-        odom0: robot_0/odometry
+        odom0: odometry
 
         # Each sensor reading updates some or all of the filter's state. These options give you greater control over which
         # values from each measurement are fed to the filter. For example, if you have an odometry message as input, but only
@@ -119,7 +119,7 @@
         odom0_pose_use_child_frame: false
 
 
-        pose0: robot_0/pose
+        pose0: pose
         pose0_config: [true,  true,  true,
                        true, true, true,
                        false, false, false,

@@ -17,16 +17,13 @@ class CameraPoller(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
 
-        self.declare_parameter('robot_id', 'default')
-
-        self.robot_id = self.get_parameter('robot_id').get_parameter_value().string_value
         client_cb_group = MutuallyExclusiveCallbackGroup()
         timer_cb_group = None
         
-        self.cli_0 = self.create_client(SetBool, f'{self.robot_id}/cam_0/set_capture', callback_group=client_cb_group)
-        # self.cli_1 = self.create_client(SetBool, f'{self.robot_id}/cam_1/set_capture', callback_group=client_cb_group)
-        # self.cli_2 = self.create_client(SetBool, f'{self.robot_id}/cam_2/set_capture', callback_group=client_cb_group)
-        # self.cli_3 = self.create_client(SetBool, f'{self.robot_id}/cam_3/set_capture', callback_group=client_cb_group)
+        self.cli_0 = self.create_client(SetBool, '/cam_0/set_capture', callback_group=client_cb_group)
+        # self.cli_1 = self.create_client(SetBool, '/cam_1/set_capture', callback_group=client_cb_group)
+        # self.cli_2 = self.create_client(SetBool, '/cam_2/set_capture', callback_group=client_cb_group)
+        # self.cli_3 = self.create_client(SetBool, '/cam_3/set_capture', callback_group=client_cb_group)
 
         # self.cli_list = [self.cli_0, self.cli_1, self.cli_2, self.cli_3]
         self.cli_list = [self.cli_0]
@@ -43,14 +40,14 @@ class CameraPoller(Node):
         
         self.det = self.create_subscription(
             TFMessage,
-            f'{self.robot_id}/tf_detections',
+            '/tf_detections',
             self.listener_callback,
             10)
 
 
         self.pose_sub = self.create_subscription(
             Odometry,
-            f'{self.robot_id}/filtered_pose',
+            '/filtered_pose',
             self.poll_dir_update,
             10
         )

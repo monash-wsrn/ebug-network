@@ -1,7 +1,7 @@
 import numpy as np
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped
 from tf2_msgs.msg import TFMessage
 import numpy as np
 from scipy.spatial.transform import Rotation as R
@@ -27,19 +27,11 @@ class TransformConverter(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
 
-        self.declare_parameter('robot_id', 'default')
 
-        self.robot_id = self.get_parameter('robot_id').get_parameter_value().string_value
-
-
-        self.subscription = self.create_subscription(
-            TFMessage,
-            f'{self.robot_id}/tf_detections',
-            self.listener_callback,
-            100)
+        self.subscription = self.create_subscription(TFMessage, '/tf_detections', self.listener_callback, 100)
 
         self.timer=self.create_timer(30, self.save_callback)
-        self.publisher = self.create_publisher(PoseWithCovarianceStamped, f'{self.robot_id}/pose', 100)
+        self.publisher = self.create_publisher(PoseWithCovarianceStamped, '/pose', 100)
         self.cam_tag = np.zeros((1,16))
         self.tag_cam = np.zeros((1,16))
         self.alpha=1e-3
