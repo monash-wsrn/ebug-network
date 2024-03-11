@@ -1,15 +1,15 @@
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, TimerAction
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare  
 
 def generate_launch_description():
     ROBOT_ID = "robot_0"        # TODO use os.environ['ROBOT_ID'] instead
     
-    #PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
-    #EKF_ODOM_PATH = os.path.join(PKG_SHARE, 'config/ekf_odom.yaml') 
-    #EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
+    PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
+    EKF_ODOM_PATH = os.path.join(PKG_SHARE, 'config/ekf_odom.yaml') 
+    EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
     
 
     CameraNode0 = create_camera_node(ROBOT_ID, "cam_0",
@@ -43,6 +43,28 @@ def generate_launch_description():
         ]
     )
 
+    EKFOdom = Node(
+        package = 'robot_localization',
+        executable = 'ekf_node',
+        name = 'ekf_filter_node_odom',
+        parameters = [ EKF_ODOM_PATH ],
+        remappings = [
+            ('odometry/filtered', f'{ROBOT_ID}/filtered_odom'),
+            ('diagnostics', 'diagnostics_odom'), 
+        ]
+    )
+    
+    EKFPose = Node(
+        package = 'robot_localization',
+        executable = 'ekf_node',
+        name = 'ekf_filter_node_pose',
+        parameters = [ EKF_POSE_PATH ],
+        remappings=[
+            ('odometry/filtered', f'{ROBOT_ID}/filtered_pose'),
+            ('diagnostics', 'diagnostics_pose'),  
+        ]
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_ebug_time',
@@ -54,7 +76,9 @@ def generate_launch_description():
         #CameraNode2,
         #CameraNode3,
         CameraPollerNode,
-        RobotControllerNode
+        EKFOdom,    # TODO Unsure of filtered_odom usage ??
+        EKFPose,
+        TimerAction(period=10.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
 
 
