@@ -3,7 +3,8 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile
 
 from ebug_interfaces.srv import ComputeTarget
-from geometry_msgs.msg import PoseWithCovarianceStamped, Twist
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Twist
 
 class MovementController(Node):
     def __init__(self):
@@ -20,7 +21,7 @@ class MovementController(Node):
         # as opposed to this roundabout way that allows the existing pub-sub
         # architecture to utilise a the service model
         qos_profile = QoSProfile(depth=10)
-        self.sub_location = self.create_subscription(PoseWithCovarianceStamped, "/pose", self.compute_target, qos_profile)
+        self.sub_location = self.create_subscription(Odometry, "/filtered_odom", self.compute_target, qos_profile)
         self.pub_target = self.create_publisher(Twist, "/cmd_vel", qos_profile)
         
         
@@ -32,14 +33,14 @@ class MovementController(Node):
     publish to back to the robot. It will do this through the central control
     service that has visibility of all robots' pose
     """
-    def compute_target(self, payload:PoseWithCovarianceStamped):
+    def compute_target(self, payload: Odometry):
         if not self.client.wait_for_service(timeout_sec=0.5):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
         
         request = ComputeTarget.Request()
         request.robot_id = self.get_namespace()
-        request.pose = payload
+        request.pose = payload.pose
 
         future = self.client.call_async(request)
         rclpy.spin_until_future_complete(self, future)

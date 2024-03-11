@@ -17,6 +17,7 @@ def generate_launch_description():
 
     PKG_SHARE = FindPackageShare(package='ebug_agent').find('ebug_agent')
     APRIL_TAG_PATH = os.path.join(PKG_SHARE, 'config/aprilTag.yaml') 
+    EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
 
 
     # launch the image processing nodes
@@ -93,6 +94,20 @@ def generate_launch_description():
         target_container = LaunchConfiguration('container'),
     )
 
+    
+    
+    EKFPose = Node(
+        package = 'robot_localization',
+        executable = 'ekf_node',
+        name = 'ekf_filter_node_pose',
+        namespace = ROBOT_ID,
+
+        parameters = [ EKF_POSE_PATH ],
+        remappings = [
+            ('odometry/filtered', '/filtered_odom'),
+        ]
+    )
+
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -105,5 +120,6 @@ def generate_launch_description():
         LoadComposable,
         AprilTagNode,
         TransformConverterNode,
+        EKFPose,
         MovementControllerNode
     ])

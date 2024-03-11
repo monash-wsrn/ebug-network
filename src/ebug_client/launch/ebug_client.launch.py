@@ -6,32 +6,14 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
-    
+    CAMERA_POLLING = os.getenv('CAMERA_POLLING', "disable").lower() == "enable"
+
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
-    EKF_ODOM_PATH = os.path.join(PKG_SHARE, 'config/ekf_odom.yaml') 
-    EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
-    
 
     CameraNode0 = create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE,
         '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0-video-index0')
-
-    # CameraNode1 = create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE,
-    #     '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2:1.0-video-index0')
-
-    # CameraNode2 = create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE,
-    #     '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0-video-index0')
-
-    # CameraNode3 = create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE,
-    #     '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.4:1.0-video-index0')
-
-    CameraPollerNode = Node(
-        package = 'ebug_client',
-        executable = 'CameraPoller',
-        name = 'CameraPoller',
-        namespace = ROBOT_ID
-    )
-
-
+    
+    
     RobotControllerNode = Node(
         package = 'ebug_client',
         executable = 'RobotController',
@@ -39,30 +21,36 @@ def generate_launch_description():
         namespace = ROBOT_ID
     )
 
-    EKFOdom = Node(
-        package = 'robot_localization',
-        executable = 'ekf_node',
-        name = 'ekf_filter_node_odom',
-        namespace = ROBOT_ID,
+    # If camera polling is disabled (default), use only the one camera
+    if not CAMERA_POLLING:
+        return LaunchDescription([
+            DeclareLaunchArgument(
+                'use_ebug_time',
+                default_value='false',
+                description='Use simulation (Gazebo) clock if true'),
 
-        parameters = [ EKF_ODOM_PATH ],
-        remappings = [
-            ('odometry/filtered', '/filtered_odom'),
-            ('diagnostics', 'diagnostics_odom'), 
-        ]
-    )
+            CameraNode0,
+            TimerAction(period=10.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
+        ])
     
-    EKFPose = Node(
-        package = 'robot_localization',
-        executable = 'ekf_node',
-        name = 'ekf_filter_node_pose',
-        namespace = ROBOT_ID,
 
-        parameters = [ EKF_POSE_PATH ],
-        remappings = [
-            ('odometry/filtered', '/filtered_pose'),
-            ('diagnostics', 'diagnostics_pose'),  
-        ]
+
+
+    # If camera polling is enabled, initialize the other camera(s) and CameraPoller
+    CameraNode1 = create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE,
+        '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2:1.0-video-index0')
+
+    CameraNode2 = create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE,
+        '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0-video-index0')
+
+    CameraNode3 = create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE,
+        '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.4:1.0-video-index0')
+
+    CameraPollerNode = Node(
+        package = 'ebug_client',
+        executable = 'CameraPoller',
+        name = 'CameraPoller',
+        namespace = ROBOT_ID
     )
 
     return LaunchDescription([
@@ -72,12 +60,10 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         CameraNode0,
-        #CameraNode1,
-        #CameraNode2,
-        #CameraNode3,
+        CameraNode1,
+        CameraNode2,
+        CameraNode3,
         CameraPollerNode,
-        EKFOdom,    # TODO Unsure of filtered_odom usage ??
-        EKFPose,
         TimerAction(period=10.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
 

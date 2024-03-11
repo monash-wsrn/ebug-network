@@ -11,11 +11,8 @@ RUN sudo apt-get install -y \
     ros-humble-ament-cmake-clang-format \
     python3-colcon-common-extensions \
     python3-pip \
-    ros-humble-robot-localization \
     ros-humble-usb-cam \
     i2c-tools \
-    # python3 \
-    # python3-flask \
     python3-smbus 
     
 

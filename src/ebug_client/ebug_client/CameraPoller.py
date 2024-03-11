@@ -47,7 +47,7 @@ class CameraPoller(Node):
 
         self.pose_sub = self.create_subscription(
             Odometry,
-            '/filtered_pose',
+            '/filtered_odom',
             self.poll_dir_update,
             10
         )
