@@ -26,8 +26,10 @@ RUN rosdep install -i --from-path src --rosdistro humble -y
 RUN bash -c "source /opt/ros/humble/setup.bash; colcon build"
 
 RUN echo "source /ws/install/setup.bash" >> /opt/ros/humble/setup.bash
+RUN echo "export ROS_DOMAIN_ID=13" >> ~/.bashrc
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
 
 # TODO maybe remove hardcoded launch for prod, useful for development though
-CMD ["bash", "-c", "ros2 launch ${ENV_ROS_PKG} ${ENV_ROS_PKG}.launch.py"]
+# CMD ["bash", "-c", "ros2 launch ${ENV_ROS_PKG} ${ENV_ROS_PKG}.launch.py"]
+CMD /bin/bash

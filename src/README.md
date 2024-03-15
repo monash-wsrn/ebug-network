@@ -9,10 +9,13 @@ The Principal must be run on the central compute server.
 
 ```sh
     # Build the principal container, with src as the working directory
-    docker build -t ebug_principal . -f Principal.Dockerfile
+    sudo docker build -t ebug_principal . -f Principal.Dockerfile
 
     # Run the principal container
-    docker run -it ebug_principal
+    sudo docker run --env UID=$(id -u) --env GID=$(id -g) -it ebug_principal
+
+    # In the container run the Principal
+    ros2 launch ebug_principal ebug_principal.launch.py
 ```
 
 ## Agent
@@ -28,10 +31,13 @@ If left blank, ROBOT_ALGO will default to 'BoidsService'.
 
 ```sh
     # Build the agent container, with src as the working directory
-    docker build -t ebug_agent . -f Agent.Dockerfile
+    sudo docker build -t ebug_agent . -f Agent.Dockerfile
 
     # Run the agent container
-    docker run -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' -it ebug_agent 
+    sudo docker run --env UID=$(id -u) --env GID=$(id -g) -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' -it ebug_agent 
+
+    # In the container run the agent
+    ros2 launch ebug_agent ebug_agent.launch.py
 ```
 
 ## Client
@@ -53,7 +59,10 @@ Doing so will enable the remaining three cameras on the robot, as well as the po
 
     # Run the client container, passing through I2C-1
     # ebug_client.util.AStar creates an SMBus on I2C-1
-    docker run -e ROBOT_ID='robot_0' --device /dev/i2c-1 -it ebug_client 
+    docker run --env UID=$(id -u) --env GID=$(id -g) -e ROBOT_ID='robot_0' --device /dev/i2c-1 -it ebug_client
+
+    # In the container run the client
+    ros2 launch ebug_client ebug_client.launch.py
 ```
 
 
