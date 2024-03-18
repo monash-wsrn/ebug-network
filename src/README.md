@@ -1,6 +1,70 @@
 ## Overview
 ![Component Architecure](component_architecture.png)
 
+
+## Notice
+***Please note, Docker Desktop for Windows has some unsupported features and cannot be used.***
+*Either install Docker Engine directly in WSL, create a Linux-based VM, or dual-boot your device.*
+
+***Please note, on some platforms, `sudo` maybe be required to execute docker commands.***
+*Alternatively, on Linux, a user group can be created for docker and the current user added.*
+
+*Please note, many of the following commands and processes will be dramatically simplified once deployment is refined and a docker-compose configuration is created.*
+
+
+## Networking
+Before building and launching any of the containers, we need to create a specialized network device.
+The default bridge network will not allow the containers to communicate externally, out of `host.docker.internal`.
+Additionally, the built-in host networking will consolidate the nodes onto a single MAC Address, which can cause issues with FastDDS.
+
+To address these considerations, we need to create a MAC Vlan driver to bind the containers to. 
+This will allocate a unique MAC Address to each container, as if they were their own physical devices.
+
+```sh
+    # Firstly, identify the interface, gateway and subnet of the host device
+    ip route
+
+    # From here on out we will assume the interface is ->  eth0
+    # From here on out we will assume the gateway is ->  192.168.1.1
+    # From here on out we will assume the subnet (CIDR notation) is ->  192.168.1.0/24
+
+    docker network create \
+        --driver macvlan \                  # Create a MAC VLAN type network
+        --subnet 192.168.1.0/24 \           # CIDR notation subnet of host device
+        --gateway 192.168.1.1 \             # Gateway address of host device
+        --opt parent=eth0 \                 # Specify which host interface to bind to
+        ebug_macvlan                        # Name the MAC VLAN network
+
+    # Or more compactly written:
+    docker network create --driver macvlan --subnet 192.168.1.0/24 --gateway 192.168.1.1 --opt parent=eth0 ebug_macvlan
+
+    # To delete the MAC VLAN
+    docker network remove ebug_macvlan
+
+    # You can list the existing docker network interfaces using
+    docker network list
+```
+
+This will expose each docker container to the host's network device, appearing as it's own physical device to the gateway.
+By default, connections directly between the container and host device will be blocked, to enable this we create a bridge.
+
+```sh
+    # We now want to create a bridge between the macvlan driver that docker uses, and the desired interface.
+    # We'll have to pick a static address for this bridge, that is not already in use on the subnet.
+
+    # From here on out we will assume the interface is ->  eth0
+    # From here on out we will assume the desired address is ->  192.168.1.2
+    #   Combined with the CIDR subnet, /24 in this example we get ->  192.168.1.2/24
+
+    sudo ip link add mac0 link eth0 type macvlan mode bridge
+    sudo addr add 192.168.1.2/24 dev mac0
+    sudo ifconfig mac0 up
+
+    # You should now be able to view the bridge, mac0, along with the other interfaces
+    ifconfig
+```
+
+
 ## Principal
 This ROS2 container implements Boids in a global scope. 
 Agents should query the Principal to determine their next course.
@@ -9,13 +73,10 @@ The Principal must be run on the central compute server.
 
 ```sh
     # Build the principal container, with src as the working directory
-    sudo docker build -t ebug_principal . -f Principal.Dockerfile
+    docker build -t ebug_principal . -f Principal.Dockerfile
 
     # Run the principal container
-    sudo docker run --env UID=$(id -u) --env GID=$(id -g) -it ebug_principal
-
-    # In the container run the Principal
-    ros2 launch ebug_principal ebug_principal.launch.py
+    docker run --network ebug_macvlan -it ebug_principal
 ```
 
 ## Agent
@@ -31,13 +92,10 @@ If left blank, ROBOT_ALGO will default to 'BoidsService'.
 
 ```sh
     # Build the agent container, with src as the working directory
-    sudo docker build -t ebug_agent . -f Agent.Dockerfile
+    docker build -t ebug_agent . -f Agent.Dockerfile
 
     # Run the agent container
-    sudo docker run --env UID=$(id -u) --env GID=$(id -g) -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' -it ebug_agent 
-
-    # In the container run the agent
-    ros2 launch ebug_agent ebug_agent.launch.py
+    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' -it ebug_agent
 ```
 
 ## Client
@@ -59,10 +117,7 @@ Doing so will enable the remaining three cameras on the robot, as well as the po
 
     # Run the client container, passing through I2C-1
     # ebug_client.util.AStar creates an SMBus on I2C-1
-    docker run --env UID=$(id -u) --env GID=$(id -g) -e ROBOT_ID='robot_0' --device /dev/i2c-1 -it ebug_client
-
-    # In the container run the client
-    ros2 launch ebug_client ebug_client.launch.py
+    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' --device /dev/i2c-1 -it ebug_client
 ```
 
 
