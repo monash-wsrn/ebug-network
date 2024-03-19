@@ -94,7 +94,7 @@ The container can be built as follows, optionally providing a `ROS_DOMAIN_ID`, w
     docker build -t ebug .
 
     # Or, build the ebug container with a specified ROS_DOMAIN_ID
-    docker build --build-arg ROS_DOMAIN_ID=13 -t ebug .
+    docker build --build-arg DOMAIN_ID=13 -t ebug .
 ```
 
 

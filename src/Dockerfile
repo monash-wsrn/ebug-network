@@ -1,4 +1,4 @@
-ARG ROS_DOMAIN_ID=13
+ARG DOMAIN_ID=13
 
 # Create container
 FROM osrf/ros:humble-desktop
@@ -30,7 +30,7 @@ COPY "./" "/ws/src/"
 
 WORKDIR "/ws/"
 
-ENV ROS_DOMAIN_ID=$ROS_DOMAIN_ID
+ENV ROS_DOMAIN_ID=${DOMAIN_ID:-13}
 
 RUN pip install -r "/ws/src/python_requirements.txt"
 RUN rosdep install -i --from-path src --rosdistro humble -y
