@@ -29,11 +29,13 @@ This will allocate a unique MAC Address to each container, as if they were their
     # From here on out we will assume the subnet (CIDR notation) is ->  192.168.1.0/24
 
     docker network create \
-        --driver macvlan \                  # Create a MAC VLAN type network
-        --subnet 192.168.1.0/24 \           # CIDR notation subnet of host device
-        --gateway 192.168.1.1 \             # Gateway address of host device
-        --opt parent=eth0 \                 # Specify which host interface to bind to
-        ebug_macvlan                        # Name the MAC VLAN network
+        --driver macvlan \                      # Create a MAC VLAN type network
+        --subnet 192.168.1.0/24 \               # CIDR notation subnet of host device
+        --gateway 192.168.1.1 \                 # Gateway address of host device
+        --ip-range 192.168.1.192/28 \           # Assign up to 16 ip addresses from 192 to 208 (Can change)
+        --aux-address 'host=192.168.1.192' \    # First address of the ip range is reserved for the bridge interface 
+        --opt parent=eth0 \                     # Specify which host interface to bind to
+        ebug_macvlan                            # Name the MAC VLAN network
 
     # Or more compactly written:
     docker network create --driver macvlan --subnet 192.168.1.0/24 --gateway 192.168.1.1 --opt parent=eth0 ebug_macvlan
@@ -56,12 +58,24 @@ By default, connections directly between the container and host device will be b
     # From here on out we will assume the desired address is ->  192.168.1.2
     #   Combined with the CIDR subnet, /24 in this example we get ->  192.168.1.2/24
 
+    # Install net tools to use ifconfig
+    sudo apt-get install -y net-tools
+
+    # Create the mac0 interface and bridge it to eth0
     sudo ip link add mac0 link eth0 type macvlan mode bridge
-    sudo addr add 192.168.1.2/24 dev mac0
+    sudo ip addr add 192.168.1.192/28 dev mac0
     sudo ifconfig mac0 up
 
     # You should now be able to view the bridge, mac0, along with the other interfaces
     ifconfig
+
+    # To validate this connection, run a container and try to ping it
+    # Firstly, find the address of the container
+    docker network inspect ebug_macvlan
+    ping 192.168.1.193
+
+    # Or check the ros topics are listed
+    ros2 topic list
 ```
 
 
