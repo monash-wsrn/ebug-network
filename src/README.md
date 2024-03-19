@@ -50,9 +50,8 @@ This will allocate a unique MAC Address to each container, as if they were their
 
 ## Host Networking
 
-This will expose each docker container to the host's network device, appearing as it's own physical device to the gateway.
 By default, connections directly between the container and host device will be blocked, to enable this we create a bridge.
-This is only required for developed purposes and the simulation.
+*This is only required for developed purposes and the simulation.*
 
 ```sh
     # We now want to create a bridge between the macvlan driver that docker uses, and the desired interface.
