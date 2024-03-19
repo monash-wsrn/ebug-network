@@ -12,7 +12,7 @@
 *Please note, many of the following commands and processes will be dramatically simplified once deployment is refined and a docker-compose configuration is created.*
 
 
-## Networking
+## Docker Networking
 Before building and launching any of the containers, we need to create a specialized network device.
 The default bridge network will not allow the containers to communicate externally, out of `host.docker.internal`.
 Additionally, the built-in host networking will consolidate the nodes onto a single MAC Address, which can cause issues with FastDDS.
@@ -47,8 +47,12 @@ This will allocate a unique MAC Address to each container, as if they were their
     docker network list
 ```
 
+
+## Host Networking
+
 This will expose each docker container to the host's network device, appearing as it's own physical device to the gateway.
 By default, connections directly between the container and host device will be blocked, to enable this we create a bridge.
+This is only required for developed purposes and the simulation.
 
 ```sh
     # We now want to create a bridge between the macvlan driver that docker uses, and the desired interface.
@@ -79,6 +83,21 @@ By default, connections directly between the container and host device will be b
 ```
 
 
+
+
+## Build Container
+The Principal, Agent, and Client instances can all be deployed using the base Ebug container.
+The container can be built as follows, optionally providing a `ROS_DOMAIN_ID`, which defaults to 13.
+
+```sh
+    # Build the ebug container, with a default ROS_DOMAIN_ID (13).
+    docker build -t ebug .
+
+    # Or, build the ebug container with a specified ROS_DOMAIN_ID
+    docker build --build-arg ROS_DOMAIN_ID=13 -t ebug .
+```
+
+
 ## Principal
 This ROS2 container implements Boids in a global scope. 
 Agents should query the Principal to determine their next course.
@@ -86,12 +105,13 @@ Agents should query the Principal to determine their next course.
 The Principal must be run on the central compute server.
 
 ```sh
-    # Build the principal container, with src as the working directory
-    docker build -t ebug_principal . -f Principal.Dockerfile
+    # Run the ebug container
+    docker run --network ebug_macvlan -it ebug
 
-    # Run the principal container
-    docker run --network ebug_macvlan -it ebug_principal
+    # In the containers interactive terminal, start the Principal
+    ros2 launch ebug_principal ebug_principal.launch.py
 ```
+
 
 ## Agent
 This ROS2 container implements localisation component(s)
@@ -105,11 +125,11 @@ The robot algorithm can also be passed in as an environment variable, `ROBOT_ALG
 If left blank, ROBOT_ALGO will default to 'BoidsService'.
 
 ```sh
-    # Build the agent container, with src as the working directory
-    docker build -t ebug_agent . -f Agent.Dockerfile
+    # Run the ebug container, with a specified ROBOT_ID and ROBOT_ALGO
+    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' -it ebug
 
-    # Run the agent container
-    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' -it ebug_agent
+    # In the containers interactive terminal, start the Agent
+    ros2 launch ebug_agent ebug_agent.launch.py
 ```
 
 ## Client
@@ -126,12 +146,12 @@ Doing so will enable the remaining three cameras on the robot, as well as the po
 *Please note: Currently the I2C connection has not been validated.*
 
 ```sh
-    # Build the client container, with src as the working directory
-    docker build -t ebug_client . -f Client.Dockerfile
-
-    # Run the client container, passing through I2C-1
+    # Run the client container, with a specified ROBOT_ID and passing through I2C-1
     # ebug_client.util.AStar creates an SMBus on I2C-1
-    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' --device /dev/i2c-1 -it ebug_client
+    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' --device /dev/i2c-1 -it ebug
+
+    # In the containers interactive terminal, start the Client
+    ros2 launch ebug_client ebug_client.launch.py
 ```
 
 

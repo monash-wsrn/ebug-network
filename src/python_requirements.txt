@@ -1,0 +1,6 @@
+pynput
+numpy
+matplotlib
+opencv-python
+transforms3d
+setuptools==58.2.0
