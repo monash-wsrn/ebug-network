@@ -1,5 +1,6 @@
 pynput
 numpy
+scipy
 matplotlib
 opencv-python
 transforms3d

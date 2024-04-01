@@ -33,6 +33,7 @@ TODO
     Password:   *lightrobot2023* <br>
 - On Windows 11, you can create a [Mobile Hotspot](https://techcommunity.microsoft.com/t5/windows-11/how-to-set-up-a-mobile-hotspot-in-windows-11/m-p/2764785).
 
+*Ensure this network supports promiscuous mode!* 
 
 ## Raspberry Pi basic setup
 - On Windows, [WinSCP](https://winscp.net/eng/download.php) (includes PuTTY) can be used.
@@ -52,16 +53,16 @@ TODO
     ```
 5. Update Raspberry Pi firmware
     ```sh
+    sudo apt install linux-modules-extra-raspi
     sudo rpi-eeprom-update
     sudo reboot
     ```
-6. Install Git and Docker
+6. Install Git and [Docker](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
     ```sh
     sudo apt install git
-    sudo apt install docker.io
-
-    # Verify docker daemon is running
-    sudo service docker status
+    
+    # Follow official Docker install here:
+    # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
     ```
 7. Add *ubuntu* user to Docker user group
     ```sh
@@ -112,6 +113,11 @@ Pololu Tutorial [here](https://www.pololu.com/blog/663/building-a-raspberry-pi-r
     ```sh
     cd ~
     git clone https://github.com/monash-wsrn/ebug-network.git
-
-    # TODO
     ```
+2. Enable promiscuous mode on the device
+3. Follow the instructions [here](https://github.com/monash-wsrn/ebug-network/blob/main/ros/src/README.md) to: <br>
+    i. Create a MAC VLAN Docker Network <br>
+    ii. Bridge the host and vlan networks <br>
+    iii. Build the EBug Container image <br>
+    iiii. Run the EBug Client <br>
+4. 

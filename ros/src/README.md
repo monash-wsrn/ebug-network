@@ -33,7 +33,7 @@ This will allocate a unique MAC Address to each container, as if they were their
         --subnet 192.168.1.0/24 \               # CIDR notation subnet of host device
         --gateway 192.168.1.1 \                 # Gateway address of host device
         --ip-range 192.168.1.192/28 \           # Assign up to 16 ip addresses from 192 to 208 (Can change)
-        --aux-address 'host=192.168.1.192' \    # First address of the ip range is reserved for the bridge interface 
+        --aux-address 'mac0=192.168.1.192' \    # First address of the ip range is reserved for the bridge interface 
         --opt parent=eth0 \                     # Specify which host interface to bind to
         ebug_macvlan                            # Name the MAC VLAN network
 
@@ -105,7 +105,7 @@ The Principal must be run on the central compute server.
 
 ```sh
     # Run the ebug container
-    docker run --network ebug_macvlan -it ebug
+    docker run --network ebug_macvlan --rm -it ebug
 
     # In the containers interactive terminal, start the Principal
     ros2 launch ebug_principal ebug_principal.launch.py
@@ -125,7 +125,7 @@ If left blank, ROBOT_ALGO will default to 'BoidsService'.
 
 ```sh
     # Run the ebug container, with a specified ROBOT_ID and ROBOT_ALGO
-    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' -it ebug
+    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' -e ROBOT_ALGO='BoidsService' --rm -it ebug
 
     # In the containers interactive terminal, start the Agent
     ros2 launch ebug_agent ebug_agent.launch.py
@@ -147,7 +147,7 @@ Doing so will enable the remaining three cameras on the robot, as well as the po
 ```sh
     # Run the client container, with a specified ROBOT_ID and passing through I2C-1
     # ebug_client.util.AStar creates an SMBus on I2C-1
-    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' --device /dev/i2c-1 -it ebug
+    docker run --network ebug_macvlan -e ROBOT_ID='robot_0' --device /dev/i2c-1 --rm -it ebug
 
     # In the containers interactive terminal, start the Client
     ros2 launch ebug_client ebug_client.launch.py

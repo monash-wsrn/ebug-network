@@ -1,7 +1,7 @@
 ARG DOMAIN_ID=13
 
 # Create container
-FROM osrf/ros:humble-desktop
+FROM ros:humble
 
 RUN sudo apt-get upgrade
 RUN sudo apt-get update
