@@ -1,3 +1,0 @@
-[console_scripts]
-robot = control.robot_controller:main
-
