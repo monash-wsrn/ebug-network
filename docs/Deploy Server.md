@@ -7,7 +7,11 @@
     Platform-specific instructions [here](https://docs.docker.com/engine/install/)
 3. Install Git
     Platform-specific instructions [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-
+4. Add your user to Docker user group
+    ```sh
+    sudo usermod -aG docker ${USER}
+    su - ${USER}
+    ```
 
 ## Build the ebug container
 1. Clone the EBug Git Repository
@@ -51,7 +55,7 @@
 
 ## Access the container ROS2 network
 1. Access the ROS2 network of the container(s) from the host device
-`   ```sh
+    ```sh
     # Enter bash as the root user, which is running the containers
     sudo bash
 
@@ -60,6 +64,6 @@
 
     # The host device now has ROS2 configured to connect to the containers
 
-    # Exit the privelleged bash after 
+    # Exit the root bash after 
     exit
     ```

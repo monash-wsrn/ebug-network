@@ -133,7 +133,7 @@ Pololu Tutorial [here](https://www.pololu.com/blog/663/building-a-raspberry-pi-r
 
 ## Access the container ROS2 network
 1. Access the ROS2 network of the container(s) from the host device
-`   ```sh
+    ```sh
     # Enter bash as the root user, which is running the containers
     sudo bash
 
