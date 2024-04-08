@@ -21,6 +21,8 @@ To address these considerations, we need to create a MAC Vlan driver to bind the
 This will allocate a unique MAC Address to each container, as if they were their own physical devices.
 
 ```sh
+    sudo docker network create --driver ipvlan --subnet 192.168.0.0/24 --opt parent=eth0 --opt ipvlan_mode=l3 ebug_ipvlan
+
     # Firstly, identify the interface, gateway and subnet of the host device
     ip route
 

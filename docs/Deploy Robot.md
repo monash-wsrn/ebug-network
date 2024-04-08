@@ -1,7 +1,3 @@
-## Assemble the EBug
-TODO
-
-
 ## Programming the Romi 32U4
 1. Install the [Arduino IDE](https://www.arduino.cc/en/software)
 2. Optionally install [Windows Drivers](https://www.pololu.com/docs/0J69/5.1)
@@ -10,6 +6,7 @@ TODO
 4. Load the **RomiRPiSlaveDemo** into the board 
 
 *Troubleshooting documentation can be found [here](https://support.arduino.cc/hc/en-us/articles/360016495679-Fix-port-access-on-Linux).*
+***TODO, Refine Romi programming instructions***
 
 
 ## Setting up the SD-Card
@@ -33,7 +30,6 @@ TODO
     Password:   *lightrobot2023* <br>
 - On Windows 11, you can create a [Mobile Hotspot](https://techcommunity.microsoft.com/t5/windows-11/how-to-set-up-a-mobile-hotspot-in-windows-11/m-p/2764785).
 
-*Ensure this network supports promiscuous mode!* 
 
 ## Raspberry Pi basic setup
 - On Windows, [WinSCP](https://winscp.net/eng/download.php) (includes PuTTY) can be used.
@@ -108,16 +104,46 @@ Pololu Tutorial [here](https://www.pololu.com/blog/663/building-a-raspberry-pi-r
     ```
 
 
-## Deploy the Client container
+## Build the ebug container
 1. Clone the EBug Git Repository
     ```sh
     cd ~
     git clone https://github.com/monash-wsrn/ebug-network.git
     ```
-2. Enable promiscuous mode on the device
-3. Follow the instructions [here](https://github.com/monash-wsrn/ebug-network/blob/main/ros/src/README.md) to: <br>
-    i. Create a MAC VLAN Docker Network <br>
-    ii. Bridge the host and vlan networks <br>
-    iii. Build the EBug Container image <br>
-    iiii. Run the EBug Client <br>
-4. 
+2. Build the EBug container
+    ```sh
+    cd ~/ebug-network/ros/src
+    docker build -t ebug .
+    ```
+
+## Deploy the container (Client Mode)
+1. Run the ebug container as a client
+    ```sh
+    # Supply environment variables, such as ROBOT_ID, using the -e flag
+    # Pass the i2c device using the --device flag. Additionally, include the camera devices
+    docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --device /dev/i2c-1 --rm -it ebug
+    
+    # In the containers interactive terminal, you can launch the ROS2 package
+    ros2 launch ebug_client ebug_client.launch.py
+    ```
+
+*This will run the container using host networking, interprocess communication, and process ID domains.*
+*It will be run as the **root** user.*
+
+
+## Access the container ROS2 network
+1. Access the ROS2 network of the container(s) from the host device
+`   ```sh
+    # Enter bash as the root user, which is running the containers
+    sudo bash
+
+    export ROS_DOMAIN_ID=13
+    source /opt/ros/humble/setup.bash
+
+    # The host device now has ROS2 configured to connect to the containers
+
+    # Exit the privelleged bash after 
+    exit
+    ```
+
+
