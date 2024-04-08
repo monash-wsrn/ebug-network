@@ -1,5 +1,7 @@
 
 ## Organise a host device for the Principal and Agent(s)
+***Ensure all virtual/unused network adapaters are disabled on the host device***
+
 1. Configure wireless connection <br>
     SSID:       *lightrobot* <br>
     Password:   *lightrobot2023* <br>

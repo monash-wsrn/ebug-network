@@ -85,7 +85,7 @@ def next(main_boid, other_boids):
     
     if (main_boid.position.y < 200 and y_comp < 0) \
         or  (main_boid.position.y > 1800 and y_comp > 0):
-        resultant_angle = math.acos(-y_comp)
+        resultant_angle = math.asin(-y_comp)
         linear_velocity = 0
     
     # TODO compare resultant_angle with angle(main_boid) to determine angular velocity

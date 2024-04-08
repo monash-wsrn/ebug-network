@@ -70,11 +70,10 @@
 Pololu Tutorial [here](https://www.pololu.com/blog/663/building-a-raspberry-pi-robot-with-the-romi-chassis).
 1. Install dependencies
     ```sh
-    sudo apt install i2c-tools
+    sudo apt install i2c-tools raspi-config
     ```
 2. Enable I2C interface
     ```sh
-    sudo apt install raspi-config
     sudo raspi-config
 
     # > 3 Interface Options
