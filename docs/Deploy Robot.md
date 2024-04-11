@@ -120,7 +120,7 @@ Pololu Tutorial [here](https://www.pololu.com/blog/663/building-a-raspberry-pi-r
     ```sh
     # Supply environment variables, such as ROBOT_ID, using the -e flag
     # Pass the i2c device using the --device flag. Additionally, include the camera devices
-    docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --device /dev/i2c-1 --rm -it ebug
+    docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --device /dev/i2c-1 --device /dev/video0 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ros2 launch ebug_client ebug_client.launch.py

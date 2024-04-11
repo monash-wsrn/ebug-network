@@ -11,7 +11,7 @@ def generate_launch_description():
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
 
     CameraNode0 = create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE,
-        '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0-video-index0')
+        '/dev/video0')
     
     
     RobotControllerNode = Node(
