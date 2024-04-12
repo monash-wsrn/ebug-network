@@ -100,5 +100,7 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
             {'framerate':       FRAME_RATE          },
             {'image_height':    HEIGHT              },
             {'image_width':     WIDTH               },
+            
+            # {'autofocus':       True                },
         ]
     )

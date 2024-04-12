@@ -1,6 +1,7 @@
 
 ## Organise a host device for the Principal and Agent(s)
 ***Ensure all virtual/unused network adapaters are disabled on the host device***
+***Windows cannot be used for this, as WSL introduces a layer of network virtualisation***
 
 1. Configure wireless connection <br>
     SSID:       *lightrobot* <br>
