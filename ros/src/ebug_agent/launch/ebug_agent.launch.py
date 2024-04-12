@@ -28,7 +28,7 @@ def generate_launch_description():
         namespace = ROBOT_ID,
 
         remappings = [
-            ('image', '/image_raw')
+            ('image', 'image_raw')
         ]
     )
 
@@ -41,7 +41,7 @@ def generate_launch_description():
         
         parameters = [ APRIL_TAG_PATH ],
         remappings = [
-            ('tf', '/tf_detections'),
+            ('tf', 'tf_detections'),
         ]
     )
 
@@ -104,7 +104,7 @@ def generate_launch_description():
 
         parameters = [ EKF_POSE_PATH ],
         remappings = [
-            ('odometry/filtered', '/filtered_odom'),
+            ('odometry/filtered', 'filtered_odom'),
         ]
     )
 
