@@ -25,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'CameraPoller = ebug_client.CameraPoller:main',
+            'CameraController = ebug_client.CameraController:main',
             'RobotController = ebug_client.RobotController:main',
         ],
     },

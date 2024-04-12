@@ -22,6 +22,15 @@ def generate_launch_description():
 
     # If camera polling is disabled (default), use only the one camera
     if not CAMERA_POLLING:
+        CameraControllerNode = Node(
+            package = 'ebug_client',
+            executable = 'CameraController',
+            name = 'CameraController',
+            namespace = ROBOT_ID,
+            parameters=[
+                {'cameras': [ 'cam_0' ] }
+            ]
+        )
         return LaunchDescription([
             DeclareLaunchArgument(
                 'use_ebug_time',
@@ -29,24 +38,29 @@ def generate_launch_description():
                 description='Use simulation (Gazebo) clock if true'),
 
             CameraNode0,
+            CameraControllerNode,
             TimerAction(period=10.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
         ])
     
 
 
 
-    # If camera polling is enabled, initialize the other camera(s) and CameraPoller
+
+    # If camera polling is enabled, initialize the other camera(s) and CameraController
     CameraNode1 = create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE, '/dev/video1')
 
     CameraNode2 = create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE, '/dev/video2')
 
     CameraNode3 = create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE, '/dev/video3')
 
-    CameraPollerNode = Node(
+    CameraControllerNode = Node(
         package = 'ebug_client',
-        executable = 'CameraPoller',
-        name = 'CameraPoller',
-        namespace = ROBOT_ID
+        executable = 'CameraController',
+        name = 'CameraController',
+        namespace = ROBOT_ID,
+        parameters=[
+            {'cameras': [ 'cam_0', 'cam_1', 'cam_2', 'cam_3' ] }
+        ]
     )
 
     return LaunchDescription([
@@ -59,7 +73,7 @@ def generate_launch_description():
         CameraNode1,
         CameraNode2,
         CameraNode3,
-        CameraPollerNode,
+        CameraControllerNode,
         TimerAction(period=10.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
 
@@ -74,8 +88,8 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
     return Node(
         package = 'usb_cam',
         executable = 'usb_cam_node_exe',
-        name = CAM_ID,
-        namespace = ROBOT_ID,
+        name = 'Camera',
+        namespace = f'{ROBOT_ID}/{CAM_ID}',
 
         parameters=[
             {'video_device':    VIDEO_DEVICE        },
@@ -86,9 +100,5 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
             {'framerate':       FRAME_RATE          },
             {'image_height':    HEIGHT              },
             {'image_width':     WIDTH               },
-        ],
-        remappings=[
-            # Subscribe
-            ('set_capture', f'{CAM_ID}/set_capture'),
         ]
     )
