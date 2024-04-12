@@ -2,7 +2,7 @@ import os
 from glob import glob
 from setuptools import find_packages, setup
 
-package_name = 'ebug_visualisation'
+package_name = 'ebug_visualiser'
 
 setup(
     name=package_name,
@@ -25,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'PyGameDisplay = ebug_visualisation.PyGameDisplay:main'
+            'PyGameDisplay = ebug_visualiser.PyGameDisplay:main'
         ],
     },
 )

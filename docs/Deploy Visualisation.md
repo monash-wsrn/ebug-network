@@ -37,7 +37,7 @@
     docker run --net host --ipc host --pid host -e DISPLAY_SCALE=3 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
-    ros2 launch ebug_visualisation ebug_visualisation.launch.py
+    ros2 launch ebug_visualiser ebug_visualiser.launch.py
     ```
 
 *This will run the container using host networking, interprocess communication, and process ID domains.*

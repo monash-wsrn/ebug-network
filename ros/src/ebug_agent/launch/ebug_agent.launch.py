@@ -27,9 +27,9 @@ def generate_launch_description():
         name = 'RectifyColorNode',
         namespace = ROBOT_ID,
 
-        #remappings = [
-        #    ('image', 'image_rect')
-        #]
+        remappings = [
+            ('image', 'image_raw')
+        ]
     )
 
     # launch the apriltag nodes

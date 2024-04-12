@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     # PyGame Display visualisation of arena state
     PyGameVisualisation = Node(
-        package = 'ebug_visualisation',
+        package = 'ebug_visualiser',
         executable = 'PyGameDisplay',
         name = 'PyGameDisplay',
     )
