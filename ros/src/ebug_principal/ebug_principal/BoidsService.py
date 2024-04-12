@@ -3,10 +3,11 @@ import math
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
 
-from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 
 from ebug_interfaces.srv import ComputeTarget
+from ebug_interfaces.msg import RobotPose
+
 from geometry_msgs.msg import PoseWithCovarianceStamped, Twist
 import ebug_principal.BoidsFunction as Boids
 
@@ -23,6 +24,9 @@ class BoidsService(Node):
         self.cb_group = ReentrantCallbackGroup()
         self.service = self.create_service(ComputeTarget, self.service_name, self.compute_target, callback_group=self.cb_group)
 
+        qos_profile = QoSProfile(depth=10)
+        self.global_poses = self.create_publisher(RobotPose, "global_poses", qos_profile)
+        
         # This will be populated with each call to the compute_target function, it's
         # a dictionary of poses, where the key is the robot_id and the value is the
         # most current pose of the respective robot, as is reported by the robot itself.
@@ -30,7 +34,7 @@ class BoidsService(Node):
 
 
     def compute_target(self, payload:ComputeTarget):
-        first_update = payload.robot_id in self.robot_poses         # String
+        exists = payload.robot_id in self.robot_poses               # String
 
         self.robot_poses[payload.robot_id] = payload.pose.pose.pose # Pull Pose from PoseWithCovarianceStamped
                                                                     # Contains (Point) 'position' and (Quaternion) 'orientation' 
@@ -39,8 +43,7 @@ class BoidsService(Node):
         result.linear.x = 0
         result.angular.z = 0
 
-        if not first_update:
-
+        if exists:
             other_poses = []
             for key, value in self.robot_poses.items():
                 if not key == payload.robot_id:
@@ -57,6 +60,13 @@ class BoidsService(Node):
             # TODO maybe apply temporal component to return value so that robots don't overshoot ??
             # result.linear.z = temporal ???
         
+
+        # Publish this movement globally, for use in simulation and visualisation
+        robot_pose = RobotPose()
+        robot_pose.robot_id = payload.robot_id
+        robot_pose.pose = payload.pose
+        self.global_poses.publish(robot_pose)
+
         return result
 
 

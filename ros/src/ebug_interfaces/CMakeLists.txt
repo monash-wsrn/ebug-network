@@ -27,6 +27,7 @@ find_package(geometry_msgs REQUIRED)
 
 rosidl_generate_interfaces (${PROJECT_NAME}
   "srv/ComputeTarget.srv"
+  "msg/RobotPose.msg"
   DEPENDENCIES geometry_msgs
 )
 

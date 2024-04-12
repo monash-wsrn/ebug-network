@@ -10,8 +10,7 @@ def generate_launch_description():
 
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
 
-    CameraNode0 = create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE,
-        '/dev/video0')
+    CameraNode0 = create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE, '/dev/video0')
     
     
     RobotControllerNode = Node(
@@ -37,14 +36,11 @@ def generate_launch_description():
 
 
     # If camera polling is enabled, initialize the other camera(s) and CameraPoller
-    CameraNode1 = create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE,
-        '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2:1.0-video-index0')
+    CameraNode1 = create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE, '/dev/video1')
 
-    CameraNode2 = create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE,
-        '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.3:1.0-video-index0')
+    CameraNode2 = create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE, '/dev/video2')
 
-    CameraNode3 = create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE,
-        '/dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.4:1.0-video-index0')
+    CameraNode3 = create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE, '/dev/video3')
 
     CameraPollerNode = Node(
         package = 'ebug_client',
