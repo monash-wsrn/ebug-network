@@ -28,10 +28,10 @@ class TransformConverter(Node):
         super().__init__(self.__class__.__name__)
 
 
-        self.subscription = self.create_subscription(TFMessage, '/tf_detections', self.listener_callback, 100)
+        self.subscription = self.create_subscription(TFMessage, 'tf_detections', self.listener_callback, 100)
 
         self.timer=self.create_timer(30, self.save_callback)
-        self.publisher = self.create_publisher(PoseWithCovarianceStamped, '/pose', 100)
+        self.publisher = self.create_publisher(PoseWithCovarianceStamped, 'pose', 100)
         self.cam_tag = np.zeros((1,16))
         self.tag_cam = np.zeros((1,16))
         self.alpha=1e-3
