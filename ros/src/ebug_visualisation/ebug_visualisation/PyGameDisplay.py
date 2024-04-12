@@ -51,14 +51,13 @@ class PyGameDisplay(Node):
         self.surface.fill(self.GREY)
 
         for key, value in self.robot_poses.items():
-
-            x = value.position.x
-            y = value.position.y
-            theta = value.orientation.z
-
             ### render pygame window
-            pygame.draw.circle(self.surface, self.BLACK, (int(value.position.x), int(value.position.y)), 15)
-            #pygame.draw.line(self.surface, self.BLACK, (int(x - 15/2*cos())), (), width=1)
+            x = int(value.position.x)
+            y = int(value.position.y)
+            pygame.draw.circle(self.surface, self.RED, (x, y), 20)
+            
+            theta = int(value.orientation.z)
+            #pygame.draw.line(self.surface, self.BLUE, (int(x - 20/2*cos())), (), width=1)
             ###
         
         # Refresh display
