@@ -34,7 +34,7 @@
 2. Run the ebug container as a visualisation
     ```sh
     # Supply environment variables, such as DISPLAY_SCALE to scale up from 200px by 200px
-    docker run --net host --ipc host --pid host -e DISPLAY_SCALE=8 --rm -it ebug
+    docker run --net host --ipc host --pid host -e DISPLAY_SCALE=3 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ros2 launch ebug_visualisation ebug_visualisation.launch.py

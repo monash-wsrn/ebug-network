@@ -11,9 +11,9 @@ from ebug_interfaces.msg import RobotPose
 # ENV DISPLAY=host.docker.internal:0.0
 class PyGameDisplay(Node):
     # Initialise Pygame Variables
-    ARENA_WIDTH = 2000  # mm
-    ARENA_HEIGHT = 2000 # mm
-    SCALE = int(os.getenv('DISPLAY_SCALE', "5"))
+    ARENA_WIDTH = 200  # mm
+    ARENA_HEIGHT = 200 # mm
+    SCALE = int(os.getenv('DISPLAY_SCALE', "3"))
     
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -33,7 +33,8 @@ class PyGameDisplay(Node):
         pygame.init()
 
         self.surface = pygame.Surface((self.ARENA_WIDTH, self.ARENA_HEIGHT))
-        self.window = pygame.display.set_mode((self.ARENA_WIDTH * self.SCALE, self.ARENA_HEIGHT * self.SCALE))
+        self.window_size = (self.ARENA_WIDTH * self.SCALE, self.ARENA_HEIGHT * self.SCALE)
+        self.window = pygame.display.set_mode(self.window_size)
         
         pygame.display.set_caption("Pygame Display")
         self.clock = pygame.time.Clock()
@@ -64,7 +65,7 @@ class PyGameDisplay(Node):
         self.redraw()
 
     def redraw(self):
-        scaled = pygame.transform.scale(self.surface, self.window.get_size())
+        scaled = pygame.transform.scale(self.surface, self.window_size)
         self.window.blit(scaled, (0, 0))
         pygame.display.update()
         
