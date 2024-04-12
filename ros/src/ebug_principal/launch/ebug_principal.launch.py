@@ -16,7 +16,7 @@ def generate_launch_description():
     StaticTransformAprilTag0 = Node(
         package = 'tf2_ros',
         executable = 'static_transform_publisher',
-        arguments = ['--x', '0.0', '--y', '0.0', '--z', '0', '--yaw', '-0.7854', '--pitch', '0.0', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_0']
+        arguments = ['--x', '1.0', '--y', '1.0', '--z', '0', '--yaw', '-0.7854', '--pitch', '0.0', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_0']
     )
 
     StaticTransformAprilTag1 = Node(
