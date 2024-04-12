@@ -4,6 +4,7 @@ from rclpy.qos import QoSProfile
 
 from ebug_interfaces.srv import ComputeTarget
 from nav_msgs.msg import Odometry
+from ebug_interfaces.msg import ControlCommand
 from geometry_msgs.msg import Twist
 
 class MovementController(Node):
@@ -45,8 +46,12 @@ class MovementController(Node):
         future = self.client.call_async(request)
         rclpy.spin_until_future_complete(self, future)
 
-        response = future.result()
-        self.pub_target.publish(response.vel)
+        response = future.result() # Returns a ControlCommand
+
+        # response.control  is Twist
+        # response.color    is Vector3
+
+        self.pub_target.publish(response.control)
 
 
 

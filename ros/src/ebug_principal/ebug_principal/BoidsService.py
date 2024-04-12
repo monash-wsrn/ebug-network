@@ -7,6 +7,7 @@ from rclpy.callback_groups import ReentrantCallbackGroup
 
 from ebug_interfaces.srv import ComputeTarget
 from ebug_interfaces.msg import RobotPose
+from ebug_interfaces.msg import ControlCommand
 
 from geometry_msgs.msg import PoseWithCovarianceStamped, Twist
 import ebug_principal.BoidsFunction as Boids
@@ -39,9 +40,11 @@ class BoidsService(Node):
         self.robot_poses[payload.robot_id] = payload.pose.pose.pose # Pull Pose from PoseWithCovarianceStamped
                                                                     # Contains (Point) 'position' and (Quaternion) 'orientation' 
 
-        result = Twist()                                            # Twist
-        result.linear.x = 0
-        result.angular.z = 0
+        control = Twist()                                            # control
+        control.linear.x = 0
+        control.angular.z = 0
+
+        result = ControlCommand()
 
         if exists:
             other_poses = []
@@ -54,11 +57,14 @@ class BoidsService(Node):
             # It could also just be left wheel power and right wheel power???
             linear_x, angular_z = Boids.next(this_pose, other_poses)
 
-            result.linear.x = linear_x  # poll time is the time it takes before the robot sends another service request
-            result.angular.z = angular_z
+            control.linear.x = linear_x  # poll time is the time it takes before the robot sends another service request
+            control.angular.z = angular_z
 
-            # TODO maybe apply temporal component to return value so that robots don't overshoot ??
-            # result.linear.z = temporal ???
+            # TODO make color meaningful
+            result.control = control
+            result.color.x = 255
+            result.color.y = 0
+            result.color.z = 0
         
 
         # Publish this movement globally, for use in simulation and visualisation
