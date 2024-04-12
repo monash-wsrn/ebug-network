@@ -38,10 +38,8 @@ class PyGameDisplay(Node):
         pygame.display.set_caption("Pygame Display")
         self.clock = pygame.time.Clock()
 
-        # TODO
-        self.surface.fill(self.GREY)
-        pygame.draw.circle(self.surface, self.RED, (30, 30), 15)
-        
+        self.surface.fill(self.WHITE)
+        #pygame.draw.circle(self.surface, self.RED, (30, 30), 15)
         self.redraw()
 
 
