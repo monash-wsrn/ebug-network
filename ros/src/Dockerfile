@@ -23,7 +23,6 @@ RUN sudo apt-get install -y \
     python3-smbus \
     i2c-tools
 
-
 RUN mkdir -p "/ws/src/"
 
 COPY "./" "/ws/src/"
@@ -38,6 +37,9 @@ RUN rosdep install -i --from-path src --rosdistro humble -y
 RUN bash -c "source /opt/ros/humble/setup.bash; colcon build"
 
 RUN echo "source /ws/install/setup.bash" >> /opt/ros/humble/setup.bash
+
+ENV DISPLAY="host.docker.internal:0.0"
+ENV SDL_AUDIODRIVER="dsp"
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
 CMD /bin/bash

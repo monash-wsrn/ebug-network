@@ -14,6 +14,7 @@
     sudo usermod -aG docker ${USER}
     su - ${USER}
     ```
+5. Install [XMing for Windows](https://sourceforge.net/projects/xming/) or [XQuartz for macOS](https://www.xquartz.org/)
 
 ## Build the ebug container
 1. Clone the EBug Git Repository
@@ -29,12 +30,11 @@
 
 
 ## Deploy the container (Visualisation Mode)
-1. Run the ebug container as an agent
+1. Run the ***XLaunch*** to capture the visualisation window from the Docker container. For more information, visit [here](https://medium.com/@rndonovan1/running-pygame-gui-in-a-docker-container-on-windows-cc587d99f473).
+2. Run the ebug container as a visualisation
     ```sh
-    # https://medium.com/@rndonovan1/running-pygame-gui-in-a-docker-container-on-windows-cc587d99f473
-
-    # Supply environment variables, such as ROBOT_ID, or ROBOT_ALGO, using the -e flag
-    docker run --net host --ipc host --pid host -e DISPLAY=host.docker.internal:0.0 --rm -it ebug
+    # Supply environment variables, such as DISPLAY_SCALE to scale up from 200px by 200px
+    docker run --net host --ipc host --pid host -e DISPLAY_SCALE=8 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ros2 launch ebug_visualisation ebug_visualisation.launch.py
