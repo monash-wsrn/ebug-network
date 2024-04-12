@@ -1,2 +1,2 @@
-Twist control
-Vector3 color
+geometry_msgs/Twist control
+geometry_msgs/Vector3 color
