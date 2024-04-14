@@ -32,18 +32,6 @@ def generate_launch_description():
         ]
     )
 
-    # launch the image processing nodes
-    ImageProcNode = Node(
-        package = 'image_proc',
-        executable = 'rectify_node',
-        name = 'RectifyColor',
-        namespace = ROBOT_ID,
-
-        remappings = [
-            ('image', 'image_raw')
-        ]
-    )
-
     RobotControllerNode = Node(
         package = 'ebug_client',
         executable = 'RobotController',
@@ -59,14 +47,13 @@ def generate_launch_description():
 
         *CAMERA_NODES,
         CameraControllerNode,
-        ImageProcNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
 
 
 
 def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
-    FRAME_RATE = 10.0
+    FRAME_RATE = 25.0
     WIDTH = 640
     HEIGHT = 480
     CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 
@@ -78,11 +65,11 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
         namespace = f'{ROBOT_ID}/{CAM_ID}',
 
         parameters=[
-            {'video_device':    VIDEO_DEVICE        },
+            {'video_device':    VIDEO_DEVICE        },  
             {'camera_name':     CAM_ID              },
             {'camera_info_url': f'file://{CAM_INFO}'},
             {'frame_id':        CAM_ID              },
-            {'pixel_format':    'mjpeg2rgb'         },
+            {'pixel_format':    'yuyv'              },
             {'framerate':       FRAME_RATE          },
             {'image_height':    HEIGHT              },
             {'image_width':     WIDTH               },

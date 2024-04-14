@@ -12,6 +12,17 @@ def generate_launch_description():
     APRIL_TAG_PATH = os.path.join(PKG_SHARE, 'config/aprilTag.yaml') 
     EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
 
+    # launch the image processing nodes
+    ImageProcNode = Node(
+        package = 'image_proc',
+        executable = 'rectify_node',
+        name = 'RectifyColor',
+        namespace = ROBOT_ID,
+
+        remappings = [
+            ('image', 'image_raw')
+        ]
+    )
 
     # launch the apriltag nodes
     AprilTagNode =  Node(
@@ -67,6 +78,7 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
         
+        ImageProcNode,
         AprilTagNode,
         TransformConverterNode,
         EKFPose,
