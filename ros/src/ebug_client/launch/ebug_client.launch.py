@@ -35,7 +35,7 @@ def generate_launch_description():
     # launch the image processing nodes
     ImageProcNode = Node(
         package = 'image_proc',
-        executable = 'RectifyNode',
+        executable = 'rectify_node',
         name = 'RectifyColor',
         namespace = ROBOT_ID,
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Launching ebug_$1"
+source /opt/ros/humble/setup.bash && ros2 launch ebug_$1 ebug_$1.launch.py
