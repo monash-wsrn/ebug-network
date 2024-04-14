@@ -29,6 +29,8 @@ COPY "./" "/ws/src/"
 
 WORKDIR "/ws/"
 
+RUN sudo mv /ws/src/launch /ws/launch && sudo chmod 777 /ws/launch
+
 ENV ROS_DOMAIN_ID=${DOMAIN_ID:-13}
 
 RUN pip install -r "/ws/src/python_requirements.txt"
