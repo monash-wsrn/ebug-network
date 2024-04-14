@@ -18,38 +18,38 @@ class CameraController(Node):
 
         self.selected = self.cameras[0]
         self.synchronizers = []
-        self.set_captures = []
+        # self.set_captures = []
 
         self.pub_image = self.create_publisher(Image, 'image_raw', 10)
         self.pub_cinfo = self.create_publisher(CameraInfo, 'camera_info', 10)
         self.sub_odom = self.create_subscription(Odometry, 'filtered_odom', self.odom_callback, 10)
 
-        self.callback_group = MutuallyExclusiveCallbackGroup()
+        # self.callback_group = MutuallyExclusiveCallbackGroup()
         
-        self.set_on = SetBool.Request()
-        self.set_on.data = True
+        # self.set_on = SetBool.Request()
+        # self.set_on.data = True
 
         for cam_id in self.cameras:
             self.get_logger().info(f"Connecting to USB Camera (ID: {cam_id})")
 
             image = Subscriber(self, Image, f'{cam_id}/image_raw')
-            cinfo = Subscriber(self, Image, f'{cam_id}/camera_info')
+            cinfo = Subscriber(self, CameraInfo, f'{cam_id}/camera_info')
 
             sync = ApproximateTimeSynchronizer([image, cinfo], 10, 0.1, allow_headerless=True)
             sync.registerCallback(lambda x, y : self.camera_callback(cam_id, x, y))
 
             self.synchronizers.append(sync)
 
-            capture = self.create_client(SetBool, f'{cam_id}/set_capture', callback_group=self.callback_group)
+            # capture = self.create_client(SetBool, f'{cam_id}/set_capture', callback_group=self.callback_group)
             
-            try:
-                while not capture.wait_for_service(timeout_sec=1.0):
-                    pass
+            # try:
+            #     while not capture.wait_for_service(timeout_sec=1.0):
+            #         pass
                 
-                capture.call_async(self.set_on)
-                self.set_captures.append(capture)
-            except KeyboardInterrupt:
-                return
+            #     capture.call_async(self.set_on)
+            #     self.set_captures.append(capture)
+            # except KeyboardInterrupt:
+            #     return
 
             self.get_logger().info(f"Connected to USB Camera (ID: {cam_id})")
 
@@ -64,12 +64,11 @@ class CameraController(Node):
         self.pub_cinfo.publish(cinfo)
 
 
-    def odom_callback(self, odom: Odometry):
-        self.selected = self.cameras[0]
-        
+    def odom_callback(self, odom: Odometry):        
         # TODO Use odom to identify which camera in the cameras array
         # would be best positioned to see an april tag.
-        pass
+        
+        self.selected = self.cameras[0]
 
 
 
