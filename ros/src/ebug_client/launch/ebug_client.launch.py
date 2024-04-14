@@ -2,15 +2,7 @@ import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, TimerAction
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare  
-
-from launch_ros.actions import ComposableNodeContainer
-from launch_ros.actions import LoadComposableNodes
-from launch_ros.descriptions import ComposableNode
-
-from launch.conditions import LaunchConfigurationEquals
-from launch.conditions import LaunchConfigurationNotEquals
-from launch.substitutions import LaunchConfiguration
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
@@ -30,7 +22,7 @@ def generate_launch_description():
         CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE, '/dev/video3') )
     
 
-    CameraControllerNode = ComposableNode(
+    CameraControllerNode = Node(
         package = 'ebug_client',
         executable = 'CameraController',
         name = 'CameraController',
@@ -41,47 +33,16 @@ def generate_launch_description():
     )
 
     # launch the image processing nodes
-    ImageProcNode = ComposableNode(
+    ImageProcNode = Node(
         package = 'image_proc',
-        plugin = 'image_proc::RectifyNode',
-        name = 'RectifyColorNode',
+        executable = 'RectifyNode',
+        name = 'RectifyColor',
         namespace = ROBOT_ID,
 
         remappings = [
             ('image', 'image_raw')
         ]
     )
-
-
-    ContainerLaunchArg = DeclareLaunchArgument(
-        name = 'ImageProcessingContainer', 
-        default_value = '',
-        description = ('Container for Camera Node(s), CameraController, and Image Rectifier.')
-    )
-
-    # If an existing container is not provided, start a container and load nodes into it
-    ImageProcContainer = ComposableNodeContainer(
-        condition = LaunchConfigurationEquals('ImageProcessingContainer', ''),
-        name = 'image_proc_container',
-        namespace = '',
-        package = 'rclcpp_components',
-        executable = 'component_container',
-        composable_node_descriptions = CAMERA_NODES.extend([ CameraControllerNode, ImageProcNode ]),
-        output = 'screen'
-    )
-
-    # If an existing container name is provided, load composable nodes into it
-    # This will block until a container with the provided name is available and nodes are loaded
-    LoadComposable = LoadComposableNodes(
-        condition = LaunchConfigurationNotEquals('ImageProcessingContainer', ''),
-        composable_node_descriptions = CAMERA_NODES.extend([ CameraControllerNode, ImageProcNode ]),
-        target_container = LaunchConfiguration('ImageProcessingContainer'),
-    )
-
-    
-
-
-    
 
     RobotControllerNode = Node(
         package = 'ebug_client',
@@ -96,9 +57,9 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
 
-        ContainerLaunchArg,
-        ImageProcContainer,
-        LoadComposable,
+        *CAMERA_NODES,
+        CameraControllerNode,
+        ImageProcNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
 
@@ -110,7 +71,7 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
     HEIGHT = 480
     CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 
 
-    return ComposableNode(
+    return Node(
         package = 'usb_cam',
         executable = 'usb_cam_node_exe',
         name = 'Camera',
