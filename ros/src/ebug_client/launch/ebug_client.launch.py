@@ -4,77 +4,102 @@ from launch.actions import DeclareLaunchArgument, TimerAction
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare  
 
+from launch_ros.actions import ComposableNodeContainer
+from launch_ros.actions import LoadComposableNodes
+from launch_ros.descriptions import ComposableNode
+
+from launch.conditions import LaunchConfigurationEquals
+from launch.conditions import LaunchConfigurationNotEquals
+from launch.substitutions import LaunchConfiguration
+
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
     CAMERA_POLLING = os.getenv('CAMERA_POLLING', "disable").lower() == "enable"
 
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
 
-    CameraNode0 = create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE, '/dev/video0')
+
+    CAMERA_IDS = ['cam_0']
+    CAMERA_NODES = []
+
+    CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE, '/dev/video0') )
+    if CAMERA_POLLING:   
+        CAMERA_IDS.extend( ['cam_1', 'cam_2', 'cam_3'] )
+        CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE, '/dev/video1') )
+        CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE, '/dev/video2') )
+        CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE, '/dev/video3') )
     
+
+    CameraControllerNode = ComposableNode(
+        package = 'ebug_client',
+        executable = 'CameraController',
+        name = 'CameraController',
+        namespace = ROBOT_ID,
+        parameters=[
+            {'cameras':  CAMERA_IDS }
+        ]
+    )
+
+    # launch the image processing nodes
+    ImageProcNode = ComposableNode(
+        package = 'image_proc',
+        plugin = 'image_proc::RectifyNode',
+        name = 'RectifyColorNode',
+        namespace = ROBOT_ID,
+
+        remappings = [
+            ('image', 'image_raw')
+        ]
+    )
+
+
+    ContainerLaunchArg = DeclareLaunchArgument(
+        name = 'ImageProcessingContainer', 
+        default_value = '',
+        description = ('Container for Camera Node(s), CameraController, and Image Rectifier.')
+    )
+
+    # If an existing container is not provided, start a container and load nodes into it
+    ImageProcContainer = ComposableNodeContainer(
+        condition = LaunchConfigurationEquals('ImageProcessingContainer', ''),
+        name = 'image_proc_container',
+        namespace = '',
+        package = 'rclcpp_components',
+        executable = 'component_container',
+        composable_node_descriptions = CAMERA_NODES.extend([ CameraControllerNode, ImageProcNode ]),
+        output = 'screen'
+    )
+
+    # If an existing container name is provided, load composable nodes into it
+    # This will block until a container with the provided name is available and nodes are loaded
+    LoadComposable = LoadComposableNodes(
+        condition = LaunchConfigurationNotEquals('ImageProcessingContainer', ''),
+        composable_node_descriptions = CAMERA_NODES.extend([ CameraControllerNode, ImageProcNode ]),
+        target_container = LaunchConfiguration('ImageProcessingContainer'),
+    )
+
     
+
+
+    
+
     RobotControllerNode = Node(
         package = 'ebug_client',
         executable = 'RobotController',
         name = 'RobotController',
         namespace = ROBOT_ID
     )
-
-    # If camera polling is disabled (default), use only the one camera
-    if not CAMERA_POLLING:
-        CameraControllerNode = Node(
-            package = 'ebug_client',
-            executable = 'CameraController',
-            name = 'CameraController',
-            namespace = ROBOT_ID,
-            parameters=[
-                {'cameras': [ 'cam_0' ] }
-            ]
-        )
-        return LaunchDescription([
-            DeclareLaunchArgument(
-                'use_ebug_time',
-                default_value='false',
-                description='Use simulation (Gazebo) clock if true'),
-
-            CameraNode0,
-            CameraControllerNode,
-            TimerAction(period=10.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
-        ])
     
-
-
-
-
-    # If camera polling is enabled, initialize the other camera(s) and CameraController
-    CameraNode1 = create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE, '/dev/video1')
-
-    CameraNode2 = create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE, '/dev/video2')
-
-    CameraNode3 = create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE, '/dev/video3')
-
-    CameraControllerNode = Node(
-        package = 'ebug_client',
-        executable = 'CameraController',
-        name = 'CameraController',
-        namespace = ROBOT_ID,
-        parameters=[
-            {'cameras': [ 'cam_0', 'cam_1', 'cam_2', 'cam_3' ] }
-        ]
-    )
-
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_ebug_time',
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
 
-        CameraNode0,
-        CameraNode1,
-        CameraNode2,
-        CameraNode3,
-        CameraControllerNode,
-        TimerAction(period=10.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
+        ContainerLaunchArg,
+        ImageProcContainer,
+        LoadComposable,
+        TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
 
 
@@ -85,7 +110,7 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
     HEIGHT = 480
     CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 
 
-    return Node(
+    return ComposableNode(
         package = 'usb_cam',
         executable = 'usb_cam_node_exe',
         name = 'Camera',

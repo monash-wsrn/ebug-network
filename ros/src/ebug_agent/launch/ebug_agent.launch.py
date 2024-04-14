@@ -1,14 +1,7 @@
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.conditions import LaunchConfigurationEquals
-from launch.conditions import LaunchConfigurationNotEquals
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import ComposableNodeContainer
-from launch_ros.actions import LoadComposableNodes
-from launch_ros.descriptions import ComposableNode
 from launch_ros.substitutions import FindPackageShare  
 
 def generate_launch_description():
@@ -20,18 +13,6 @@ def generate_launch_description():
     EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
 
 
-    # launch the image processing nodes
-    ImageProcNode = ComposableNode(
-        package = 'image_proc',
-        plugin = 'image_proc::RectifyNode',
-        name = 'RectifyColorNode',
-        namespace = ROBOT_ID,
-
-        remappings = [
-            ('image', 'image_raw')
-        ]
-    )
-
     # launch the apriltag nodes
     AprilTagNode =  Node(
         package = 'apriltag_ros',
@@ -41,7 +22,7 @@ def generate_launch_description():
         
         parameters = [ APRIL_TAG_PATH ],
         remappings = [
-            ('tf', 'tf_detections'),
+            ('/tf', 'tf_detections'),   # This must be '/tf' as the AprilTag publishes to the absolute topic
         ]
     )
 
@@ -65,35 +46,6 @@ def generate_launch_description():
         ]
     )
 
-
-    ContainerLaunchArg = DeclareLaunchArgument(
-        name = 'container', 
-        default_value = '',
-        description = (
-            'Name of an existing node container to load launched nodes into. '
-            'If unset, a new container will be created.'
-        )
-    )
-
-    # If an existing container is not provided, start a container and load nodes into it
-    ImageProcContainer = ComposableNodeContainer(
-        condition = LaunchConfigurationEquals('container', ''),
-        name = 'image_proc_container',
-        namespace = '', # TODO maybe ROBOT_ID ??
-        package = 'rclcpp_components',
-        executable = 'component_container',
-        composable_node_descriptions = [ ImageProcNode ],
-        output = 'screen'
-    )
-
-    # If an existing container name is provided, load composable nodes into it
-    # This will block until a container with the provided name is available and nodes are loaded
-    LoadComposable = LoadComposableNodes(
-        condition = LaunchConfigurationNotEquals('container', ''),
-        composable_node_descriptions = [ ImageProcNode ],
-        target_container = LaunchConfiguration('container'),
-    )
-
     
     
     EKFPose = Node(
@@ -114,10 +66,7 @@ def generate_launch_description():
             'use_ebug_time',
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
-
-        ContainerLaunchArg,
-        ImageProcContainer,
-        LoadComposable,
+        
         AprilTagNode,
         TransformConverterNode,
         EKFPose,
