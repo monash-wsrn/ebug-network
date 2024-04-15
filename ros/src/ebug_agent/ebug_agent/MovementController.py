@@ -16,7 +16,10 @@ class MovementController(Node):
 
 
         # TODO shouldn't be the service module but rather the DTO and the service name
-        self.client = self.create_client(ComputeTarget, self.service_name)
+        self.client = self.create_client(ComputeTarget, f'/{self.service_name}')
+
+        while not self.client.wait_for_service(timeout_sec=0.5):
+            pass
 
         # Ideally we'd update our robots to interact directly with the BoidsService
         # as opposed to this roundabout way that allows the existing pub-sub

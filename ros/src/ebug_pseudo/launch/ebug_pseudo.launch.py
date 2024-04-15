@@ -8,9 +8,10 @@ def generate_launch_description():
     ROBOT_ALGO = os.getenv('ROBOT_ALGO', "BoidsService")
 
     
-    START_POSX = int(os.getenv('START_POSX', "0"))
-    START_POSY = int(os.getenv('START_POSY', "0"))
+    START_POSX = float(os.getenv('START_POSX', "0.0"))
+    START_POSY = float(os.getenv('START_POSY', "0.0"))
     START_YAW = float(os.getenv('START_YAW', "0.0"))
+    TICK_RATE = float(os.getenv('TICK_RATE', "25.0"))
 
     # This node is the connector between the central controller and an individual robot.
     PseudoMovementControllerNode = Node(
@@ -21,6 +22,7 @@ def generate_launch_description():
 
         parameters = [
             {"service_name":    ROBOT_ALGO                  },
+            {"tick_rate":       TICK_RATE                   },
             {"start_pos":       [START_POSX, START_POSY]    },
             {"start_yaw":       START_YAW                   }
         ]

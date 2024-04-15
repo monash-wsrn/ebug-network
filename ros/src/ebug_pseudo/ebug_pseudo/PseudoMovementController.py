@@ -1,11 +1,12 @@
-import rclpy
-from rclpy.node import Node
-from rclpy import time
 import numpy as np
 
+import rclpy
+from rclpy import time
+from rclpy.node import Node
+from rclpy.callback_groups import ReentrantCallbackGroup
+
 from ebug_interfaces.srv import ComputeTarget
-from geometry_msgs.msg import Twist, PoseWithCovarianceStamped, Pose, PoseWithCovariance
-from tf_transformations import quaternion_from_euler
+from geometry_msgs.msg import Twist, PoseWithCovarianceStamped, PoseWithCovariance, Pose, Quaternion 
 
 class PseudoMovementController(Node):
     def __init__(self):
@@ -14,29 +15,37 @@ class PseudoMovementController(Node):
         self.declare_parameter('service_name', 'ComputeTargetService')
         self.service_name = self.get_parameter('service_name').get_parameter_value().string_value
         
-        self.declare_parameter('start_pos', [0, 0])
-        self.start_pos = self.get_parameter('start_pos').get_parameter_value().integer_array_value
+        self.declare_parameter('tick_rate', 25.0)
+        self.tick_rate = self.get_parameter('tick_rate').get_parameter_value().double_value
+        
+        self.declare_parameter('start_pos', [0.0, 0.0])
+        self.start_pos = self.get_parameter('start_pos').get_parameter_value().double_array_value
         
         self.declare_parameter('start_yaw', 0.0)
         self.start_yaw = self.get_parameter('start_yaw').get_parameter_value().double_value
 
-        self.client = self.create_client(ComputeTarget, self.service_name)
+        self.client = self.create_client(ComputeTarget, f'/{self.service_name}')
+
+        while not self.client.wait_for_service(timeout_sec=0.5):
+            pass
         
         self.pose = Pose()
+        
         self.yaw = self.start_yaw
         self.pose.position.x = self.start_pos[0]
         self.pose.position.y = self.start_pos[1]
-        self.pose.position.z = 0
-        self.pose.orientation = quaternion_from_euler(0, 0, self.yaw)
-        self.tick_rate = 25.0
-        self.timer = self.create_timer(1.0 / self.tick_rate, self.tick)
+        self.pose.position.z = 0.0
+        self.pose.orientation = self.quat()
+
+        self.cb_group = ReentrantCallbackGroup()
+        self.timer = self.create_timer(1.0 / self.tick_rate, self.tick, self.cb_group, self.get_clock())
         self.timestamp = None
         
         self.twist = Twist()
-        self.twist.linear.x = 0
-        self.twist.angular.z = 0
+        self.twist.linear.x = 0.0
+        self.twist.angular.z = 0.0
         
-        self.get_logger().info(f"Created SudoMovementController (ID: {self.get_namespace()}) using {self.service_name}")
+        self.get_logger().info(f"Created PseudoMovementController (ID: {self.get_namespace()}) using {self.service_name}")
     
 
     """
@@ -52,15 +61,14 @@ class PseudoMovementController(Node):
         if not self.timestamp:
             self.timestamp = time.Time()
         
-        delta = (time.Time().nanoseconds - self.timestamp.nanoseconds) / 1_000_000_000.0
+        delta = float(time.Time().nanoseconds - self.timestamp.nanoseconds) / 1_000_000_000.0
         self.timestamp = time.Time()
 
         # TODO apply delta time change with linear and angular velocities
         self.yaw = self.yaw + self.twist.angular.z*delta
         self.pose.position.x = self.pose.orientation.x + delta*self.twist.linear.x*np.cos(self.yaw)
         self.pose.position.y = self.pose.orientation.y + delta*self.twist.linear.x*np.sin(self.yaw)
-
-        self.pose.orientation = quaternion_from_euler(0, 0, self.yaw)
+        self.pose.orientation = self.quat()
         
         request = ComputeTarget.Request()
         request.robot_id = self.get_namespace()
@@ -75,6 +83,18 @@ class PseudoMovementController(Node):
         self.twist = response.control
         self.timestamp = self.get_clock().now().to_msg()
 
+        self.timer.reset()
+        
+
+    def quat(self):
+        q = Quaternion()
+        roll, pitch, yaw = 0.0, 0.0, self.yaw
+
+        q.x = np.sin(roll/2.0) * np.cos(pitch/2.0) * np.cos(yaw/2.0) - np.cos(roll/2.0) * np.sin(pitch/2.0) * np.sin(yaw/2.0)
+        q.y = np.cos(roll/2.0) * np.sin(pitch/2.0) * np.cos(yaw/2.0) + np.sin(roll/2.0) * np.cos(pitch/2.0) * np.sin(yaw/2.0)
+        q.z = np.cos(roll/2.0) * np.cos(pitch/2.0) * np.sin(yaw/2.0) - np.sin(roll/2.0) * np.sin(pitch/2.0) * np.cos(yaw/2.0)
+        q.w = np.cos(roll/2.0) * np.cos(pitch/2.0) * np.cos(yaw/2.0) + np.sin(roll/2.0) * np.sin(pitch/2.0) * np.sin(yaw/2.0)
+        return q
 
 ## Boilerplate
 

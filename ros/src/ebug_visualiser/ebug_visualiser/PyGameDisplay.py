@@ -67,11 +67,11 @@ class PyGameDisplay(Node):
             #LED = 
 
             # Draw robot body
-            pygame.draw.circle(self.surface, self.BLACK, (x, y), ROBOT_RADIUS)
+            pygame.draw.circle(self.surface, self.BLACK, (x, y), self.ROBOT_RADIUS)
             
             # Draw LED's evenly space around ring
-            for i in range(0, NUM_LEDS):
-                pygame.draw.circle(self.surface, self.RED, (int(x+ROBOT_RADIUS/2*math.cos(theta+i*(2*math.pi/NUM_LEDS))), int(y+ROBOT_RADIUS/2*math.sin(theta+i*(2*math.pi/NUM_LEDS)))), 1)
+            for i in range(0, self.NUM_LEDS):
+                pygame.draw.circle(self.surface, self.RED, (int(x+self.ROBOT_RADIUS/2*math.cos(theta+i*(2*math.pi/self.NUM_LEDS))), int(y+self.ROBOT_RADIUS/2*math.sin(theta+i*(2*math.pi/self.NUM_LEDS)))), 1)
             
             #pygame.draw.line(self.surface, self.BLUE, (int(x - 20/2*cos())), (), width=1)
             ###

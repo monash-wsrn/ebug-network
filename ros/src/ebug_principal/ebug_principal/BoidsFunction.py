@@ -1,5 +1,4 @@
 import math
-from tf_transformations import euler_from_quaternion
 
 # Screen dimensions (in mm)
 ARENA_WIDTH = 2000
@@ -24,7 +23,7 @@ def angle_between(pose1, other_x, other_y):
 
 # Function to get the Euler Z angle of a boid
 def angle(pose):
-    (roll, pitch, yaw) = euler_from_quaternion(pose.orientation)
+    roll, pitch, yaw = euler_from_quaternion(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)
     return yaw
 
 def sign(num):
@@ -95,3 +94,26 @@ def next(main_boid, other_boids):
     led_colour = (255, 0, 0)
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
     return (linear_velocity, angular_velocity, led_colour)
+
+
+def euler_from_quaternion(x, y, z, w):
+    """
+    Convert a quaternion into euler angles (roll, pitch, yaw)
+    roll is rotation around x in radians (counterclockwise)
+    pitch is rotation around y in radians (counterclockwise)
+    yaw is rotation around z in radians (counterclockwise)
+    """
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + y * y)
+    roll_x = math.atan2(t0, t1)
+
+    t2 = +2.0 * (w * y - z * x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    pitch_y = math.asin(t2)
+
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (y * y + z * z)
+    yaw_z = math.atan2(t3, t4)
+
+    return roll_x, pitch_y, yaw_z # in radians

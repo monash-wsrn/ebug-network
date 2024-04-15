@@ -1,4 +1,6 @@
 
+*Containers are run using host networking, interprocess communication, and process ID domains.*
+*This means it will be run as the **root** user. To access it from a host device, please view last section.*
 
 ## Build the ebug container
 1. Clone the EBug Git Repository
@@ -12,47 +14,84 @@
     docker build -t ebug .
     ```
 
+
 ## Deploy the container (Client Mode)
 1. Run the ebug container as a client
     ```sh
-    # Supply environment variables, such as ROBOT_ID, using the -e flag
-    # Pass the i2c device using the --device flag. Additionally, include the camera devices
+    # Supply environment variables using the -e flag. The available variable defaults are:
+    #    ROBOT_ID (String):         'default'
+    #    CAMERA_POLLING (String):   'disable'   // Enable/disable polling additional cameras
+    
+    # Supply host devices using the --device flag. The mappable devices are:
+    #    /dev/i2c-1  (Required)
+    #    /dev/video0 (Required)
+    #    /dev/video1 (Optional)
+    #    /dev/video2 (Optional)
+    #    /dev/video3 (Optional)
+
     docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --device /dev/i2c-1 --device /dev/video0 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch client
     ```
 
-*This will run the container using host networking, interprocess communication, and process ID domains.*
-*It will be run as the **root** user.*
-
 
 ## Deploy the container (Agent Mode)
 1. Run the ebug container as an agent
     ```sh
-    # Supply environment variables, such as ROBOT_ID, or ROBOT_ALGO, using the -e flag
+    # Supply environment variables using the -e flag. The available variable defaults are:
+    #    ROBOT_ID (String):         'default'
+    #    ROBOT_ALGO (String):       'BoidsService'
+
     docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch agent
     ```
 
-*This will run the container using host networking, interprocess communication, and process ID domains.*
-*It will be run as the **root** user.*
-
 
 ## Deploy the container (Principal Mode)
 1. Run the ebug container as a principal
     ```sh
+    # Supply environment variables using the -e flag. The available variable defaults are:
+    #    ----
+
     docker run --net host --ipc host --pid host -e --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch principal
     ```
 
-*This will run the container using host networking, interprocess communication, and process ID domains.*
-*It will be run as the **root** user.*
 
+## Deploy the container (Pseudo Mode)
+1. Run the ebug container as a pseudo
+    ```sh
+    # Supply environment variables using the -e flag. The available variable defaults are:
+    #    ROBOT_ID (String):         'default'
+    #    ROBOT_ALGO (String):       'BoidsService'
+    #    TICK_RATE (Float):         25.0    // Simulated FPS, should match actual cameras
+    #    START_POSX (Float):        0.0
+    #    START_POSY (Float):        0.0
+    #    START_YAW (Float):         0.0
+
+    docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --rm -it ebug
+    
+    # In the containers interactive terminal, you can launch the ROS2 package
+    ./launch pseudo
+    ```
+
+
+## Deploy the container (Visualiser Mode)
+1. Run the ebug container as a visualiser
+    ```sh
+    # Supply environment variables using the -e flag. The available variable defaults are:
+    #    DISPLAY_SCALE (Integer):   3   // Scale the 200x200 px arena display
+
+    docker run --net host --ipc host --pid host -e DISPLAY_SCALE=3 --rm -it ebug
+    
+    # In the containers interactive terminal, you can launch the ROS2 package
+    ./launch visualiser
+    ```
 
 
 ## Access the container ROS2 network

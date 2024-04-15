@@ -15,20 +15,8 @@
     su - ${USER}
     ```
 5. Install [XMing for Windows](https://sourceforge.net/projects/xming/) or [XQuartz for macOS](https://www.xquartz.org/)
+6. Run the ***XLaunch*** to capture the visualisation window from the Docker container. For more information, visit [here](https://medium.com/@rndonovan1/running-pygame-gui-in-a-docker-container-on-windows-cc587d99f473).
 
 
-
-## Deploy the container (Visualisation Mode)
-1. Follow the instructions [here](/docs/Deploy%20Containers.md) to build the container.
-2. Run the ***XLaunch*** to capture the visualisation window from the Docker container. For more information, visit [here](https://medium.com/@rndonovan1/running-pygame-gui-in-a-docker-container-on-windows-cc587d99f473).
-3. Run the ebug container as a visualisation
-    ```sh
-    # Supply environment variables, such as DISPLAY_SCALE to scale up from 200px by 200px
-    docker run --net host --ipc host --pid host -e DISPLAY_SCALE=3 --rm -it ebug
-    
-    # In the containers interactive terminal, you can launch the ROS2 package
-    ./launch visualiser
-    ```
-
-*This will run the container using host networking, interprocess communication, and process ID domains.*
-*It will be run as the **root** user.*
+## Running the containers
+Follow the instructions [here](/docs/Deploy%20Containers.md) to build and deploy the relevant container(s).
