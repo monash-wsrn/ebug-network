@@ -55,16 +55,16 @@ class BoidsService(Node):
             this_pose = self.robot_poses[payload.robot_id]  # Pose (position & orientation)
 
             # It could also just be left wheel power and right wheel power???
-            linear_x, angular_z = Boids.next(this_pose, other_poses)
+            linear_x, angular_z, led_colour = Boids.next(this_pose, other_poses)
 
             control.linear.x = linear_x  # poll time is the time it takes before the robot sends another service request
             control.angular.z = angular_z
 
             # TODO make color meaningful
             result.control = control
-            result.color.x = 255
-            result.color.y = 0
-            result.color.z = 0
+            result.color.x = led_colour[0]
+            result.color.y = led_colour[1]
+            result.color.z = led_colour[2]
         
 
         # Publish this movement globally, for use in simulation and visualisation

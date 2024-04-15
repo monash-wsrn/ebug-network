@@ -6,6 +6,7 @@ import pygame
 import math
 import sys
 from ebug_interfaces.msg import RobotPose
+from ebug_interfaces.msg import ControlCommand
 
 # https://medium.com/@rndonovan1/running-pygame-gui-in-a-docker-container-on-windows-cc587d99f473
 # ENV DISPLAY=host.docker.internal:0.0
@@ -15,6 +16,11 @@ class PyGameDisplay(Node):
     ARENA_HEIGHT = 200 # mm
     SCALE = int(os.getenv('DISPLAY_SCALE', "3"))
     
+    # Initialise Robot Params
+    ROBOT_RADIUS = 15 #cm
+    NUM_LEDS = 16
+
+    # Initialise Colours
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     GREY = (128, 128, 128)
@@ -24,7 +30,8 @@ class PyGameDisplay(Node):
 
     def __init__(self):
         super().__init__('pygame_display')
-        self.subscription =  self.create_subscription(RobotPose, 'global_poses', self.render, 10)
+        self.subscription = self.create_subscription(RobotPose, 'global_poses', self.render, 10)
+        #self.subscription = self.create_subscription(ControlCommand, 'controls', self.render, 10)
 
         # Define robot pose dictionary to fill
         self.robot_poses = {}     
@@ -40,7 +47,6 @@ class PyGameDisplay(Node):
         self.clock = pygame.time.Clock()
 
         self.surface.fill(self.WHITE)
-        #pygame.draw.circle(self.surface, self.RED, (30, 30), 15)
         self.redraw()
 
 
@@ -53,11 +59,20 @@ class PyGameDisplay(Node):
 
         for key, value in self.robot_poses.items():
             ### render pygame window
+
+            # Grab robot position, direction and LED colours
             x = int(value.position.x)
             y = int(value.position.y)
-            pygame.draw.circle(self.surface, self.RED, (x, y), 20)
+            theta = value.orientation.z
+            #LED = 
+
+            # Draw robot body
+            pygame.draw.circle(self.surface, self.BLACK, (x, y), ROBOT_RADIUS)
             
-            theta = int(value.orientation.z)
+            # Draw LED's evenly space around ring
+            for i in range(0, NUM_LEDS):
+                pygame.draw.circle(self.surface, self.RED, (int(x+ROBOT_RADIUS/2*math.cos(theta+i*(2*math.pi/NUM_LEDS))), int(y+ROBOT_RADIUS/2*math.sin(theta+i*(2*math.pi/NUM_LEDS)))), 1)
+            
             #pygame.draw.line(self.surface, self.BLUE, (int(x - 20/2*cos())), (), width=1)
             ###
         
