@@ -53,7 +53,7 @@ def next(main_boid, other_boids):
             separation[1] += (main_boid.position.y - other_boid.position.y)
             count_separation += 1
     
-    resultant_angle = 0
+    resultant_angle = angle(main_boid)
     if count_cohesion > 0:
         cohesion[0] /= count_cohesion
         cohesion[1] /= count_cohesion
@@ -92,5 +92,6 @@ def next(main_boid, other_boids):
     # Maybe keep a constant linear velocity and only worry about signing it
     angular_velocity = 1 * sign(resultant_angle - angle(main_boid))
 
+    led_colour = (255, 0, 0)
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
-    return (linear_velocity, angular_velocity)
+    return (linear_velocity, angular_velocity, led_colour)
