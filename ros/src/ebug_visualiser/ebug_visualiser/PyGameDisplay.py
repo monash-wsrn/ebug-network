@@ -12,13 +12,13 @@ from ebug_interfaces.msg import ControlCommand
 # ENV DISPLAY=host.docker.internal:0.0
 class PyGameDisplay(Node):
     # Initialise Pygame Variables
-    ARENA_WIDTH = 200  # mm
-    ARENA_HEIGHT = 200 # mm
+    ARENA_WIDTH = 200   # cm
+    ARENA_HEIGHT = 200  # cm
     SCALE = int(os.getenv('DISPLAY_SCALE', "3"))
     
     # Initialise Robot Params
-    ROBOT_RADIUS = 15 #cm
-    NUM_LEDS = 16
+    ROBOT_RADIUS = 7.5  # cm (15 cm diameter)
+    NUM_LEDS = 16       # 16 leds circullarly arranged on each robot
 
     # Initialise Colours
     BLACK = (0, 0, 0)
@@ -63,7 +63,7 @@ class PyGameDisplay(Node):
             # Grab robot position, direction and LED colours
             x = int(value.position.x)
             y = int(value.position.y)
-            theta = value.orientation.z
+            theta = angle(value)
             #LED = 
 
             # Draw robot body
@@ -71,7 +71,9 @@ class PyGameDisplay(Node):
             
             # Draw LED's evenly space around ring
             for i in range(0, self.NUM_LEDS):
-                pygame.draw.circle(self.surface, self.RED, (int(x+self.ROBOT_RADIUS/2*math.cos(theta+i*(2*math.pi/self.NUM_LEDS))), int(y+self.ROBOT_RADIUS/2*math.sin(theta+i*(2*math.pi/self.NUM_LEDS)))), 1)
+                led_x = x + self.ROBOT_RADIUS/2 * math.cos(theta + i * (2*math.pi/self.NUM_LEDS))
+                led_y = y + self.ROBOT_RADIUS/2 * math.sin(theta + i * (2*math.pi/self.NUM_LEDS))
+                pygame.draw.circle(self.surface, self.RED, (int(led_x), int(led_y)), 1)
             
             #pygame.draw.line(self.surface, self.BLUE, (int(x - 20/2*cos())), (), width=1)
             ###
@@ -107,3 +109,32 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+
+
+
+
+def angle(pose):
+    roll, pitch, yaw = euler_from_quaternion(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)
+    return yaw
+
+def euler_from_quaternion(x, y, z, w):
+    """
+    Convert a quaternion into euler angles (roll, pitch, yaw)
+    roll is rotation around x in radians (counterclockwise)
+    pitch is rotation around y in radians (counterclockwise)
+    yaw is rotation around z in radians (counterclockwise)
+    """
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + y * y)
+    roll_x = math.atan2(t0, t1)
+
+    t2 = +2.0 * (w * y - z * x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    pitch_y = math.asin(t2)
+
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (y * y + z * z)
+    yaw_z = math.atan2(t3, t4)
+
+    return roll_x, pitch_y, yaw_z # in radians

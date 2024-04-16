@@ -45,9 +45,9 @@ class MovementController(Node):
         request = ComputeTarget.Request()
         request.robot_id = self.get_namespace()
         request.pose = payload.pose
-
+        
         future = self.client.call_async(request)
-        rclpy.spin_until_future_complete(self, future)
+        self.executor.spin_until_future_complete(future)
 
         response = future.result() # Returns a ControlCommand
 

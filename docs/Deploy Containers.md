@@ -29,7 +29,8 @@
     #    /dev/video2 (Optional)
     #    /dev/video3 (Optional)
 
-    docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --device /dev/i2c-1 --device /dev/video0 --rm -it ebug
+    docker run --net host --ipc host --pid host -e \
+        ROBOT_ID='robot_0' --device /dev/i2c-1 --device /dev/video0 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch client
@@ -74,7 +75,8 @@
     #    START_POSY (Float):        0.0
     #    START_YAW (Float):         0.0
 
-    docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --rm -it ebug
+    docker run --net host --ipc host --pid host -e \
+        ROBOT_ID='robot_0' -e START_POSX=50 -e START_POSY=50 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch pseudo

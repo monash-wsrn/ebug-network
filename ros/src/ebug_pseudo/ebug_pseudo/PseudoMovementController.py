@@ -39,7 +39,7 @@ class PseudoMovementController(Node):
 
         self.cb_group = ReentrantCallbackGroup()
         self.timer = self.create_timer(1.0 / self.tick_rate, self.tick, self.cb_group, self.get_clock())
-        self.timestamp = None
+        self.timestamp = 0
         
         self.twist = Twist()
         self.twist.linear.x = 0.0
@@ -58,16 +58,11 @@ class PseudoMovementController(Node):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
 
-        if not self.timestamp:
-            self.timestamp = time.Time()
+        delta = self.delta_time()
         
-        delta = float(time.Time().nanoseconds - self.timestamp.nanoseconds) / 1_000_000_000.0
-        self.timestamp = time.Time()
-
-        # TODO apply delta time change with linear and angular velocities
-        self.yaw = self.yaw + self.twist.angular.z*delta
-        self.pose.position.x = self.pose.orientation.x + delta*self.twist.linear.x*np.cos(self.yaw)
-        self.pose.position.y = self.pose.orientation.y + delta*self.twist.linear.x*np.sin(self.yaw)
+        self.yaw                += delta * self.twist.angular.z
+        self.pose.position.x    += delta * self.twist.linear.x * np.cos(self.yaw)
+        self.pose.position.y    += delta * self.twist.linear.x * np.sin(self.yaw)
         self.pose.orientation = self.quat()
         
         request = ComputeTarget.Request()
@@ -77,11 +72,10 @@ class PseudoMovementController(Node):
         request.pose.pose.pose = self.pose
 
         future = self.client.call_async(request)
-        rclpy.spin_until_future_complete(self, future)
+        self.executor.spin_until_future_complete(future)
 
         response = future.result() # Returns a ControlCommand
         self.twist = response.control
-        self.timestamp = self.get_clock().now().to_msg()
 
         self.timer.reset()
         
@@ -95,6 +89,19 @@ class PseudoMovementController(Node):
         q.z = np.cos(roll/2.0) * np.cos(pitch/2.0) * np.sin(yaw/2.0) - np.sin(roll/2.0) * np.sin(pitch/2.0) * np.cos(yaw/2.0)
         q.w = np.cos(roll/2.0) * np.cos(pitch/2.0) * np.cos(yaw/2.0) + np.sin(roll/2.0) * np.sin(pitch/2.0) * np.sin(yaw/2.0)
         return q
+
+    def delta_time(self):
+        def ns():
+            return time.Time().nanoseconds
+
+        if self.timestamp == 0:
+            self.timestamp = ns()
+        
+        delta = float(ns() - self.timestamp) / 1_000_000_000.0
+        self.timestamp = ns()
+
+        return delta
+
 
 ## Boilerplate
 
