@@ -29,8 +29,8 @@
     #    /dev/video2 (Optional)
     #    /dev/video3 (Optional)
 
-    docker run --net host --ipc host --pid host -e \
-        ROBOT_ID='robot_0' --device /dev/i2c-1 --device /dev/video0 --rm -it ebug
+    docker run --net host --ipc host --pid host \
+        -e ROBOT_ID='robot_0' --device /dev/i2c-1 --device /dev/video0 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch client
@@ -75,8 +75,8 @@
     #    START_POSY (Float):        0.0
     #    START_YAW (Float):         0.0
 
-    docker run --net host --ipc host --pid host -e \
-        ROBOT_ID='robot_0' -e START_POSX=50 -e START_POSY=50 --rm -it ebug
+    docker run --net host --ipc host --pid host \
+        -e ROBOT_ID='robot_0' -e START_POSX=50 -e START_POSY=50 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch pseudo
@@ -87,9 +87,12 @@
 1. Run the ebug container as a visualiser
     ```sh
     # Supply environment variables using the -e flag. The available variable defaults are:
-    #    DISPLAY_SCALE (Integer):   3   // Scale the 200x200 px arena display
+    #    DISPLAY_SCALE (Integer):   3       // Scale the 200x200 px arena display
+    #    FPS (Float):               25.0    // PyGame redraw rate, frames per second
 
-    docker run --net host --ipc host --pid host -e DISPLAY_SCALE=3 --rm -it ebug
+
+    docker run --net host --ipc host --pid host \
+        -e DISPLAY_SCALE=3 -e FPS=25.0 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch visualiser

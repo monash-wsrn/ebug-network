@@ -24,8 +24,6 @@ class CameraController(Node):
         self.sub_odom = self.create_subscription(Odometry, 'filtered_odom', self.odom_callback, 10)
 
         for cam_id in self.cameras:
-            self.get_logger().info(f"Connecting to USB Camera (ID: {cam_id})")
-
             image = Subscriber(self, Image, f'{cam_id}/image_raw')
             cinfo = Subscriber(self, CameraInfo, f'{cam_id}/camera_info')
 
@@ -34,7 +32,7 @@ class CameraController(Node):
 
             self.synchronizers.append(sync)
 
-            self.get_logger().info(f"Connected to USB Camera (ID: {cam_id})")
+            self.get_logger().info(f"Connected USB Camera (ID: {cam_id})")
 
 
     def camera_callback(self, cam_id: str, image: Image, cinfo: CameraInfo):

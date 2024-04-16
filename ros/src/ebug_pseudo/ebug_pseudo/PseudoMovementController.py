@@ -1,7 +1,6 @@
 import numpy as np
 
 import rclpy
-from rclpy import time
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
 
@@ -59,7 +58,6 @@ class PseudoMovementController(Node):
             return
 
         delta = self.delta_time()
-        
         self.yaw                += delta * self.twist.angular.z
         self.pose.position.x    += delta * self.twist.linear.x * np.cos(self.yaw)
         self.pose.position.y    += delta * self.twist.linear.x * np.sin(self.yaw)
@@ -92,7 +90,7 @@ class PseudoMovementController(Node):
 
     def delta_time(self):
         def ns():
-            return time.Time().nanoseconds
+            return self.get_clock().now().nanoseconds
 
         if self.timestamp == 0:
             self.timestamp = ns()

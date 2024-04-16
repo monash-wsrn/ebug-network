@@ -1,12 +1,20 @@
 import math
 
 # Screen dimensions (in mm)
-ARENA_WIDTH = 2000
-ARENA_HEIGHT = 2000
+ARENA_WIDTH = 2000      # mm
+ARENA_HEIGHT = 2000     # mm
+BUFFER_SPACE = 0.10     # proportion
+
+
+LOWER_WIDTH = int(ARENA_WIDTH * BUFFER_SPACE)
+UPPER_WIDTH = ARENA_WIDTH - LOWER_WIDTH
+
+LOWER_HEIGHT = int(ARENA_HEIGHT * BUFFER_SPACE)
+UPPER_HEIGHT = ARENA_HEIGHT - LOWER_HEIGHT
 
 # Boid parameters
-MAX_SPEED = 5
-SEPARATION_DISTANCE = 25
+MAX_SPEED = 50              # mm /s 
+SEPARATION_DISTANCE = 100   # mm
 ALIGNMENT_FACTOR = 0.01
 COHESION_FACTOR = 0.01
 SEPARATION_FACTOR = 0.01
@@ -73,17 +81,17 @@ def next(main_boid, other_boids):
 
 
     # TODO set desired linear velocity (this should just be constant ??)
-    linear_velocity = 1
+    linear_velocity = MAX_SPEED
 
     x_comp = math.cos(resultant_angle) # negative is towards left, positive is towards right
     y_comp = math.sin(resultant_angle) # negative is towards bottom, positive is towards up
-    if      (main_boid.position.x < 200 and x_comp < 0) \
-        or  (main_boid.position.x > 1800 and x_comp > 0):
+    if      (main_boid.position.x < LOWER_WIDTH and x_comp < 0) \
+        or  (main_boid.position.x > UPPER_WIDTH and x_comp > 0):
         resultant_angle = math.acos(-x_comp)
         linear_velocity = 0
     
-    if (main_boid.position.y < 200 and y_comp < 0) \
-        or  (main_boid.position.y > 1800 and y_comp > 0):
+    if      (main_boid.position.y < LOWER_HEIGHT and y_comp < 0) \
+        or  (main_boid.position.y > UPPER_HEIGHT and y_comp > 0):
         resultant_angle = math.asin(-y_comp)
         linear_velocity = 0
     

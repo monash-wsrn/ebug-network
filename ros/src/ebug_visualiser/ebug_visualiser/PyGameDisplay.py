@@ -8,16 +8,22 @@ import sys
 from ebug_interfaces.msg import RobotPose
 from ebug_interfaces.msg import ControlCommand
 
+from rclpy.callback_groups import ReentrantCallbackGroup
+
 # https://medium.com/@rndonovan1/running-pygame-gui-in-a-docker-container-on-windows-cc587d99f473
 # ENV DISPLAY=host.docker.internal:0.0
 class PyGameDisplay(Node):
     # Initialise Pygame Variables
-    ARENA_WIDTH = 200   # cm
-    ARENA_HEIGHT = 200  # cm
+    ARENA_WIDTH = 2000   # mm
+    ARENA_HEIGHT = 2000  # mm
+
+    DISPLAY_WIDTH = 200  # px
+    DISPLAY_HEIGHT = 200 # px
     SCALE = int(os.getenv('DISPLAY_SCALE', "3"))
+    FPS = float(os.getenv('FPS', "25.0"))
     
     # Initialise Robot Params
-    ROBOT_RADIUS = 7.5  # cm (15 cm diameter)
+    ROBOT_RADIUS = 75   # mm (150 mm diameter)
     NUM_LEDS = 16       # 16 leds circullarly arranged on each robot
 
     # Initialise Colours
@@ -30,31 +36,37 @@ class PyGameDisplay(Node):
 
     def __init__(self):
         super().__init__('pygame_display')
-        self.subscription = self.create_subscription(RobotPose, 'global_poses', self.render, 10)
-        #self.subscription = self.create_subscription(ControlCommand, 'controls', self.render, 10)
+        self.subscription = self.create_subscription(RobotPose, 'global_poses', self.update, 10)
+        #self.subscription = self.create_subscription(ControlCommand, 'controls', self.update, 10)
 
         # Define robot pose dictionary to fill
         self.robot_poses = {}     
+
+        self.cb_group = ReentrantCallbackGroup()
+        self.timer = self.create_timer(1.0 / self.FPS, self.render, self.cb_group, self.get_clock())
+
         
         # Initialize Pygame
         pygame.init()
 
         self.surface = pygame.Surface((self.ARENA_WIDTH, self.ARENA_HEIGHT))
-        self.window_size = (self.ARENA_WIDTH * self.SCALE, self.ARENA_HEIGHT * self.SCALE)
+        self.window_size = (self.DISPLAY_WIDTH * self.SCALE, self.DISPLAY_HEIGHT * self.SCALE)
         self.window = pygame.display.set_mode(self.window_size)
         
         pygame.display.set_caption("Pygame Display")
-        self.clock = pygame.time.Clock()
 
         self.surface.fill(self.WHITE)
         self.redraw()
 
 
-    def render(self, payload:RobotPose):
+    def update(self, payload:RobotPose):
 
         # Update robot pose dictionary with new data
-        self.robot_poses[payload.robot_id] = payload.pose.pose.pose #[position vector3, orientation vector3]
-
+        self.robot_poses[payload.robot_id] = payload.pose.pose.pose # [position vector3, orientation vector3]
+    
+    
+    def render(self):
+        self.check_window()
         self.surface.fill(self.GREY)
 
         for key, value in self.robot_poses.items():
@@ -64,7 +76,6 @@ class PyGameDisplay(Node):
             x = int(value.position.x)
             y = int(value.position.y)
             theta = angle(value)
-            #LED = 
 
             # Draw robot body
             pygame.draw.circle(self.surface, self.BLACK, (x, y), self.ROBOT_RADIUS)
@@ -80,31 +91,34 @@ class PyGameDisplay(Node):
         
         # Refresh display
         self.redraw()
+        self.timer.reset()
+
 
     def redraw(self):
         scaled = pygame.transform.scale(self.surface, self.window_size)
         self.window.blit(scaled, (0, 0))
         pygame.display.update()
-        
 
-    def run(self):
-        while rclpy.ok():
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-            rclpy.spin_once(self)
-            self.clock.tick(30)
+    def check_window(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+    
 
 
 
-def main(args=None):
-    rclpy.init(args=args)
+def main():
+    rclpy.init()
+    node = PyGameDisplay()
 
-    pygame_display = PyGameDisplay()
-    pygame_display.run()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        return
+    finally:
+        node.destroy_node()
 
-    pygame_display.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':

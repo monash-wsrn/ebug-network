@@ -37,8 +37,6 @@ class BoidsService(Node):
 
 
     def compute_target(self, request, response):
-        self.get_logger().info(f'Handling request for {request.robot_id}.')
-
         exists = request.robot_id in self.robot_poses               # String
 
         self.robot_poses[request.robot_id] = request.pose.pose.pose # Pull Pose from PoseWithCovarianceStamped
@@ -65,15 +63,15 @@ class BoidsService(Node):
             response.color.x = float(led_colour[0])
             response.color.y = float(led_colour[1])
             response.color.z = float(led_colour[2])
-        
+        else:
+            self.get_logger().info(f'Registered new robot with id: {request.robot_id}.')
+
 
         # Publish this movement globally, for use in simulation and visualisation
         robot_pose = RobotPose()
         robot_pose.robot_id = request.robot_id
         robot_pose.pose = request.pose
         self.global_poses.publish(robot_pose)
-        
-        self.get_logger().info(f'Handled request for {request.robot_id}.')
 
         return response
 
