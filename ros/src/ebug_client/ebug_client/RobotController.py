@@ -139,10 +139,10 @@ class RobotController(Node):
             odom.pose.pose.position.x = self.odom_x
             odom.pose.pose.position.y = self.odom_y
             odom.pose.pose.position.z = 0.0
-            odom.pose.pose.orientation.x = float(q[0])
-            odom.pose.pose.orientation.y = float(q[1])
-            odom.pose.pose.orientation.z = float(q[2])
-            odom.pose.pose.orientation.w = float(q[3])
+            odom.pose.pose.orientation.x = float(q.x)
+            odom.pose.pose.orientation.y = float(q.y)
+            odom.pose.pose.orientation.z = float(q.z)
+            odom.pose.pose.orientation.w = float(q.w)
             odom.pose.covariance = mat6diag(1e-3)
 
             odom.twist.twist.linear.x = float(self.odom_v)

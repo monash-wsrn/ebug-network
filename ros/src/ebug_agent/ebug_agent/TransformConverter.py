@@ -2,9 +2,8 @@
 import rclpy
 from rclpy.node import Node
 
-from tf2.LinearMath import Transform, Vector3, Quaternion
 from tf2_msgs.msg import TFMessage
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped, Transform
 
 
 ## map to tag 
@@ -33,9 +32,18 @@ class TransformConverter(Node):
 
         self.cameras = []
         for cam_id in range(4):
-            translation = Vector3(0.00, 0.0, -0.025)
-            rotation = Quaternion(CAM_ROBOT_ROT_X[cam_id], CAM_ROBOT_ROT_Y[cam_id], CAM_ROBOT_ROT_Z[cam_id], CAM_ROBOT_ROT_W[cam_id])
-            self.cameras[cam_id] = Transform(rotation, translation)
+            t = Transform()
+
+            t.translation.x = 0.0
+            t.translation.y = 0.0
+            t.translation.z = -0.025
+
+            t.rotation.x = CAM_ROBOT_ROT_X[cam_id]
+            t.rotation.y = CAM_ROBOT_ROT_Y[cam_id]
+            t.rotation.z = CAM_ROBOT_ROT_Z[cam_id]
+            t.rotation.w = CAM_ROBOT_ROT_W[cam_id]
+
+            self.cameras[cam_id] = t
 
 
 
@@ -46,11 +54,10 @@ class TransformConverter(Node):
         
         for t in tf_det.transforms:    
             cam_id = int(t.child_frame_id[-1])
-
-            cam_tag = fromMsg(t.transform)            
-            tag_cam = cam_tag.inverse()                 # Transform tag to camera
-            cam_robot = self.cameras[ cam_id ]          # Transform camera to robot
-            tag_robot = tag_cam * cam_robot             # Combined transform, tag to robot
+            
+            tag_cam = inverse(t.transform)
+            cam_robot = self.cameras[ cam_id ]
+            tag_robot = combine(tag_cam, cam_robot)
 
 
             msg = PoseWithCovarianceStamped()
@@ -71,10 +78,51 @@ class TransformConverter(Node):
             self.publisher.publish(msg)
 
 
-def fromMsg(msg):
-    translation = Vector3(msg.translation.x, msg.translation.y, msg.translation.z)
-    rotation = Quaternion(msg.rotation.x, msg.rotation.y, msg.rotation.z, msg.rotation.w)
-    return Transform(rotation, translation)
+def combine(t1, t2):
+    t = Transform()
+
+    t.translation.x = t1.x + t2.x
+    t.translation.y = t1.y + t2.y
+    t.translation.z = t1.z + t2.z
+
+    qx, qy, qz, qw = mulQuat(t1.rotation, t2.rotation)
+    t.rotation.x = qx
+    t.rotation.y = qy
+    t.rotation.z = qz
+    t.rotation.w = qw
+    
+    return t
+
+
+def inverse(t1):    
+    t = Transform()
+
+    t.translation.x = -t1.x
+    t.translation.y = -t1.y
+    t.translation.z = -t1.z
+
+    qx, qy, qz, qw = invQuat(t1.rotation)
+    t.rotation.x = qx
+    t.rotation.y = qy
+    t.rotation.z = qz
+    t.rotation.w = qw
+    
+    return t
+
+
+def invQuat(q1):
+    d = q1.x*q1.x + q1.y*q1.y + q1.z*q1.z + q1.w*q1.w
+    d += 0.00000000000001   # Add epsilon value to avoid div 0 error
+    return q1.x/d, -q1.y/d, -q1.z/d, -q1.w/d
+
+
+def mulQuat(q1, q2):
+    x_ = q1.x * q2.w + q1.w * q2.x + q1.y * q2.z - q1.z * q2.y
+    y_ = q1.y * q2.w + q1.w * q2.y + q1.z * q2.x - q1.x * q2.z
+    z_ = q1.z * q2.w + q1.w * q2.z + q1.x * q2.y - q1.y * q2.x
+    w_ = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z
+    return x_, y_, z_, w_
+
 
 def mat6diag(v):
     return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
