@@ -16,8 +16,8 @@ class CameraController(Node):
         self.declare_parameter('cameras', ['cam_0'])
         self.cameras = self.get_parameter('cameras').get_parameter_value().string_array_value
         
-        self.declare_parameter('all_cameras', False)
-        self.all_cameras = self.get_parameter('all_cameras').get_parameter_value().bool_value
+        self.declare_parameter('all_cameras', "disable")
+        self.all_cameras = self.get_parameter('all_cameras').get_parameter_value().string_value == "enable"
 
         self.selected = self.cameras[0]
         self.synchronizers = []
