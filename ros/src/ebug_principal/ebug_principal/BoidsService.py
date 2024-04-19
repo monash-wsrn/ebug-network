@@ -10,7 +10,7 @@ from rclpy.callback_groups import ReentrantCallbackGroup
 from ebug_interfaces.srv import ComputeTarget
 from ebug_interfaces.msg import RobotPose, ControlCommand
 
-from geometry_msgs.msg import PoseWithCovarianceStamped, Twist
+from geometry_msgs.msg import PoseWithCovariance, Twist
 
 import ebug_principal.BoidsFunction as Boids
 
@@ -39,7 +39,7 @@ class BoidsService(Node):
     def compute_target(self, request, response):
         exists = request.robot_id in self.robot_poses               # String
 
-        self.robot_poses[request.robot_id] = request.pose.pose.pose # Pull Pose from PoseWithCovarianceStamped
+        self.robot_poses[request.robot_id] = request.pose.pose # Pull Pose from PoseWithCovarianceStamped
                                                                     # Contains (Point) 'position' and (Quaternion) 'orientation' 
 
         response.control.linear.x = 0.0

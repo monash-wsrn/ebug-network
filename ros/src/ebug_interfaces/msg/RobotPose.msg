@@ -1,2 +1,2 @@
 string robot_id
-geometry_msgs/PoseWithCovarianceStamped pose
+geometry_msgs/PoseWithCovariance pose
