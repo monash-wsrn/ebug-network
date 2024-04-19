@@ -7,7 +7,7 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
     CAMERA_POLLING = os.getenv('CAMERA_POLLING', "disable").lower() == "enable"
-    ALL_CAMERAS = os.getenv('ALL_CAMERAS', 'disable').lower()
+    ALL_CAMERAS = os.getenv('ALL_CAMERAS', 'disable').lower() == "enable"
 
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
 
@@ -29,7 +29,7 @@ def generate_launch_description():
         name = 'CameraController',
         namespace = ROBOT_ID,
         parameters=[
-            {'all_cameras', ALL_CAMERAS },
+            {'all_cameras': ALL_CAMERAS },
             {'cameras':     CAMERA_IDS  },
         ]
     )
