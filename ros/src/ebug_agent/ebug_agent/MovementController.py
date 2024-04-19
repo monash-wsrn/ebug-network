@@ -7,6 +7,8 @@ from nav_msgs.msg import Odometry
 from ebug_interfaces.msg import ControlCommand
 from geometry_msgs.msg import Twist
 
+import time
+
 class MovementController(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
@@ -54,7 +56,10 @@ class MovementController(Node):
         self.get_logger().info("C")
 
         future = self.client.call_async(request)
-        self.executor.spin_until_future_complete(future)
+        future.add_done_callback(self.future_callback)
+        #self.executor.spin_until_future_complete(future)
+
+    def future_callback(self, future):
 
         self.get_logger().info("D")
 
