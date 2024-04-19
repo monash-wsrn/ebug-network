@@ -70,12 +70,12 @@ class PseudoMovementController(Node):
         request.pose.pose.pose = self.pose
 
         future = self.client.call_async(request)
-        self.executor.spin_until_future_complete(future)
-
-        response = future.result() # Returns a ControlCommand
-        self.twist = response.control
+        future.add_done_callback(self.future_callback)
 
         self.timer.reset()
+        
+    def future_callback(self, future):
+        self.twist = future.result().control
         
 
     def quat(self):

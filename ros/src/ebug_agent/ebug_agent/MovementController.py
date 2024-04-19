@@ -52,14 +52,13 @@ class MovementController(Node):
 
         future = self.client.call_async(request)
         future.add_done_callback(self.future_callback)
-        #self.executor.spin_until_future_complete(future)
 
     def future_callback(self, future):
-
-        response = future.result() # Returns a ControlCommand
-
-        # response.control  is Twist
-        # response.color    is Vector3
+        result = future.result() # Returns a ControlCommand
+        
+        response = ControlCommand()
+        response.control = result.control   # Twist
+        response.color = result.color       # Vector3
 
         self.pub_target.publish(response)
 
