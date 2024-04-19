@@ -54,7 +54,7 @@ class MovementController(Node):
         # response.control  is Twist
         # response.color    is Vector3
 
-        self.pub_target.publish(response.control)
+        self.pub_target.publish(response)
 
 
 
