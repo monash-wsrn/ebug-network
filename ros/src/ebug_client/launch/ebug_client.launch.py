@@ -55,9 +55,9 @@ def generate_launch_description():
 
 
 def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
-    FRAME_RATE = 25.0
-    WIDTH = 640
-    HEIGHT = 480
+    FRAME_RATE = 30.0
+    WIDTH = 1280
+    HEIGHT = 960
     CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 
 
     return Node(
@@ -71,7 +71,7 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
             {'camera_name':     CAM_ID              },
             {'camera_info_url': f'file://{CAM_INFO}'},
             {'frame_id':        CAM_ID              },
-            {'pixel_format':    'yuyv'              },
+            {'pixel_format':    'mono16'            },
             {'framerate':       FRAME_RATE          },
             {'image_height':    HEIGHT              },
             {'image_width':     WIDTH               },
