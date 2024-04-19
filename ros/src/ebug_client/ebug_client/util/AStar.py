@@ -42,8 +42,11 @@ class AStar:
     self.bus.write_i2c_block_data(20, address, data_array)
     time.sleep(0.0002)
 
-  def leds(self, red, yellow, green):
-    self.write_pack(0, 'BBB', red, yellow, green)
+  #def leds(self, red, yellow, green):
+  #  self.write_pack(0, 'BBB', red, yellow, green)
+
+  def leds(self, red, green, blue):
+    self.write_pack(0, 'ccc', red, green, blue)
 
   def play_notes(self, notes):
     self.write_pack(24, 'B14s', 1, notes.encode("ascii"))

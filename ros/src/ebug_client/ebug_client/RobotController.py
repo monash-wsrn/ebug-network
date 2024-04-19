@@ -9,6 +9,7 @@ import numpy as np
 import time
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
+from ebug_interfaces.msg import ControlCommand
 from geometry_msgs.msg import Twist
 from scipy.spatial.transform import Rotation as R
 
@@ -31,7 +32,7 @@ class RobotController(Node):
 
         # self.imu_pub = self.create_publisher(Imu, '/imu', 10)
 
-        self.cmd_vel_sub =  self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 10)
+        self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         self.start = 1
 
         self.r = 0.035
@@ -87,11 +88,12 @@ class RobotController(Node):
             except:
                 continue
     
-    def motors(self,left, right):
+    def motors(self,left, right, led):
 
         while True:
             try:
                 self.a_star.motors(int(left), int(right))
+                self.a_star.leds(led.x, led.y, led.z)
                 return
             except:
 
@@ -198,13 +200,13 @@ class RobotController(Node):
 
         return np.sqrt((goal_x-x)**2 + (goal_y-y)**2)
 
-    def cmd_vel_callback(self, msg:Twist):
+    def cmd_vel_callback(self, msg:ControlCommand):
 
-        self.desired_v = msg.linear.x
-        self.desired_w = msg.angular.z
+        self.desired_v = msg.control.linear.x
+        self.desired_w = msg.control.angular.z
 
         duty_cycle_l,duty_cycle_r = self.drive(self.desired_v, self.desired_w, self.wl, self.wr)
-        self.motors(duty_cycle_l, duty_cycle_r)
+        self.motors(duty_cycle_l, duty_cycle_r, msg.color)
 
 
 
