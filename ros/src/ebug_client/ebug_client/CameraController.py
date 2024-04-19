@@ -16,8 +16,8 @@ class CameraController(Node):
         self.declare_parameter('cameras', ['cam_0'])
         self.cameras = self.get_parameter('cameras').get_parameter_value().string_array_value
         
-        self.declare_parameter('all_cameras', "disable")
-        self.all_cameras = self.get_parameter('all_cameras').get_parameter_value().string_value == "enable"
+        self.declare_parameter('all_cameras', 'disable')
+        self.all_cameras = (self.get_parameter('all_cameras').get_parameter_value().string_value).lower() == 'enable'
 
         self.selected = self.cameras[0]
         self.synchronizers = []
@@ -39,11 +39,10 @@ class CameraController(Node):
 
 
     def camera_callback(self, cam_id: str, image: Image, cinfo: CameraInfo):
-        if not self.all_cameras and not (cam_id == self.selected):
-            return
-        
-        self.pub_image.publish(image)
-        self.pub_cinfo.publish(cinfo)
+        self.get_logger().info(f"All Cameras: {self.all_cameras}, Cam ID: {cam_id}, Selected: {self.selected}")
+        if self.all_cameras or (cam_id == self.selected):
+            self.pub_image.publish(image)
+            self.pub_cinfo.publish(cinfo)
 
 
     def odom_callback(self, odom: Odometry):        
