@@ -29,8 +29,8 @@ def generate_launch_description():
         name = 'CameraController',
         namespace = ROBOT_ID,
         parameters=[
-            {'all_cameras', str(ALL_CAMERAS)    },
-            {'cameras':     CAMERA_IDS          },
+            {'all_cameras', ALL_CAMERAS },
+            {'cameras':     CAMERA_IDS  },
         ]
     )
 
@@ -71,7 +71,7 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
             {'camera_name':     CAM_ID              },
             {'camera_info_url': f'file://{CAM_INFO}'},
             {'frame_id':        CAM_ID              },
-            {'pixel_format':    'yuyv'            },
+            {'pixel_format':    'yuyv'              },
             {'framerate':       FRAME_RATE          },
             {'image_height':    HEIGHT              },
             {'image_width':     WIDTH               },

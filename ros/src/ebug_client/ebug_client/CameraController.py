@@ -12,8 +12,8 @@ from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 class CameraController(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
-        
-        self.declare_parameter('all_cameras', False)
+
+        self.declare_parameter('all_cameras', 'disable')
         self.all_cameras = self.get_parameter('all_cameras').get_parameter_value().bool_value
 
         self.declare_parameter('cameras', ['cam_0'])
