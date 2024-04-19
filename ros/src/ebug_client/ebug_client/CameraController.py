@@ -40,7 +40,6 @@ class CameraController(Node):
 
 
     def camera_callback(self, cam_id: str, image: Image, cinfo: CameraInfo):
-        self.get_logger().info(f"All Cameras: {self.all_cameras}, Cam ID: {cam_id}, Selected: {self.selected}")
         if self.all_cameras or (cam_id == self.selected):
             self.pub_image.publish(image)
             self.pub_cinfo.publish(cinfo)
