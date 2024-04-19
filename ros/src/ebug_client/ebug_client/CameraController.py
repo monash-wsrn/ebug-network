@@ -13,11 +13,12 @@ class CameraController(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
         
+        self.declare_parameter('all_cameras', False)
+        self.all_cameras = self.get_parameter('all_cameras').get_parameter_value().bool_value
+
         self.declare_parameter('cameras', ['cam_0'])
         self.cameras = self.get_parameter('cameras').get_parameter_value().string_array_value
         
-        self.declare_parameter('all_cameras', 'disable')
-        self.all_cameras = (self.get_parameter('all_cameras').get_parameter_value().string_value).lower() == 'enable'
 
         self.selected = self.cameras[0]
         self.synchronizers = []
@@ -31,7 +32,7 @@ class CameraController(Node):
             cinfo = Subscriber(self, CameraInfo, f'{cam_id}/camera_info')
 
             sync = ApproximateTimeSynchronizer([image, cinfo], 10, 0.1, allow_headerless=True)
-            sync.registerCallback(lambda x, y : self.camera_callback(cam_id, x, y))
+            sync.registerCallback(lambda x, y, cid=cam_id : self.camera_callback(cid, x, y))
 
             self.synchronizers.append(sync)
 
