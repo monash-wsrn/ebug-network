@@ -102,6 +102,13 @@ Pololu Tutorial [here](https://www.pololu.com/blog/663/building-a-raspberry-pi-r
     # This should show the i2c device being owned by the root user, and dialout grouo
     ```
 
+## Identify USB Camera Devices
+1. Install Video-4-Linux Utils, and identify devices
+    ```sh
+    sudo apt install v4l-utils
+    v4l2-ctl --list-devices
+    ```
+2. Typically, the four cameras will be mounted to `/dev/video0`, `/dev/video2`, `/dev/video4`, and `/dev/video6`.
 
 ## Running the containers
 Follow the instructions [here](/docs/Deploy%20Containers.md) to build and deploy the relevant container(s).
