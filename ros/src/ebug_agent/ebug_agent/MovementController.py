@@ -38,23 +38,38 @@ class MovementController(Node):
     service that has visibility of all robots' pose
     """
     def compute_target(self, payload: Odometry):
+
+        print("A")
+
         if not self.client.wait_for_service(timeout_sec=0.5):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
+
+        print("B")
         
         request = ComputeTarget.Request()
         request.robot_id = self.get_namespace()
         request.pose = payload.pose
         
+        print("C")
+
         future = self.client.call_async(request)
         self.executor.spin_until_future_complete(future)
 
+        print("D")
+
         response = future.result() # Returns a ControlCommand
+
+        print("E")
+        print(response)
+
 
         # response.control  is Twist
         # response.color    is Vector3
 
         self.pub_target.publish(response)
+
+        print("F")
 
 
 
