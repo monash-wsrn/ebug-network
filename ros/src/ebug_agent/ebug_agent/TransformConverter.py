@@ -80,9 +80,9 @@ class TransformConverter(Node):
 def combine(t1, t2):
     t = Transform()
 
-    t.translation.x = t1.x + t2.x
-    t.translation.y = t1.y + t2.y
-    t.translation.z = t1.z + t2.z
+    t.translation.x = t1.translation.x + t2.translation.x
+    t.translation.y = t1.translation.y + t2.translation.y
+    t.translation.z = t1.translation.z + t2.translation.z
 
     qx, qy, qz, qw = mulQuat(t1.rotation, t2.rotation)
     t.rotation.x = qx
@@ -96,9 +96,9 @@ def combine(t1, t2):
 def inverse(t1):    
     t = Transform()
 
-    t.translation.x = -t1.x
-    t.translation.y = -t1.y
-    t.translation.z = -t1.z
+    t.translation.x = -t1.translation.x
+    t.translation.y = -t1.translation.y
+    t.translation.z = -t1.translation.z
 
     qx, qy, qz, qw = invQuat(t1.rotation)
     t.rotation.x = qx
