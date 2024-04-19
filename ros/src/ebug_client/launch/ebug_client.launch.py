@@ -55,7 +55,13 @@ def generate_launch_description():
 
 
 def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
-    FRAME_RATE = 30.0
+    # USB 2 Bus = 480 Mbps max channel bandwidth
+    # 640x480 YUYV is aout 5 Mbps per camera per frame
+    # Thus we have a hard max of 96 frames per second
+    # Accross four cameras, this limits a hard max of 24 fps
+    # Stay well below this and ensure we minimise timeouts
+    
+    FRAME_RATE = 15.0
     WIDTH = 640
     HEIGHT = 480
     CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 
