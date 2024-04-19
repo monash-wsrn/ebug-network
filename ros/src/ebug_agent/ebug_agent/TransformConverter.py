@@ -30,22 +30,21 @@ class TransformConverter(Node):
         self.subscription = self.create_subscription(TFMessage, 'tf_detections', self.listener_callback, 100)
         self.publisher = self.create_publisher(PoseWithCovarianceStamped, 'pose', 100)
 
-        self.cameras = []
-        for cam_id in range(4):
-            t = Transform()
+        self.cameras = [self.get_camera(i) for i in range(4)]
+    
+    def get_camera(self, cam_id):
+        t = Transform()
 
-            t.translation.x = 0.0
-            t.translation.y = 0.0
-            t.translation.z = -0.025
+        t.translation.x = 0.0
+        t.translation.y = 0.0
+        t.translation.z = -0.025
 
-            t.rotation.x = CAM_ROBOT_ROT_X[cam_id]
-            t.rotation.y = CAM_ROBOT_ROT_Y[cam_id]
-            t.rotation.z = CAM_ROBOT_ROT_Z[cam_id]
-            t.rotation.w = CAM_ROBOT_ROT_W[cam_id]
-
-            self.cameras[cam_id] = t
-
-
+        t.rotation.x = CAM_ROBOT_ROT_X[cam_id]
+        t.rotation.y = CAM_ROBOT_ROT_Y[cam_id]
+        t.rotation.z = CAM_ROBOT_ROT_Z[cam_id]
+        t.rotation.w = CAM_ROBOT_ROT_W[cam_id]
+        
+        return t
 
 
     def listener_callback(self, tf_det:TFMessage):
