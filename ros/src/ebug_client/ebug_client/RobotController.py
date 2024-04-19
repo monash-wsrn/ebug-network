@@ -5,13 +5,11 @@ Handles the PID controller of the robot and i2c communication with Romi board
 from ebug_client.util.AStar import AStar
 import rclpy
 from rclpy.node import Node
-import numpy as np
+import math
 import time
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import Imu
+from geometry_msgs.msg import Quaternion
 from ebug_interfaces.msg import ControlCommand
-from geometry_msgs.msg import Twist
-from scipy.spatial.transform import Rotation as R
 
 # PATH = [(0.5, 0.0), (0.0, 0.5), (-0.5, 0.0), (0.0, -0.5), (0.5, 0.0), (1.0, 0.0)]
 # PATH = [(0.5, 0.0), (0.5, 0.5), (-0.5, 0.5), (-0.5, -0.5), (0.5, -0.5), (0.5, 0.0), (1.0, 0.0)]
@@ -119,16 +117,16 @@ class RobotController(Node):
             self.prev_t = current_t
             encoder_l, encoder_r = self.read_encoders_gyro()
 
-            self.wl = min(max(2*np.pi*(self.overflow_corr(encoder_l, self.prev_enc_l))/dt/ENCODER, -12),12)
-            self.wr = min(max(2*np.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12)
+            self.wl = min(max(2*math.pi*(self.overflow_corr(encoder_l, self.prev_enc_l))/dt/ENCODER, -12),12)
+            self.wr = min(max(2*math.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12)
 
             self.prev_enc_l=encoder_l
             self.prev_enc_r=encoder_r
             
             self.odom_v, self.odom_w = self.base_velocity(self.wl,self.wr)
             self.odom_th = self.odom_th + self.odom_w*dt
-            self.odom_x = self.odom_x + dt*self.odom_v*np.cos(self.odom_th)
-            self.odom_y = self.odom_y + dt*self.odom_v*np.sin(self.odom_th)
+            self.odom_x = self.odom_x + dt*self.odom_v*math.cos(self.odom_th)
+            self.odom_y = self.odom_y + dt*self.odom_v*math.sin(self.odom_th)
             
 
             t = self.get_clock().now().to_msg()
@@ -136,7 +134,8 @@ class RobotController(Node):
             odom.header.frame_id = 'robot/odom'
             odom.header.stamp = t
             odom.child_frame_id ='robot'
-            q = R.from_euler('xyz',[.0, .0, self.odom_th]).as_quat().astype('float')
+            q = quat(0.0, 0.0, self.odom_th)
+
             odom.pose.pose.position.x = self.odom_x
             odom.pose.pose.position.y = self.odom_y
             odom.pose.pose.position.z = 0.0
@@ -144,14 +143,16 @@ class RobotController(Node):
             odom.pose.pose.orientation.y = float(q[1])
             odom.pose.pose.orientation.z = float(q[2])
             odom.pose.pose.orientation.w = float(q[3])
-            odom.pose.covariance = np.diag([1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3]).ravel()
+            odom.pose.covariance = mat6diag(1e-3)
+
             odom.twist.twist.linear.x = float(self.odom_v)
             odom.twist.twist.linear.y = 0.0
             odom.twist.twist.linear.z = 0.0
             odom.twist.twist.angular.x = 0.0
             odom.twist.twist.angular.y = 0.0
             odom.twist.twist.angular.z = float(self.odom_w)
-            odom.twist.covariance = np.diag([1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3]).ravel()
+            odom.twist.covariance = mat6diag(1e-3)
+
             self.odom_pub.publish(odom) 
 
 
@@ -198,7 +199,7 @@ class RobotController(Node):
 
     def distance(self,goal_x, goal_y, x, y):
 
-        return np.sqrt((goal_x-x)**2 + (goal_y-y)**2)
+        return math.sqrt((goal_x-x)**2 + (goal_y-y)**2)
 
     def cmd_vel_callback(self, msg:ControlCommand):
 
@@ -209,6 +210,16 @@ class RobotController(Node):
         self.motors(duty_cycle_l, duty_cycle_r, msg.color)
 
 
+def quat(roll, pitch, yaw):
+    q = Quaternion()
+    q.x = math.sin(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) - math.cos(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
+    q.y = math.cos(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0)
+    q.z = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0) - math.sin(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0)
+    q.w = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
+    return q
+
+def mat6diag(v):
+    return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
 
 def main():
     rclpy.init()

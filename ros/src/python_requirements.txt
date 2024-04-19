@@ -1,8 +1,2 @@
-pynput
-numpy
-scipy
-matplotlib
-opencv-python
-transforms3d
-pygame
 setuptools==58.2.0
+pygame

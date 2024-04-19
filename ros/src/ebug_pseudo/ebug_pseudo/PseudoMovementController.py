@@ -1,5 +1,4 @@
-import numpy as np
-
+import math
 import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -59,8 +58,8 @@ class PseudoMovementController(Node):
 
         delta = self.delta_time()
         self.yaw                += delta * self.twist.angular.z
-        self.pose.position.x    += delta * self.twist.linear.x * np.cos(self.yaw)
-        self.pose.position.y    += delta * self.twist.linear.x * np.sin(self.yaw)
+        self.pose.position.x    += delta * self.twist.linear.x * math.cos(self.yaw)
+        self.pose.position.y    += delta * self.twist.linear.x * math.sin(self.yaw)
         self.pose.orientation = self.quat()
         
         request = ComputeTarget.Request()
@@ -82,10 +81,10 @@ class PseudoMovementController(Node):
         q = Quaternion()
         roll, pitch, yaw = 0.0, 0.0, self.yaw
 
-        q.x = np.sin(roll/2.0) * np.cos(pitch/2.0) * np.cos(yaw/2.0) - np.cos(roll/2.0) * np.sin(pitch/2.0) * np.sin(yaw/2.0)
-        q.y = np.cos(roll/2.0) * np.sin(pitch/2.0) * np.cos(yaw/2.0) + np.sin(roll/2.0) * np.cos(pitch/2.0) * np.sin(yaw/2.0)
-        q.z = np.cos(roll/2.0) * np.cos(pitch/2.0) * np.sin(yaw/2.0) - np.sin(roll/2.0) * np.sin(pitch/2.0) * np.cos(yaw/2.0)
-        q.w = np.cos(roll/2.0) * np.cos(pitch/2.0) * np.cos(yaw/2.0) + np.sin(roll/2.0) * np.sin(pitch/2.0) * np.sin(yaw/2.0)
+        q.x = math.sin(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) - math.cos(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
+        q.y = math.cos(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0)
+        q.z = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0) - math.sin(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0)
+        q.w = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
         return q
 
     def delta_time(self):
