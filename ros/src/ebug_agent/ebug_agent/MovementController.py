@@ -39,29 +39,29 @@ class MovementController(Node):
     """
     def compute_target(self, payload: Odometry):
 
-        print("A")
+        self.get_logger().info("A")
 
         if not self.client.wait_for_service(timeout_sec=0.5):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
 
-        print("B")
+        self.get_logger().info("B")
         
         request = ComputeTarget.Request()
         request.robot_id = self.get_namespace()
         request.pose = payload.pose
         
-        print("C")
+        self.get_logger().info("C")
 
         future = self.client.call_async(request)
         self.executor.spin_until_future_complete(future)
 
-        print("D")
+        self.get_logger().info("D")
 
         response = future.result() # Returns a ControlCommand
 
-        print("E")
-        print(response)
+        self.get_logger().info("E")
+        self.get_logger().info(response)
 
 
         # response.control  is Twist
@@ -69,7 +69,7 @@ class MovementController(Node):
 
         self.pub_target.publish(response)
 
-        print("F")
+        self.get_logger().info("F")
 
 
 
