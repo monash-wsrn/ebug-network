@@ -41,19 +41,14 @@ class MovementController(Node):
     """
     def compute_target(self, payload: Odometry):
 
-        self.get_logger().info("A")
-
         if not self.client.wait_for_service(timeout_sec=0.5):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
-
-        self.get_logger().info("B")
         
         request = ComputeTarget.Request()
         request.robot_id = self.get_namespace()
         request.pose = payload.pose
-        
-        self.get_logger().info("C")
+
 
         future = self.client.call_async(request)
         future.add_done_callback(self.future_callback)
@@ -61,20 +56,12 @@ class MovementController(Node):
 
     def future_callback(self, future):
 
-        self.get_logger().info("D")
-
         response = future.result() # Returns a ControlCommand
-
-        self.get_logger().info("E")
-        self.get_logger().info(response)
-
 
         # response.control  is Twist
         # response.color    is Vector3
 
         self.pub_target.publish(response)
-
-        self.get_logger().info("F")
 
 
 
