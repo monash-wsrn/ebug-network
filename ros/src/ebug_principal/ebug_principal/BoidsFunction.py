@@ -1,10 +1,10 @@
+import os
 import math
 
 # Screen dimensions (in mm)
-ARENA_WIDTH = 2000      # mm
-ARENA_HEIGHT = 2000     # mm
-BUFFER_SPACE = 0.10     # proportion
-
+ARENA_WIDTH = int(os.getenv('ARENA_WIDTH', "2000"))         # mm
+ARENA_HEIGHT = int(os.getenv('ARENA_HEIGHT', "2000"))       # mm
+BUFFER_SPACE = float(os.getenv('BORDER_BUFFER', "0.10"))    # proportion
 
 LOWER_WIDTH = int(ARENA_WIDTH * BUFFER_SPACE)
 UPPER_WIDTH = ARENA_WIDTH - LOWER_WIDTH
@@ -13,16 +13,18 @@ LOWER_HEIGHT = int(ARENA_HEIGHT * BUFFER_SPACE)
 UPPER_HEIGHT = ARENA_HEIGHT - LOWER_HEIGHT
 
 # Boid parameters
-MAX_FORWARD_SPEED = 50      # mm /s 
-MAX_ANGULAR_SPEED = 50      # degrees /s 
-SEPARATION_DISTANCE = 100   # mm
-VIEW_DISTANCE = 500         # mm
-ALIGNMENT_FACTOR = 0.1
-COHESION_FACTOR = 0.1
-SEPARATION_FACTOR = 0.1
+MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "50"))         # mm /s 
+MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "50"))         # degrees /s 
+SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "125"))    # mm
+VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "300"))                # mm
+
+ALIGNMENT_FACTOR = float(os.getenv('ALIGNMENT_FACTOR', "0.01"))
+COHESION_FACTOR = float(os.getenv('COHESION_FACTOR', "0.001"))
+SEPARATION_FACTOR = float(os.getenv('SEPARATION_FACTOR', "1.0"))
+
 
 # Function to implement Boid rules
-def next(main_boid, other_boids):
+def next(main_boid, other_boids):# Function to implement Boid rules
     cohesion = [0, 0]
     alignment = [0, 0]
     separation = [0, 0]
@@ -31,21 +33,20 @@ def next(main_boid, other_boids):
     count_separation = 0
     
     for other_boid in other_boids:
-        if distance(main_boid, other_boid) <= VIEW_DISTANCE:
-            cohesion[0] += other_boid.position.x
-            cohesion[1] += other_boid.position.y
+        if distance(main_boid, other_boid) < VIEW_DISTANCE:
+            cohesion[0] += other_boid.position.x # find average x position of all other boids
+            cohesion[1] += other_boid.position.y # find average y position of all other boids
             count_cohesion += 1
-            
+
             alignment[0] += math.cos(angle(other_boid))
             alignment[1] += math.sin(angle(other_boid))
             count_alignment += 1
-                
+
             if distance(main_boid, other_boid) < SEPARATION_DISTANCE:
                 separation[0] += (main_boid.position.x - other_boid.position.x)
                 separation[1] += (main_boid.position.y - other_boid.position.y)
                 count_separation += 1
     
-
     resultant_angle = angle(main_boid)
     if count_cohesion > 0:
         cohesion[0] /= count_cohesion
@@ -68,27 +69,37 @@ def next(main_boid, other_boids):
 
     # TODO set desired linear velocity (this should just be constant ??)
     linear_velocity = MAX_FORWARD_SPEED
-
-    x_comp = math.cos(resultant_angle) # negative is towards left, positive is towards right
-    y_comp = math.sin(resultant_angle) # negative is towards bottom, positive is towards up
-    if      (main_boid.position.x < LOWER_WIDTH and x_comp < 0) \
-        or  (main_boid.position.x > UPPER_WIDTH and x_comp > 0):
-        resultant_angle = math.acos(-x_comp)
-        linear_velocity = 0
+    resultant_angle = clamp(resultant_angle)
+    x_comp = math.cos(resultant_angle)
+    y_comp = math.sin(resultant_angle) 
     
-    if      (main_boid.position.y < LOWER_HEIGHT and y_comp < 0) \
-        or  (main_boid.position.y > UPPER_HEIGHT and y_comp > 0):
-        resultant_angle = math.asin(-y_comp)
-        linear_velocity = 0
+     # negative is towards bottom, positive is towards up
+    if (main_boid.position.x < 50 and x_comp < 0) or (main_boid.position.x > 550 and x_comp > 0):
+        resultant_angle = math.pi - resultant_angle
     
+    
+    resultant_angle = clamp(resultant_angle)
+    x_comp = math.cos(resultant_angle)
+    y_comp = math.sin(resultant_angle) 
+    if (main_boid.position.y < 50 and y_comp < 0) or (main_boid.position.y > 550 and y_comp > 0):
+        resultant_angle = 2*math.pi - resultant_angle
+    
+    
+    resultant_angle = clamp(resultant_angle)
     # TODO compare resultant_angle with angle(main_boid) to determine angular velocity
     # Maybe keep a constant linear velocity and only worry about signing it
-    angular_velocity = MAX_ANGULAR_SPEED * sign(resultant_angle - angle(main_boid))
+    angular_velocity = clamp(resultant_angle - angle(main_boid))
+
+    if (angular_velocity > math.pi):
+        angular_velocity -= 2*math.pi
 
     led_colour = (255, 0, 0)
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
     return (linear_velocity, angular_velocity, led_colour)
 
+
+def clamp(angle):
+    return angle % (2*math.pi)
 
 # Function to calculate distance between two boids
 def distance(pose1, pose2):
@@ -111,7 +122,7 @@ def angle(pose):
     t4 = +1.0 - 2.0 * (y * y + z * z)
     yaw_z = math.atan2(t3, t4)
 
-    return yaw_z
+    return clamp(yaw_z)
 
 
 def sign(num):
