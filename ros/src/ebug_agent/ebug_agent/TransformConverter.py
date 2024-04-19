@@ -112,7 +112,7 @@ def inverse(t1):
 
 def invQuat(q1):
     d = q1.x*q1.x + q1.y*q1.y + q1.z*q1.z + q1.w*q1.w
-    d += 0.00000000000001   # Add epsilon value to avoid div 0 error
+    d += 1e-12   # Add epsilon value to avoid div 0 error
     return q1.x/d, -q1.y/d, -q1.z/d, -q1.w/d
 
 

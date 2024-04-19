@@ -91,7 +91,7 @@ class RobotController(Node):
         while True:
             try:
                 self.a_star.motors(int(left), int(right))
-                self.a_star.leds(led.x, led.y, led.z)
+                #self.a_star.leds(led.x, led.y, led.z)
                 return
             except:
 
