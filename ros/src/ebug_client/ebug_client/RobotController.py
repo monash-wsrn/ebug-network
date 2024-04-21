@@ -8,7 +8,7 @@ from rclpy.node import Node
 import math
 import time
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Quaternion, Vector3
 from ebug_interfaces.msg import ControlCommand
 
 # PATH = [(0.5, 0.0), (0.0, 0.5), (-0.5, 0.0), (0.0, -0.5), (0.5, 0.0), (1.0, 0.0)]
@@ -53,6 +53,10 @@ class RobotController(Node):
         self.duty_cycle_l, self.duty_cycle_r = 0, 0
         self.I = 0
         self.e_prev = 0
+
+        zero = Vector3()
+        zero.x, zero.y, zero.z = 0, 0, 0
+        self.motors(0, 0, zero)
 
         # Veclocity motion model
     def base_velocity(self,wl,wr):
