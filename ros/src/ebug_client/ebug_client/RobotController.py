@@ -54,10 +54,6 @@ class RobotController(Node):
         self.I = 0
         self.e_prev = 0
 
-        zero = Vector3()
-        zero.x, zero.y, zero.z = 0, 0, 0
-        self.motors(0, 0, zero)
-
         # Veclocity motion model
     def base_velocity(self,wl,wr):
 
@@ -229,11 +225,18 @@ def main():
     rclpy.init()
     node = RobotController()
     
+
+    zero = Vector3()
+    zero.x, zero.y, zero.z = 0.0, 0.0, 0.0
+    
+    node.motors(0, 0, zero)
+    
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
         return
     finally:
+        node.motors(0, 0, zero)
         node.destroy_node()
 
     rclpy.shutdown()
