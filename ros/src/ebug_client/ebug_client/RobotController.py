@@ -95,13 +95,13 @@ class RobotController(Node):
                 self.get_logger().info("I/O error moving motors")
                 continue
             
-        while True:
-            try:
-                self.a_star.led_ring(int(led.x), int(led.y), int(led.z))
-                break
-            except:
-                self.get_logger().info("I/O error setting LEDs")
-                continue
+        # while True:
+        #     try:
+        #         self.a_star.led_ring(int(led.x), int(led.y), int(led.z))
+        #         break
+        #     except:
+        #         self.get_logger().info("I/O error setting LEDs")
+        #         continue
 
 
     
