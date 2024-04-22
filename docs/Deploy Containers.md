@@ -24,17 +24,13 @@
     
     # Supply host devices using the --device flag. The mappable devices are:
     #    /dev/i2c-1  (Required)
-    #    /dev/video0 (Required)
-    #    /dev/video1 (Optional)
-    #    /dev/video2 (Optional)
-    #    /dev/video3 (Optional)
+    #    /dev/video0 (Required) also include video1
+    #    /dev/video2 (Optional) also include video3
+    #    /dev/video4 (Optional) also include video5
+    #    /dev/video6 (Optional) also include video7
 
     docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --device /dev/i2c-1 \
-        --device /dev/video0 --device /dev/video1 \
-        --device /dev/video2 --device /dev/video3 \
-        --device /dev/video4 --device /dev/video5 \
-        --device /dev/video6 --device /dev/video7 \
-         --rm -it ebug
+        --device /dev/video0 --device /dev/video1 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch client
