@@ -5,7 +5,7 @@
 
 // Variables for LED connection
 #define LED_PIN 22 // PF1 pin
-#define NUM_LEDs 10 //5 LEDs in total but count from 0
+#define NUM_LEDs 16 //5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
 /* This example program shows how to make the Romi 32U4 Control Board 
@@ -32,17 +32,19 @@
 
 struct Data
 {
-  uint8_t red, green, blue;
-  bool buttonA, buttonB, buttonC;
+  bool yellow, green, red; // 0, 1, 2
+  bool buttonA, buttonB, buttonC; // 3, 4, 5
+  
 
-  int16_t leftMotor, rightMotor;
-  uint16_t batteryMillivolts;
-  uint16_t analog[6];
+  int16_t leftMotor, rightMotor; // 6-7, 8-9
+  uint16_t batteryMillivolts; // 10-11
+  uint16_t analog[6]; // 12-23  six numbers of two bytes each
+  uint8_t red_ring, green_ring, blue_ring; // 23, 25, 26
 
-  bool playNotes;
-  char notes[14];
+  bool playNotes; // 27
+  char notes[14]; // 28-41
 
-  int16_t leftEncoder, rightEncoder;
+  int16_t leftEncoder, rightEncoder; // 42-43, 44-45
 };
 
 PololuRPiSlave<struct Data,5> slave;
@@ -87,15 +89,28 @@ void loop()
   }
 
   // READING the buffer is allowed before or after finalizeWrites().
+  ledYellow(slave.buffer.yellow);
+  ledGreen(slave.buffer.green);
+  ledRed(slave.buffer.red);
   motors.setSpeeds(slave.buffer.leftMotor, slave.buffer.rightMotor);
 
   // Set and display LED colours
-  leds[0] = CRGB(slave.buffer.red,slave.buffer.green,slave.buffer.blue);
-  leds[1] = CRGB(slave.buffer.red,slave.buffer.green,slave.buffer.blue);
-  leds[2] = CRGB(slave.buffer.red,slave.buffer.green,slave.buffer.blue);
-  leds[3] = CRGB(slave.buffer.red,slave.buffer.green,slave.buffer.blue);
-  leds[4] = CRGB(slave.buffer.red,slave.buffer.green,slave.buffer.blue);
-  leds[5] = CRGB(slave.buffer.red,slave.buffer.green,slave.buffer.blue);
+  leds[0] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[1] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[2] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[3] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[4] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[5] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[6] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[7] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[8] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[9] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[10] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[11] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[12] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[13] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[14] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
+  leds[15] = CRGB(slave.buffer.red_ring, slave.buffer.green_ring, slave.buffer.blue_ring);
   FastLED.show();
 
   // Playing music involves both reading and writing, since we only
