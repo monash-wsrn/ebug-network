@@ -41,7 +41,7 @@ struct Data
   int16_t leftMotor, rightMotor; // 6-7, 8-9
   uint16_t batteryMillivolts; // 10-11
   uint16_t analog[6]; // 12-23  six numbers of two bytes each
-  uint8_t red_ring, green_ring, blue_ring; // 23, 25, 26
+  uint8_t red_ring, green_ring, blue_ring; // 24, 25, 26
 
   bool playNotes; // 27
   char notes[14]; // 28-41
