@@ -87,16 +87,20 @@ class RobotController(Node):
                 continue
     
     def motors(self,left, right, led):
-
         while True:
             try:
                 self.a_star.motors(int(left), int(right))
-                self.a_star.led_ring(led.x, led.y, led.z)
-                return
+                break
             except:
-
-                self.get_logger().info("I/O error")
-
+                self.get_logger().info("I/O error moving motors")
+                continue
+            
+        while True:
+            try:
+                self.a_star.led_ring(int(led.x), int(led.y), int(led.z))
+                break
+            except:
+                self.get_logger().info("I/O error setting LEDs")
                 continue
 
 
