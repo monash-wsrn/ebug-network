@@ -58,20 +58,20 @@ class TransformConverter(Node):
             tag_cam = inverse(t.transform)
             cam_robot = self.cameras[ cam_id ]
             tag_robot = combine(tag_cam, cam_robot)
-
+            robot_tag = inverse(tag_robot)
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
             msg.header.frame_id = f'apriltag_{cam_id}'
             
-            msg.pose.pose.position.x = tag_robot.translation.x
-            msg.pose.pose.position.y = tag_robot.translation.y
-            msg.pose.pose.position.z = tag_robot.translation.z
+            msg.pose.pose.position.x = robot_tag.translation.x
+            msg.pose.pose.position.y = robot_tag.translation.y
+            msg.pose.pose.position.z = robot_tag.translation.z
 
-            msg.pose.pose.orientation.x = tag_robot.rotation.x
-            msg.pose.pose.orientation.y = tag_robot.rotation.y
-            msg.pose.pose.orientation.z = tag_robot.rotation.z
-            msg.pose.pose.orientation.w = tag_robot.rotation.w
+            msg.pose.pose.orientation.x = robot_tag.rotation.x
+            msg.pose.pose.orientation.y = robot_tag.rotation.y
+            msg.pose.pose.orientation.z = robot_tag.rotation.z
+            msg.pose.pose.orientation.w = robot_tag.rotation.w
 
             msg.pose.covariance = self.covariance
             self.publisher.publish(msg)
