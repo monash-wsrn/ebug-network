@@ -54,16 +54,10 @@ class TransformConverter(Node):
         
         for t in tf_det.transforms:    
             cam_id = int(t.child_frame_id[-1])
-            
-            self.get_logger().info(f'TF => X: {t.transform.translation.x}, Y: {t.transform.translation.y}, Z: {t.transform.translation.z}')
-            
+
             tag_cam = inverse(t.transform)
             cam_robot = self.cameras[ cam_id ]
             tag_robot = combine(tag_cam, cam_robot)
-
-            
-            self.get_logger().info(f'Cam => X: {cam_robot.translation.x}, Y: {cam_robot.translation.y}, Z: {cam_robot.translation.z}')
-            self.get_logger().info(f'iTF => X: {tag_cam.translation.x}, Y: {tag_cam.translation.y}, Z: {tag_cam.translation.z}')
 
 
             msg = PoseWithCovarianceStamped()
@@ -80,10 +74,6 @@ class TransformConverter(Node):
             msg.pose.pose.orientation.w = tag_robot.rotation.w
 
             msg.pose.covariance = self.covariance
-
-            p = msg.pose.pose
-            self.get_logger().info(f'POSE => X: {p.position.x}, Y: {p.position.y}, Z: {p.position.z}')
-
             self.publisher.publish(msg)
 
 
