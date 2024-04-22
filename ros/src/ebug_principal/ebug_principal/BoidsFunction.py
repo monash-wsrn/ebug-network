@@ -31,6 +31,7 @@ def next(main_boid, other_boids):# Function to implement Boid rules
     count_cohesion = 0
     count_alignment = 0
     count_separation = 0
+    led_colour = (255, 255, 255)
     
     for other_boid in other_boids:
         if distance(main_boid, other_boid) < VIEW_DISTANCE:
@@ -53,18 +54,21 @@ def next(main_boid, other_boids):# Function to implement Boid rules
         cohesion[1] /= count_cohesion
         target_angle = angle_between(main_boid, cohesion[0], cohesion[1]) # TODO Build pose from cohesion ??
         resultant_angle = (1 - COHESION_FACTOR) * angle(main_boid) + COHESION_FACTOR * target_angle
+        led_colour = (0, 255, 0)
 
     if count_alignment > 0:
         alignment[0] /= count_alignment
         alignment[1] /= count_alignment
         target_angle = math.atan2(alignment[1], alignment[0])
         resultant_angle = (1 - ALIGNMENT_FACTOR) * angle(main_boid) + ALIGNMENT_FACTOR * target_angle
+        led_colour = (0, 0, 255)
 
     if count_separation > 0:
         separation[0] /= count_separation
         separation[1] /= count_separation
         target_angle = math.atan2(separation[1], separation[0])
         resultant_angle = (1 - SEPARATION_FACTOR) * angle(main_boid) + SEPARATION_FACTOR * target_angle
+        led_colour = (255, 0, 0)
 
 
     # TODO set desired linear velocity (this should just be constant ??)
@@ -93,7 +97,6 @@ def next(main_boid, other_boids):# Function to implement Boid rules
     if (angular_velocity > math.pi):
         angular_velocity -= 2*math.pi
 
-    led_colour = (255, 0, 0)
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
     return (linear_velocity, angular_velocity, led_colour)
 
