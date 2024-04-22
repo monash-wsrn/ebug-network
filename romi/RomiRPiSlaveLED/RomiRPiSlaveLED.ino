@@ -8,6 +8,8 @@
 #define NUM_LEDs 16 //5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
+CRGB leds[NUM_LEDs]; 
+
 /* This example program shows how to make the Romi 32U4 Control Board 
  * into a Raspberry Pi I2C slave.  The RPi and Romi 32U4 Control Board can
  * exchange data bidirectionally, allowing each device to do what it
