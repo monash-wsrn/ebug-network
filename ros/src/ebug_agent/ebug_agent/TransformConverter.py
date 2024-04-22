@@ -75,6 +75,10 @@ class TransformConverter(Node):
 
             msg.pose.covariance = self.covariance
 
+            p = msg.pose.pose
+            self.get_logger().info(f'X: {p.position.x}, Y: {p.position.y}, Z: {p.position.z}')
+            self.get_logger().info(f'X: {p.orientation.x}, Y: {p.orientation.y}, Z: {p.orientation.z}, W: {p.orientation.w}')
+
             self.publisher.publish(msg)
 
 
