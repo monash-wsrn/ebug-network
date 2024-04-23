@@ -21,9 +21,9 @@ class ByteRectifier(Node):
         raw = jpeg.decode_jpeg(data, 'BGR', True, True, self.HEIGHT, self.WIDTH, 1, None, False)
 
         result = Image()
-        result.Header = img.Header
-        result.Width = self.WIDTH
-        result.Height = self.HEIGHT
+        result.header = img.header
+        result.width = self.WIDTH
+        result.height = self.HEIGHT
         result.encoding = 'bgr8'
         result.is_bigendian = False
         result.step = raw.size / self.HEIGHT
