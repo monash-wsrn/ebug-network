@@ -1,7 +1,6 @@
 import rclpy
 from rclpy.node import Node
 
-from std_srvs.srv import SetBool
 from sensor_msgs.msg import CameraInfo, CompressedImage, Image
 from nav_msgs.msg import Odometry
 

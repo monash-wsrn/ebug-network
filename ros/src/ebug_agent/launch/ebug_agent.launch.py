@@ -27,6 +27,13 @@ def generate_launch_description():
             ('out', 'image_raw/uncompressed'),
         ]
     )
+
+    ImageByteRectifier = Node(
+        package = 'ebug_agent',
+        executable = 'ByteRectifier',
+        name = 'ByteRectifier',
+        namespace = ROBOT_ID,
+    )
     
     # launch the image processing nodes
     ImageProcNode = Node(
@@ -36,7 +43,7 @@ def generate_launch_description():
         namespace = ROBOT_ID,
 
         remappings = [
-            ('image', 'image_raw/uncompressed')
+            ('image', 'image_raw/rectified')
         ]
     )
 
@@ -95,6 +102,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
         
         ImageDecompression,
+        ImageByteRectifier,
         ImageProcNode,
         AprilTagNode,
         TransformConverterNode,
