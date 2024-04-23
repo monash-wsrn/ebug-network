@@ -22,10 +22,10 @@ def generate_launch_description():
         arguments = [
             'compressed',
             'raw',
-        ]
+        ],
         remappings = [
-            ('in/compressed', 'image_raw/compressed').
-            ('out', 'image_raw/uncompressed').
+            ('in/compressed', 'image_raw/compressed'),
+            ('out', 'image_raw/uncompressed'),
         ]
     )
 
