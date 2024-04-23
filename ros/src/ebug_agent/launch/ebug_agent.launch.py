@@ -12,14 +12,6 @@ def generate_launch_description():
     APRIL_TAG_PATH = os.path.join(PKG_SHARE, 'config/aprilTag.yaml') 
     EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
 
-    # launch mjpeg decompression node
-    # MotionJPEGDecompress = Node(
-    #     package = 'ebug_agent',
-    #     executable = 'JpegDecompressor',
-    #     name = 'DecompressMJPEG',
-    #     namespace = ROBOT_ID
-    # )
-
     MotionJPEGDecompress = Node(
         package = 'image_transport',
         executable = 'republish',
