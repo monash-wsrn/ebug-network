@@ -27,7 +27,7 @@ class ByteRectifier(Node):
         result.encoding = 'bgr8'
         result.is_bigendian = False
         result.step = int(raw.size / self.HEIGHT)
-        result.data = raw.data
+        result.data = raw.tobytes()
         
         self.pub_image.publish(result)
 
