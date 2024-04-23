@@ -6,7 +6,6 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
-    CAMERA_POLLING = os.getenv('CAMERA_POLLING', "disable").lower() == "enable"
     ALL_CAMERAS = os.getenv('ALL_CAMERAS', 'disable').lower() == "enable"
 
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
@@ -16,7 +15,7 @@ def generate_launch_description():
     CAMERA_NODES = []
 
     CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE, '/dev/video0') )
-    if CAMERA_POLLING:   
+    if ALL_CAMERAS:   
         CAMERA_IDS.extend( ['cam_1', 'cam_2', 'cam_3'] )
         CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE, '/dev/video2') )
         CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE, '/dev/video4') )
@@ -77,11 +76,10 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
             {'camera_name':     CAM_ID              },
             {'camera_info_url': f'file://{CAM_INFO}'},
             {'frame_id':        CAM_ID              },
-            {'pixel_format':    'yuyv'              },
+            {'pixel_format':    'raw_mjpeg'         },
             {'framerate':       FRAME_RATE          },
             {'image_height':    HEIGHT              },
             {'image_width':     WIDTH               },
-            
-            # {'autofocus':       True                },
+            {'autofocus':       True                },
         ]
     )
