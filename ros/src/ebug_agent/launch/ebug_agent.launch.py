@@ -93,6 +93,7 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
         
+        MotionJPEGDecompress,
         ImageProcNode,
         AprilTagNode,
         TransformConverterNode,
