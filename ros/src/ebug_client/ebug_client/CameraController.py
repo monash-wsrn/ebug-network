@@ -23,7 +23,7 @@ class CameraController(Node):
         self.pub_image = self.create_publisher(Image, 'image_raw', 10)
         self.pub_cimage = self.create_publisher(CompressedImage, 'image_raw/compressed', 10)
         self.pub_cinfo = self.create_publisher(CameraInfo, 'camera_info', 10)
-        
+
         self.sub_odom = self.create_subscription(Odometry, 'filtered_odom', self.odom_callback, 10)
 
         for cam_id in self.cameras:
@@ -32,7 +32,7 @@ class CameraController(Node):
             cinfo = Subscriber(self, CameraInfo, f'{cam_id}/camera_info')
 
             sync = ApproximateTimeSynchronizer([image, cimage, cinfo], 10, 0.1, allow_headerless=True)
-            sync.registerCallback(lambda x, y, cid=cam_id : self.camera_callback(cid, x, y))
+            sync.registerCallback(lambda x, y, z, cid=cam_id : self.camera_callback(cid, x, y, z))
 
             self.synchronizers.append(sync)
 
