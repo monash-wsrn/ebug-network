@@ -13,11 +13,27 @@ def generate_launch_description():
     EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
 
     # launch mjpeg decompression node
+    # MotionJPEGDecompress = Node(
+    #     package = 'ebug_agent',
+    #     executable = 'JpegDecompressor',
+    #     name = 'DecompressMJPEG',
+    #     namespace = ROBOT_ID
+    # )
+
     MotionJPEGDecompress = Node(
-        package = 'ebug_agent',
-        executable = 'JpegDecompressor',
+        package = 'image_transport',
+        executable = 'republish',
         name = 'DecompressMJPEG',
-        namespace = ROBOT_ID
+        namespace = ROBOT_ID,
+    
+        arguments = [
+            'compressed',
+            'raw',
+        ],
+        remappings = [
+            ('in/compressed', 'image_raw/compressed'),
+            ('out', 'image_raw/uncompressed'),
+        ]
     )
     
     # launch the image processing nodes

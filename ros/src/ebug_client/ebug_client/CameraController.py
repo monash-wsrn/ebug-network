@@ -42,6 +42,8 @@ class CameraController(Node):
     # def camera_callback(self, cam_id: str, image: Image, cinfo: CameraInfo):
     def camera_callback(self, cam_id: str, image: Image, cimage: CompressedImage, cinfo: CameraInfo):
         if self.all_cameras or (cam_id == self.selected):
+            cimage.data = image.data
+            
             self.pub_image.publish(image)
             self.pub_cimage.publish(cimage)
             self.pub_cinfo.publish(cinfo)
