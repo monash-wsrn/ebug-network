@@ -27,7 +27,7 @@ setup(
         'console_scripts': [
             'TransformConverter = ebug_agent.TransformConverter:main',
             'MovementController = ebug_agent.MovementController:main',
-            'JsonDecompressor = ebug_agent.JsonDecompressor:main',
+            'JpegDecompressor = ebug_agent.JpegDecompressor:main',
         ],
     },
 )

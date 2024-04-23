@@ -6,7 +6,7 @@ from sensor_msgs.msg import CompressedImage, Image
 import simplejpeg as jpeg
 import numpy as np
 
-class JsonDecompressor(Node):
+class JpegDecompressor(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
         self.sub_image = self.create_subscription(CompressedImage, 'image_raw/compressed', self.img_callback, 10)
@@ -24,7 +24,7 @@ class JsonDecompressor(Node):
         result.header = img.header
         result.width = int(self.WIDTH)
         result.height = int(self.HEIGHT)
-        result.encoding = 'bgr'
+        result.encoding = 'bgr8'
         result.is_bigendian = False
         result.step = int(raw.size / self.HEIGHT)
         result.data = raw.tobytes()
@@ -38,7 +38,7 @@ class JsonDecompressor(Node):
 
 def main():
     rclpy.init()
-    node = JsonDecompressor()
+    node = JpegDecompressor()
     
     try:
         rclpy.spin(node)

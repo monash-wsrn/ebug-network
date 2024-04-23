@@ -15,7 +15,7 @@ def generate_launch_description():
     # launch mjpeg decompression node
     MotionJPEGDecompress = Node(
         package = 'ebug_agent',
-        executable = 'JsonDecompressor',
+        executable = 'JpegDecompressor',
         name = 'DecompressMJPEG',
         namespace = ROBOT_ID
     )
