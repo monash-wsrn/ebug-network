@@ -13,10 +13,10 @@ LOWER_HEIGHT = int(ARENA_HEIGHT * BUFFER_SPACE)
 UPPER_HEIGHT = ARENA_HEIGHT - LOWER_HEIGHT
 
 # Boid parameters
-MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "50"))         # mm /s 
-MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "50"))         # degrees /s 
-SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "125"))    # mm
-VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "300"))                # mm
+MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.50"))         # m /s 
+MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "5.00"))         # degrees /s 
+SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "0.125"))    # mm
+VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "0.300"))                # mm
 
 ALIGNMENT_FACTOR = float(os.getenv('ALIGNMENT_FACTOR', "0.01"))
 COHESION_FACTOR = float(os.getenv('COHESION_FACTOR', "0.001"))
