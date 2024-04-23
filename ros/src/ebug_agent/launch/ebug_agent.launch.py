@@ -14,19 +14,10 @@ def generate_launch_description():
 
     # launch mjpeg decompression node
     MotionJPEGDecompress = Node(
-        package = 'image_transport',
-        executable = 'republish',
+        package = 'ebug_agent',
+        executable = 'JsonDecompressor',
         name = 'DecompressMJPEG',
-        namespace = ROBOT_ID,
-    
-        arguments = [
-            'compressed',
-            'raw',
-        ],
-        remappings = [
-            ('in/compressed', 'image_raw/compressed'),
-            ('out', 'image_raw/uncompressed'),
-        ]
+        namespace = ROBOT_ID
     )
     
     # launch the image processing nodes
