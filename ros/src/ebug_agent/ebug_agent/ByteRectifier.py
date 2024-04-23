@@ -22,11 +22,11 @@ class ByteRectifier(Node):
 
         result = Image()
         result.header = img.header
-        result.width = self.WIDTH
-        result.height = self.HEIGHT
+        result.width = int(self.WIDTH)
+        result.height = int(self.HEIGHT)
         result.encoding = 'bgr8'
         result.is_bigendian = False
-        result.step = raw.size / self.HEIGHT
+        result.step = int(raw.size / self.HEIGHT)
         result.data = raw.data
         
         self.pub_image.publish(result)
