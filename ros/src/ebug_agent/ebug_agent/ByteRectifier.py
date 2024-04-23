@@ -11,7 +11,9 @@ class ByteRectifier(Node):
 
 
     def img_callback(self, img: Image):        
-        img.step = img.step * 2
+        if ( str(img.encoding).lower() == "yuv422" ):
+            img.step = img.width * 2
+
         self.pub_image.publish(img)
 
 
