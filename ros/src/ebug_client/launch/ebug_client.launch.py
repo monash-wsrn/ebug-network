@@ -60,7 +60,7 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
     # Accross four cameras, this limits a hard max of 24 fps
     # Stay well below this and ensure we minimise timeouts
     
-    FRAME_RATE = 30.0
+    FRAME_RATE = 10.0
     WIDTH = 640
     HEIGHT = 480
     CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 

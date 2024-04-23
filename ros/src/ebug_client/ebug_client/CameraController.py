@@ -20,7 +20,7 @@ class CameraController(Node):
         self.selected = self.cameras[0]
         self.synchronizers = []
 
-        self.pub_image = self.create_publisher(Image, 'image_raw', 10)
+        # self.pub_image = self.create_publisher(Image, 'image_raw', 10)
         self.pub_cimage = self.create_publisher(CompressedImage, 'image_raw/compressed', 10)
         self.pub_cinfo = self.create_publisher(CameraInfo, 'camera_info', 10)
 
@@ -43,8 +43,8 @@ class CameraController(Node):
     def camera_callback(self, cam_id: str, image: Image, cimage: CompressedImage, cinfo: CameraInfo):
         if self.all_cameras or (cam_id == self.selected):
             cimage.data = image.data
-            
-            self.pub_image.publish(image)
+
+            # self.pub_image.publish(image)
             self.pub_cimage.publish(cimage)
             self.pub_cinfo.publish(cinfo)
 
