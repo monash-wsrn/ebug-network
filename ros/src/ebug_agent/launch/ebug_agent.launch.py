@@ -12,23 +12,7 @@ def generate_launch_description():
     APRIL_TAG_PATH = os.path.join(PKG_SHARE, 'config/aprilTag.yaml') 
     EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
 
-    # launch mjpeg decompression node
-    MotionJPEGDecompress = Node(
-        package = 'image_transport',
-        executable = 'republish',
-        name = 'DecompressMJPEG',
-        namespace = ROBOT_ID,
     
-        arguments = [
-            'compressed',
-            'raw',
-        ],
-        remappings = [
-            ('in/compressed', 'image_raw'),
-            ('out', 'image_raw/uncompressed'),
-        ]
-    )
-
     # launch the image processing nodes
     ImageProcNode = Node(
         package = 'image_proc',
@@ -37,7 +21,7 @@ def generate_launch_description():
         namespace = ROBOT_ID,
 
         remappings = [
-            ('image', 'image_raw/uncompressed')
+            ('image', 'image_raw')
         ]
     )
 
@@ -95,7 +79,6 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
         
-        MotionJPEGDecompress,
         ImageProcNode,
         AprilTagNode,
         TransformConverterNode,
