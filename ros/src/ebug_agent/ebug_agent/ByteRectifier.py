@@ -1,20 +1,36 @@
 import rclpy
 from rclpy.node import Node
 
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage, Image
+
+import simplejpeg as jpeg
+import numpy as np
 
 class ByteRectifier(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
-        self.sub_image = self.create_subscription(Image, 'image_raw/uncompressed', self.img_callback, 10)
-        self.pub_image = self.create_publisher(Image, 'image_raw/rectified', 10)
+        self.sub_image = self.create_subscription(CompressedImage, 'image_raw/compressed', self.img_callback, 10)
+        self.pub_image = self.create_publisher(Image, 'image_raw/uncompressed', 10)
+
+        self.WIDTH = 640
+        self.HEIGHT = 480
 
 
-    def img_callback(self, img: Image):        
-        if ( str(img.encoding).lower() == "yuv422" ):
-            img.step = img.width * 2
+    def img_callback(self, img: CompressedImage):        
+        data = memoryview(img.data) 
+        raw = jpeg.decode_jpeg(data, 'BGR', True, True, self.HEIGHT, self.WIDTH, 1, None, False)
 
-        self.pub_image.publish(img)
+        result = Image()
+        result.Header = img.Header
+        result.Width = self.WIDTH
+        result.Height = self.HEIGHT
+        result.encoding = 'bgr8'
+        result.is_bigendian = False
+        result.step = raw.size / self.HEIGHT
+        result.data = raw.data
+        
+        self.pub_image.publish(result)
+
 
 
 
