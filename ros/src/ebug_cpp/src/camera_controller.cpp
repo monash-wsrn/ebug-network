@@ -31,8 +31,8 @@ class CameraController : public rclcpp::Node
             this->declare_parameter("cameras", std::vector<std::string>( { "cam_0" } ));
             std::vector<std::string> cameras = this->get_parameter("cameras").as_string_array();
 
-            m_CameraInfoPublisher = this->create_publisher<sensor_msgs::msg::CameraInfo>("image_raw/compressed", 10);
-            m_CompressedImagePublisher = this->create_publisher<sensor_msgs::msg::CompressedImage>("camera_info", 10);
+            m_CompressedImagePublisher = this->create_publisher<sensor_msgs::msg::CompressedImage>("image_raw/compressed", 10);
+            m_CameraInfoPublisher = this->create_publisher<sensor_msgs::msg::CameraInfo>("camera_info", 10);
 
             typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::msg::Image, sensor_msgs::msg::CameraInfo> approximate_policy;
             for (const std::string& cam_id : cameras) 
