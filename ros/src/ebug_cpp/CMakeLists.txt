@@ -21,6 +21,11 @@ find_package(ebug_interfaces REQUIRED)
 add_executable(camera_controller src/camera_controller.cpp)
 ament_target_dependencies(camera_controller rclcpp sensor_msgs message_filters)
 
+install(TARGETS 
+  camera_controller
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -33,7 +38,6 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
 
 # find_package(rosidl_default_generators REQUIRED)
 
