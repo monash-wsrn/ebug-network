@@ -41,7 +41,8 @@ class CameraController : public rclcpp::Node
                 message_filters::Subscriber<sensor_msgs::msg::CameraInfo> cinfo(this, cam_id + "/camera_info");
 
                 auto sync = std::make_shared<message_filters::Synchronizer<approximate_policy>>(approximate_policy(10), image, cinfo);
-
+                
+                sync->setMaxIntervalDuration(rclcpp::Duration(10,0));
                 sync->registerCallback(std::bind(&CameraController::camera_callback, this, std::placeholders::_1, std::placeholders::_2));
             }
         }
