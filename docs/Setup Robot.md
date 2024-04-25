@@ -109,8 +109,22 @@ Pololu Tutorial [here](https://www.pololu.com/blog/663/building-a-raspberry-pi-r
     v4l2-ctl --list-devices
     ```
 2. Typically, the four cameras will be mounted to `/dev/video0`, `/dev/video2`, `/dev/video4`, and `/dev/video6`.
-    With secondary channels on the odd numbers, these should all be mounted to the docker container.
+    With secondary channels on the odd numbers, all of these should also be mounted to the docker container.
 
 
 ## Running the containers
 Follow the instructions [here](/docs/Deploy%20Containers.md) to build and deploy the relevant container(s).
+
+## Identify the cameras
+1. Deploy and run an ebug container as a Client
+2. Deploy and run an ebug container as an Agent
+3. Deploy and run another ebug container:
+    ```sh
+    # Substitute 'robot_0' with the desired robot id
+    ros2 topic echo /robot_0/tf_detections | grep "frame_id: cam_"
+
+    # This will print out which camera is detecting an AprilTag, thus
+    # using a single Apriltag, you can spin the robot around and identify
+    # which cam_id corresponds with which physical camera. Swap them around
+    # as needed to fit the specifications.
+    ```

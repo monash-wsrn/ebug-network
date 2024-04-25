@@ -29,8 +29,13 @@
     #    /dev/video4 (Optional) also include /dev/video5
     #    /dev/video6 (Optional) also include /dev/video7
 
-    docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --device /dev/i2c-1 \
-        --device /dev/video0 --device /dev/video1 --rm -it ebug
+    docker run --net host --ipc host --pid host \
+        -e ROBOT_ID='robot_0' -e ALL_CAMERAS='enable' \
+        --device /dev/video0 --device /dev/video1 \
+        --device /dev/video2 --device /dev/video3 \
+        --device /dev/video4 --device /dev/video5 \
+        --device /dev/video6 --device /dev/video7 \
+        --device /dev/i2c-1 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch client
