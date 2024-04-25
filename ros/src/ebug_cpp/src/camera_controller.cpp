@@ -43,15 +43,16 @@ class CameraController : public rclcpp::Node
                 message_filters::Subscriber<sensor_msgs::msg::Image> image(this, cam_id + "/image_raw");
                 message_filters::Subscriber<sensor_msgs::msg::CameraInfo> cinfo(this, cam_id + "/camera_info");
 
+                image.subscribe();
+                cinfo.subscribe();
+
                 auto sync = std::make_shared<message_filters::Synchronizer<approximate_policy>>(approximate_policy(10), image, cinfo);
+                m_Synchronizers.push_back(sync);
                 
                 sync->setMaxIntervalDuration(rclcpp::Duration(0,100000000)); // 0.1 Second interval
                 sync->registerCallback(std::bind(&CameraController::camera_callback, this, std::placeholders::_1, std::placeholders::_2));
 
-                m_Synchronizers.push_back(sync);
-
-                RCLCPP_INFO(this->get_logger(), "Connected USB Camera (ID: %s) '%s' '%s'", 
-                    cam_id.c_str(), (cam_id + "/image_raw").c_str(), (cam_id + "/camera_info").c_str());
+                RCLCPP_INFO(this->get_logger(), "Connected USB Camera (ID: %s)", cam_id.c_str());
             }
         }
 
