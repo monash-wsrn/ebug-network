@@ -28,6 +28,8 @@ class CameraController : public rclcpp::Node
         rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr m_CompressedImagePublisher;
 
         std::vector<std::string> m_Cameras;
+        std::vector<message_filters::Subscriber<sensor_msgs::msg::Image>> m_Images;
+        std::vector<message_filters::Subscriber<sensor_msgs::msg::CameraInfo>> m_Cinfos;
         std::vector<std::shared_ptr<message_filters::Synchronizer<approximate_policy>>> m_Synchronizers;
 
     public:
@@ -41,9 +43,11 @@ class CameraController : public rclcpp::Node
             for (auto &cam_id : m_Cameras) 
             {
                 message_filters::Subscriber<sensor_msgs::msg::Image> image(this, cam_id + "/image_raw");
-                message_filters::Subscriber<sensor_msgs::msg::CameraInfo> cinfo(this, cam_id + "/camera_info");
-
+                m_Images.push_back(image);
                 image.subscribe();
+
+                message_filters::Subscriber<sensor_msgs::msg::CameraInfo> cinfo(this, cam_id + "/camera_info");
+                m_Cinfos.push_back(imacinfoge);
                 cinfo.subscribe();
 
                 auto sync = std::make_shared<message_filters::Synchronizer<approximate_policy>>(approximate_policy(10), image, cinfo);
