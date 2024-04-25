@@ -44,6 +44,8 @@ class CameraController : public rclcpp::Node
                 
                 sync->setMaxIntervalDuration(rclcpp::Duration(0,100000000)); // 0.1 Second interval
                 sync->registerCallback(std::bind(&CameraController::camera_callback, this, std::placeholders::_1, std::placeholders::_2));
+
+                RCLCPP_INFO(this->get_logger(), "Connected USB Camera (ID: %s) '%s' '%s'", cam_id, cam_id + "/image_raw", cam_id + "/camera_info");
             }
         }
 
@@ -51,7 +53,7 @@ class CameraController : public rclcpp::Node
         void camera_callback(const sensor_msgs::msg::Image::ConstSharedPtr& image, const sensor_msgs::msg::CameraInfo::ConstSharedPtr& cinfo)
         {
             RCLCPP_INFO(this->get_logger(), "Received Image & CameraInfo");
-            
+
             sensor_msgs::msg::CompressedImage cimage;
 
             cimage.header = image->header;
