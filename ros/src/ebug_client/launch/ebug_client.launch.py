@@ -39,7 +39,7 @@ def generate_launch_description():
         name = 'CameraController',
         namespace = ROBOT_ID,
         parameters=[
-            {'all_cameras': ALL_CAMERAS }
+            {'cameras':     CAMERA_IDS  }
         ]
     )
 

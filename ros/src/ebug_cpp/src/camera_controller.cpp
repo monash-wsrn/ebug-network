@@ -28,8 +28,8 @@ class CameraController : public rclcpp::Node
     public:
         CameraController() : Node("CameraController")
         {
-            this->declare_parameter("cameras", std::vector<std::string>( { "cam_0" } ));
-            std::vector<std::string> cameras = this->get_parameter("cameras").as_string_array();
+            std::vector<std::string> cameras = this->declare_parameter<std::vector<std::string>>
+                ("cameras", std::vector<std::string>( { "cam_0" } ));
 
             m_CompressedImagePublisher = this->create_publisher<sensor_msgs::msg::CompressedImage>("image_raw/compressed", 10);
             m_CameraInfoPublisher = this->create_publisher<sensor_msgs::msg::CameraInfo>("camera_info", 10);
