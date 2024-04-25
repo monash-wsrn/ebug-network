@@ -20,18 +20,6 @@ def generate_launch_description():
         CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE, '/dev/video2') )
         CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE, '/dev/video4') )
         CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE, '/dev/video6') )
-    
-
-    # CameraControllerNode = Node(
-    #     package = 'ebug_client',
-    #     executable = 'CameraController',
-    #     name = 'CameraController',
-    #     namespace = ROBOT_ID,
-    #     parameters=[
-    #         {'all_cameras': ALL_CAMERAS },
-    #         {'cameras':     CAMERA_IDS  },
-    #     ]
-    # )
         
     CameraControllerNode = Node(
         package = 'ebug_cpp',

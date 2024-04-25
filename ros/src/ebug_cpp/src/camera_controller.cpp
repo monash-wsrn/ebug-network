@@ -63,8 +63,6 @@ class CameraController : public rclcpp::Node
     private:
         void camera_callback(const sensor_msgs::msg::Image::ConstSharedPtr& image, const sensor_msgs::msg::CameraInfo::ConstSharedPtr& cinfo) const
         {
-            RCLCPP_INFO(this->get_logger(), "Received Image & CameraInfo");
-
             sensor_msgs::msg::CompressedImage cimage;
 
             cimage.header = image->header;
