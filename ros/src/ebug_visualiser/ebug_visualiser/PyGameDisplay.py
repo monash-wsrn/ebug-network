@@ -73,8 +73,8 @@ class PyGameDisplay(Node):
             ### render pygame window
 
             # Grab robot position, direction and LED colours
-            x = int(value.position.x)
-            y = int(value.position.y)
+            x = int(value.position.x*1000) # convert from m to mm
+            y = int(value.position.y*1000) # convert from m to mm
             theta = angle(value)
 
             # Draw robot body

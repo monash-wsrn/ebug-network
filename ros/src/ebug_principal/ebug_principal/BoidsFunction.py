@@ -1,22 +1,22 @@
 import os
 import math
 
-# Screen dimensions (in mm)
-ARENA_WIDTH = int(os.getenv('ARENA_WIDTH', "2000"))         # mm
-ARENA_HEIGHT = int(os.getenv('ARENA_HEIGHT', "2000"))       # mm
+# Screen dimensions (in m)
+ARENA_WIDTH = int(os.getenv('ARENA_WIDTH', "2"))         # m
+ARENA_HEIGHT = int(os.getenv('ARENA_HEIGHT', "2"))       # m
 BUFFER_SPACE = float(os.getenv('BORDER_BUFFER', "0.10"))    # proportion
 
-LOWER_WIDTH = int(ARENA_WIDTH * BUFFER_SPACE)
+LOWER_WIDTH = float(ARENA_WIDTH * BUFFER_SPACE)
 UPPER_WIDTH = ARENA_WIDTH - LOWER_WIDTH
 
-LOWER_HEIGHT = int(ARENA_HEIGHT * BUFFER_SPACE)
+LOWER_HEIGHT = float(ARENA_HEIGHT * BUFFER_SPACE)
 UPPER_HEIGHT = ARENA_HEIGHT - LOWER_HEIGHT
 
 # Boid parameters
-MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.50"))         # m /s 
+MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.20"))         # m /s 
 MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "5.00"))         # degrees /s 
-SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "0.125"))    # mm
-VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "0.300"))                # mm
+SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "0.15"))    # m
+VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "0.300"))                # m
 
 ALIGNMENT_FACTOR = float(os.getenv('ALIGNMENT_FACTOR', "0.01"))
 COHESION_FACTOR = float(os.getenv('COHESION_FACTOR', "0.001"))
@@ -24,7 +24,7 @@ SEPARATION_FACTOR = float(os.getenv('SEPARATION_FACTOR', "1.0"))
 
 
 # Function to implement Boid rules
-def next(main_boid, other_boids):# Function to implement Boid rules
+def next(main_boid, other_boids):
     cohesion = [0, 0]
     alignment = [0, 0]
     separation = [0, 0]
@@ -71,25 +71,27 @@ def next(main_boid, other_boids):# Function to implement Boid rules
         led_colour = (255, 0, 0)
 
 
-    # TODO set desired linear velocity (this should just be constant ??)
+    # Set linear velocity to be the desired constant
     linear_velocity = MAX_FORWARD_SPEED
+
+    # Deal with boundary conditions
     resultant_angle = clamp(resultant_angle)
     x_comp = math.cos(resultant_angle)
     y_comp = math.sin(resultant_angle) 
-    
-     # negative is towards bottom, positive is towards up
-    if (main_boid.position.x < 50 and x_comp < 0) or (main_boid.position.x > 550 and x_comp > 0):
+
+    if (main_boid.position.x < LOWER_WIDTH and x_comp < 0) or (main_boid.position.x > UPPER_WIDTH and x_comp > 0):
         resultant_angle = math.pi - resultant_angle
-    
-    
+     
     resultant_angle = clamp(resultant_angle)
     x_comp = math.cos(resultant_angle)
     y_comp = math.sin(resultant_angle) 
-    if (main_boid.position.y < 50 and y_comp < 0) or (main_boid.position.y > 550 and y_comp > 0):
+
+    if (main_boid.position.y < LOWER_HEIGHT and y_comp < 0) or (main_boid.position.y > UPPER_HEIGHT and y_comp > 0):
         resultant_angle = 2*math.pi - resultant_angle
     
-    
+    # Ensure angle stays between 0 and 2*pi
     resultant_angle = clamp(resultant_angle)
+
     # TODO compare resultant_angle with angle(main_boid) to determine angular velocity
     # Maybe keep a constant linear velocity and only worry about signing it
     angular_velocity = clamp(resultant_angle - angle(main_boid))
@@ -100,7 +102,7 @@ def next(main_boid, other_boids):# Function to implement Boid rules
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
     return (linear_velocity, angular_velocity, led_colour)
 
-
+# Function to rectify an angle to between 0 and 2*pi
 def clamp(angle):
     return angle % (2*math.pi)
 
@@ -110,11 +112,9 @@ def distance(pose1, pose2):
             ((pose1.position.x - pose2.position.x) ** 2)
           + ((pose1.position.y - pose2.position.y) ** 2) )
 
-
 # Function to calculate angle between two boids
 def angle_between(pose1, other_x, other_y):
     return math.atan2(other_y - pose1.position.y, other_x - pose1.position.x)
-
 
 # Function to get the Euler Z angle of a boid
 def angle(pose):
@@ -127,6 +127,6 @@ def angle(pose):
 
     return clamp(yaw_z)
 
-
+# Function to return the sign of a number
 def sign(num):
     return -1 if num < 0 else 1
