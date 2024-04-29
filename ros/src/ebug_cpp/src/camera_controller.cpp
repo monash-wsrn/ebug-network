@@ -15,10 +15,6 @@
 
 using namespace std::chrono_literals;
 
-#include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(ebug::CameraController)
-
-
 namespace ebug
 {
     class CameraController : public rclcpp::Node
@@ -71,10 +67,13 @@ namespace ebug
     };
 }
 
-int main(int argc, char * argv[])
-{
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<ebug::CameraController>());
-  rclcpp::shutdown();
-  return 0;
-}
+// int main(int argc, char * argv[])
+// {
+//   rclcpp::init(argc, argv);
+//   rclcpp::spin(std::make_shared<ebug::CameraController>());
+//   rclcpp::shutdown();
+//   return 0;
+// }
+
+#include "rclcpp_components/register_node_macro.hpp"
+RCLCPP_COMPONENTS_REGISTER_NODE(ebug::CameraController)
