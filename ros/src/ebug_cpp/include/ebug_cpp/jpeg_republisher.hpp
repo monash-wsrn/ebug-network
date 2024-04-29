@@ -28,6 +28,8 @@ namespace ebug
         private:
             std::shared_ptr<Plugin> m_Publisher;
             image_transport::Subscriber m_Subscriber;
+            
+            std::vector<pluginlib::ClassLoader<Plugin>> m_Loader;
 
         public:
             explicit JpegRepublisher(const rclcpp::NodeOptions& options);
