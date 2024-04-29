@@ -24,8 +24,8 @@ def generate_launch_description():
         ],
         remappings = [
             ('in/compressed', 'image_raw/compressed'),
-            ('out', 'image_rect',)
-            #('out', 'image_raw/uncompressed'),  # The uncomrpessed jpeg output needs no color correction, feed into AprilTags
+            #('out', 'image_rect',)
+            ('out', 'image_raw/uncompressed'),  # The uncomrpessed jpeg output needs no color correction, feed into AprilTags
         ]
     )
 
@@ -96,7 +96,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
         
         MotionJPEGDecompress,
-        # ImageProcNode, # TODO optimise
+        ImageProcNode, # TODO optimise
         AprilTagNode,
         TransformConverterNode,
         EKFPose,
