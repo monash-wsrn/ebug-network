@@ -120,13 +120,14 @@ def create_camera_composable_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
         name = 'DecompressMJPEG',
         namespace = NAMESPACE,
     
-        arguments = [
-            'compressed',
-            'raw',
+        parameters=[
+            {'in_transport':    'compressed'    },
+            {'out_transport':   'raw'           },
         ],
+
         remappings = [
-            ('in/compressed', 'image_compressed'),
-            ('out', 'image_uncompressed'), 
+            ('in/compressed',   'image_compressed'  ),
+            ('out',             'image_uncompressed'), 
         ]
     )
 
