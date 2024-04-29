@@ -24,7 +24,8 @@ def generate_launch_description():
         ],
         remappings = [
             ('in/compressed', 'image_raw/compressed'),
-            ('out', 'image_raw/uncompressed'),  # The uncomrpessed jpeg output needs no color correction, feed into AprilTags
+            ('out', 'image_rect',)
+            #('out', 'image_raw/uncompressed'),  # The uncomrpessed jpeg output needs no color correction, feed into AprilTags
         ]
     )
 
