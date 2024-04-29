@@ -13,7 +13,7 @@ namespace ebug
         std::string out_transport = this->declare_parameter<std::string>("out_transport", "raw");
 
         // Load transport plugin
-        m_Loader =  std::make_shared<pluginlib::ClassLoader<Plugin>>("image_transport", "image_transport::PublisherPlugin");
+        m_Loader = std::make_shared<pluginlib::ClassLoader<Plugin>>("image_transport", "image_transport::PublisherPlugin");
         std::string lookup_name = Plugin::getLookupName(out_transport);
 
         auto instance = m_Loader->createUniqueInstance(lookup_name);
