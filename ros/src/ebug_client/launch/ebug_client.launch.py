@@ -20,7 +20,7 @@ def generate_launch_description():
         
     CameraControllerNode = Node(
         package = 'ebug_client',
-        executable = 'camera_controller',
+        executable = 'CameraController',
         name = 'CameraController',
         namespace = ROBOT_ID,
         parameters=[
