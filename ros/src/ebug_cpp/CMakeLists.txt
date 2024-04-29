@@ -34,10 +34,12 @@ rclcpp_components_register_node(
   EXECUTABLE byte_rectifier
 )
 
+ament_export_targets(export_ebug_components)
 install(TARGETS
   camera_controller_component
   byte_rectifier_component
 
+  EXPORT export_ebug_components
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
