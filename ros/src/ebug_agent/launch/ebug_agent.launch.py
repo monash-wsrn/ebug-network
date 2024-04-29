@@ -24,7 +24,19 @@ def generate_launch_description():
         ],
         remappings = [
             ('in/compressed', 'image_raw/compressed'),
-            ('out', 'image_rect'),  # The uncomrpessed jpeg output needs no color correction, feed into AprilTags
+            ('out', 'image_raw/uncompressed'),  # The uncomrpessed jpeg output needs no color correction, feed into AprilTags
+        ]
+    )
+
+    # launch the image processing nodes
+    ImageProcNode = Node(
+        package = 'image_proc',
+        executable = 'rectify_node',
+        name = 'RectifyColor',
+        namespace = ROBOT_ID,
+
+        remappings = [
+            ('image', 'image_raw/uncompressed')
         ]
     )
 
@@ -83,6 +95,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
         
         MotionJPEGDecompress,
+        ImageProcNode,
         AprilTagNode,
         TransformConverterNode,
         EKFPose,
