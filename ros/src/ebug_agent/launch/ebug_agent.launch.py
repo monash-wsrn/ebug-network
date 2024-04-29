@@ -95,7 +95,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
         
         MotionJPEGDecompress,
-        ImageProcNode,
+        # ImageProcNode, # TODO optimise
         AprilTagNode,
         TransformConverterNode,
         EKFPose,
