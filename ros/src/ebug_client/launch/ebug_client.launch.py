@@ -94,7 +94,7 @@ def create_camera_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
         ],
         remappings = [
             ('in/compressed', 'image_compressed'),
-            ('out', 'image_uncompressed'), 
+            ('out', 'image_rect'), 
         ]
     )
 
@@ -110,4 +110,4 @@ def create_camera_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
         ]
     )
 
-    return [CameraNode, ByteRectifier, MotionJPEGDecompress, ImageProcNode]
+    return [CameraNode, ByteRectifier, MotionJPEGDecompress ] #, ImageProcNode]
