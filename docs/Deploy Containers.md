@@ -20,7 +20,7 @@
     ```sh
     # Supply environment variables using the -e flag. The available variable defaults are:
     #    ROBOT_ID (String):         'default'
-    #    ALL_CAMERAS (String):      'disable'   // Enable/disable using all four cameras
+    #    CAMERAS (String):          'cam_0'   // List, separating with a comma, the cameras to use
     
     # Supply host devices using the --device flag. The mappable devices are:
     #    /dev/i2c-1  (Required)
@@ -30,7 +30,7 @@
     #    /dev/video6 (Optional) also include /dev/video7
 
     docker run --net host --ipc host --pid host \
-        -e ROBOT_ID='robot_0' -e ALL_CAMERAS='enable' \
+        -e ROBOT_ID='robot_0' -e CAMERAS='cam_0,cam_1,cam_2,cam_3' \
         --device /dev/video0 --device /dev/video1 \
         --device /dev/video2 --device /dev/video3 \
         --device /dev/video4 --device /dev/video5 \

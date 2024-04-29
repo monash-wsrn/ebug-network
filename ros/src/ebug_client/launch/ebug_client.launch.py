@@ -6,7 +6,7 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
-    CAMERA_IDS = os.getenv('ALL_CAMERAS', 'cam_0').split(',')
+    CAMERA_IDS = os.getenv('CAMERAS', 'cam_0').split(',')
 
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
 
