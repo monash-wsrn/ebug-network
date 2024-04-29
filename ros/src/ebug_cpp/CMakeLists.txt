@@ -17,10 +17,10 @@ find_package(ebug_interfaces REQUIRED)
 
 include_directories(include)
 
-add_library(camera_controller_component src/camera_controller.cpp)
+add_library(camera_controller_component SHARED  src/camera_controller.cpp)
 ament_target_dependencies(camera_controller_component rclcpp rclcpp_components sensor_msgs message_filters)
 
-add_library(byte_rectifier_component src/byte_rectifier.cpp)
+add_library(byte_rectifier_component SHARED src/byte_rectifier.cpp)
 ament_target_dependencies(byte_rectifier_component rclcpp rclcpp_components sensor_msgs message_filters)
 
 rclcpp_components_register_node(
@@ -34,7 +34,6 @@ rclcpp_components_register_node(
   PLUGIN "ebug::ByteRectifier"
   EXECUTABLE byte_rectifier
 )
-
 
 # Install include directories
 install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
