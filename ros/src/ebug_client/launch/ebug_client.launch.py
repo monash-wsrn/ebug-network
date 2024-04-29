@@ -6,23 +6,20 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
-    ALL_CAMERAS = os.getenv('ALL_CAMERAS', 'disable').lower() == "enable"
+    CAMERA_IDS = os.getenv('ALL_CAMERAS', 'cam_0').split(',')
 
     PKG_SHARE = FindPackageShare(package='ebug_client').find('ebug_client')
 
 
-    CAMERA_IDS = ['cam_0']
     CAMERA_NODES = []
-
-    CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_0", PKG_SHARE, '/dev/video0') )
-    if ALL_CAMERAS:   
-        CAMERA_IDS.extend( ['cam_1', 'cam_2', 'cam_3'] )
-        CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_1", PKG_SHARE, '/dev/video2') )
-        CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_2", PKG_SHARE, '/dev/video4') )
-        CAMERA_NODES.append( create_camera_node(ROBOT_ID, "cam_3", PKG_SHARE, '/dev/video6') )
+    VIDX = 0    # 0, 2, 4, and 6
+    for cam_id in CAMERA_IDS:
+        CAMERA_NODES.extend( create_camera_nodes(ROBOT_ID, cam_id, PKG_SHARE, f'/dev/video{VIDX}') )
+        VIDX += 2
+        
         
     CameraControllerNode = Node(
-        package = 'ebug_cpp',
+        package = 'ebug)client',
         executable = 'camera_controller',
         name = 'CameraController',
         namespace = ROBOT_ID,
@@ -51,23 +48,18 @@ def generate_launch_description():
 
 
 
-def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
-    # USB 2 Bus = 480 Mbps max channel bandwidth
-    # 640x480 YUYV is aout 5 Mbps per camera per frame
-    # Thus we have a hard max of 96 frames per second
-    # Accross four cameras, this limits a hard max of 24 fps
-    # Stay well below this and ensure we minimise timeouts
-    
+def create_camera_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):   
     FRAME_RATE = 10.0
     WIDTH = 640
     HEIGHT = 480
     CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 
+    NAMESPACE = f'{ROBOT_ID}/{CAM_ID}'
 
-    return Node(
+    CameraNode = Node(
         package = 'usb_cam',
         executable = 'usb_cam_node_exe',
         name = 'Camera',
-        namespace = f'{ROBOT_ID}/{CAM_ID}',
+        namespace = NAMESPACE,
 
         parameters=[
             {'video_device':    VIDEO_DEVICE        },  
@@ -80,3 +72,42 @@ def create_camera_node(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
             {'image_width':     WIDTH               },
         ]
     )
+
+    # Correctly select raw camera bytes for compressed data stream
+    ByteRectifier = Node(
+        package = 'ebug_client',
+        executable = 'ByteRectifier',
+        name = 'ByteRectifier',
+        namespace = NAMESPACE,
+    )
+
+    # Decompress jpeg format into raw image
+    MotionJPEGDecompress = Node(
+        package = 'image_transport',
+        executable = 'republish',
+        name = 'DecompressMJPEG',
+        namespace = NAMESPACE,
+    
+        arguments = [
+            'compressed',
+            'raw',
+        ],
+        remappings = [
+            ('in/compressed', 'image_compressed'),
+            ('out', 'image_uncompressed'), 
+        ]
+    )
+
+    # launch the image processing nodes (rectify camera distortion)
+    ImageProcNode = Node(
+        package = 'image_proc',
+        executable = 'rectify_node',
+        name = 'RectifyColor',
+        namespace = NAMESPACE,
+
+        remappings = [
+            ('image', 'image_uncompressed')
+        ]
+    )
+
+    return [CameraNode, ByteRectifier, MotionJPEGDecompress, ImageProcNode]
