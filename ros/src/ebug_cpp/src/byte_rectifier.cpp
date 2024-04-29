@@ -18,14 +18,14 @@ class ByteRectifier : public rclcpp::Node
 {
     private:
         rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr m_CompressedImagePublisher;
-        rclcpp::Subscriber<sensor_msgs::msg::Image>::SharedPtr m_ImageSubscriber;
+        rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr m_ImageSubscription;
 
     public:
         ByteRectifier() : Node("ByteRectifier")
         {
             m_CompressedImagePublisher = this->create_publisher<sensor_msgs::msg::CompressedImage>("image_compressed", 10);
 
-            m_ImageSubscriber = this->create_subscription<sensor_msgs::msg::Image>("image_raw", 10, std::bind(&ByteRectifier::camera_callback, this, _1));
+            m_ImageSubscription = this->create_subscription<sensor_msgs::msg::Image>("image_raw", 10, std::bind(&ByteRectifier::camera_callback, this, std::placeholders::_1));
         }
 
     private:
