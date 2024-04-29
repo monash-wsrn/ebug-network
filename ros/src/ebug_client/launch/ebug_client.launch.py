@@ -33,8 +33,15 @@ def generate_launch_description():
     )
     COMPOSABLE_NODES.append(CameraControllerNode)
 
+
+    ContainerLaunchArg = DeclareLaunchArgument(
+        name=f'{ROBOT_ID}_container', 
+        default_value='',
+        description=('')
+    )
+
     ComposablesContainer = ComposableNodeContainer(
-        condition=LaunchConfigurationEquals('ebug_container', ''),
+        condition=LaunchConfigurationEquals(f'{ROBOT_ID}_container', ''),
         package='rclcpp_components',
         executable='component_container',
         name='ebug_composables_container',
@@ -43,17 +50,10 @@ def generate_launch_description():
     )
 
     ComposablesLoader = LoadComposableNodes(
-        condition=LaunchConfigurationNotEquals('ebug_container', ''),
+        condition=LaunchConfigurationNotEquals(f'{ROBOT_ID}_container', ''),
         composable_node_descriptions=COMPOSABLE_NODES,
-        target_container=LaunchConfiguration('ebug_container'),
+        target_container=LaunchConfiguration(f'{ROBOT_ID}_container'),
     )
-
-    ComposablesConfig = SetLaunchConfiguration(
-        condition=LaunchConfigurationEquals('ebug_container', ''),
-        name='ebug_container',
-        value='ebug_composables_container'
-    )
-
 
 
     RobotControllerNode = Node(
@@ -69,10 +69,9 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
 
+        ContainerLaunchArg,
         ComposablesContainer,
         ComposablesLoader,
-        ComposablesConfig,
-        CameraControllerNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
 
