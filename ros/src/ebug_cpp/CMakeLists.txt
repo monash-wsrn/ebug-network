@@ -10,8 +10,14 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 
+find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(message_filters REQUIRED)
+find_package(image_transport REQUIRED)
+find_package(compressed_image_transport REQUIRED)
+find_package(image_proc REQUIRED)
+find_package(pluginlib REQUIRED)
 
 find_package(ebug_interfaces REQUIRED)
 
@@ -21,7 +27,12 @@ add_library(camera_controller_component SHARED  src/camera_controller.cpp)
 ament_target_dependencies(camera_controller_component rclcpp rclcpp_components sensor_msgs message_filters)
 
 add_library(byte_rectifier_component SHARED src/byte_rectifier.cpp)
-ament_target_dependencies(byte_rectifier_component rclcpp rclcpp_components sensor_msgs message_filters)
+ament_target_dependencies(byte_rectifier_component rclcpp rclcpp_components sensor_msgs)
+
+add_library(jpeg_republisher_component SHARED src/jpeg_republisher.cpp)
+ament_target_dependencies(jpeg_republisher_component rclcpp rclcpp_components sensor_msgs image_transport pluginlib)
+
+ament_export_dependencies(rclcpp rclcpp_components nav_msgs sensor_msgs geometry_msgs message_filters image_transport compressed_image_transport image_proc pluginlib)
 
 rclcpp_components_register_node(
   camera_controller_component
@@ -35,12 +46,19 @@ rclcpp_components_register_node(
   EXECUTABLE byte_rectifier
 )
 
+rclcpp_components_register_node(
+  jpeg_republisher_component
+  PLUGIN "ebug::JpegRepublisher"
+  EXECUTABLE jpeg_republisher
+)
+
 # Install include directories
 install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
 
 install(TARGETS
   camera_controller_component
   byte_rectifier_component
+  jpeg_republisher_component
 
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

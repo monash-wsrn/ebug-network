@@ -35,24 +35,24 @@ def generate_launch_description():
 
 
     ContainerLaunchArg = DeclareLaunchArgument(
-        name=f'{ROBOT_ID}_container', 
-        default_value='',
-        description=('')
+        name = f'{ROBOT_ID}_container', 
+        default_value = '',
+        description = ('')
     )
 
     ComposablesContainer = ComposableNodeContainer(
-        condition=LaunchConfigurationEquals(f'{ROBOT_ID}_container', ''),
-        package='rclcpp_components',
-        executable='component_container',
-        name='ebug_composables_container',
-        namespace='',
-        composable_node_descriptions=COMPOSABLE_NODES,
+        condition = LaunchConfigurationEquals(f'{ROBOT_ID}_container', ''),
+        package = 'rclcpp_components',
+        executable = 'component_container',
+        name = 'ebug_composables_container',
+        namespace = '',
+        composable_node_descriptions = COMPOSABLE_NODES,
     )
 
     ComposablesLoader = LoadComposableNodes(
-        condition=LaunchConfigurationNotEquals(f'{ROBOT_ID}_container', ''),
-        composable_node_descriptions=COMPOSABLE_NODES,
-        target_container=LaunchConfiguration(f'{ROBOT_ID}_container'),
+        condition = LaunchConfigurationNotEquals(f'{ROBOT_ID}_container', ''),
+        composable_node_descriptions = COMPOSABLE_NODES,
+        target_container = LaunchConfiguration(f'{ROBOT_ID}_container'),
     )
 
 
@@ -114,8 +114,8 @@ def create_camera_composable_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
     # https://github.com/ros-perception/image_common/blob/rolling/image_transport/CMakeLists.txt
     # Decompress jpeg format into raw image
     MotionJPEGDecompress = ComposableNode(
-        package = 'image_transport',
-        plugin = 'image_transport::Republisher',
+        package = 'ebug_cpp',               #'image_transport',
+        plugin = 'ebug::JpegRepublisher',   #'image_transport::Republisher',
         name = 'DecompressMJPEG',
         namespace = NAMESPACE,
     

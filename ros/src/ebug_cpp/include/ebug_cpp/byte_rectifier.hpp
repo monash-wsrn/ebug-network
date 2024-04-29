@@ -27,7 +27,6 @@ namespace ebug
             rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr m_ImageSubscription;
 
         public:
-            EBUG_EXPORT
             explicit ByteRectifier(const rclcpp::NodeOptions& options);
 
         private:

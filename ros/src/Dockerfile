@@ -13,6 +13,8 @@ RUN sudo apt-get install -y \
     ros-humble-robot-localization \
     ros-humble-tf2-tools \
     ros-humble-tf-transformations \
+    ros-humble-image-transport \
+    ros-humble-image-transport-plugins \
     ros-humble-image-pipeline \
     ros-humble-apriltag-ros \
     ros-humble-usb-cam

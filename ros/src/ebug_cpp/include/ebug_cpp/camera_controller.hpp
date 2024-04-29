@@ -38,7 +38,6 @@ namespace ebug
             std::vector<std::shared_ptr<message_filters::Synchronizer<approximate_policy>>> m_Synchronizers;
 
         public:
-            EBUG_EXPORT
             explicit CameraController(const rclcpp::NodeOptions& options);
 
         private:
