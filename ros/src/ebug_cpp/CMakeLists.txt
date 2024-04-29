@@ -15,6 +15,7 @@ find_package(message_filters REQUIRED)
 
 find_package(ebug_interfaces REQUIRED)
 
+include_directories(include)
 
 add_library(camera_controller_component src/camera_controller.cpp)
 ament_target_dependencies(camera_controller_component rclcpp rclcpp_components sensor_msgs message_filters)
@@ -34,12 +35,14 @@ rclcpp_components_register_node(
   EXECUTABLE byte_rectifier
 )
 
-ament_export_targets(export_ebug_components)
+
+# Install include directories
+install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
+
 install(TARGETS
   camera_controller_component
   byte_rectifier_component
 
-  EXPORT export_ebug_components
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
