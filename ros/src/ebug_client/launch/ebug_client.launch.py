@@ -19,8 +19,8 @@ def generate_launch_description():
         
         
     CameraControllerNode = Node(
-        package = 'ebug_client',
-        executable = 'CameraController',
+        package = 'ebug_cpp',
+        executable = 'camera_controller',
         name = 'CameraController',
         namespace = ROBOT_ID,
         parameters=[
@@ -75,8 +75,8 @@ def create_camera_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
 
     # Correctly select raw camera bytes for compressed data stream
     ByteRectifier = Node(
-        package = 'ebug_client',
-        executable = 'ByteRectifier',
+        package = 'ebug_cpp',
+        executable = 'byte_rectifier',
         name = 'ByteRectifier',
         namespace = NAMESPACE,
     )

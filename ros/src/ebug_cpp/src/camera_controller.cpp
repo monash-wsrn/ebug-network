@@ -7,7 +7,6 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include <sensor_msgs/msg/image.hpp>
-#include <sensor_msgs/msg/compressed_image.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 
 #include <message_filters/subscriber.h>
@@ -25,7 +24,7 @@ class CameraController : public rclcpp::Node
 
     private:
         rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr m_CameraInfoPublisher;
-        rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr m_CompressedImagePublisher;
+        rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr m_ImagePublisher;
 
         std::vector<std::string> m_Cameras;
         std::vector<std::shared_ptr<message_filters::Subscriber<sensor_msgs::msg::Image>>> m_Images;
@@ -37,12 +36,12 @@ class CameraController : public rclcpp::Node
         {
             m_Cameras = this->declare_parameter<std::vector<std::string>>("cameras", std::vector<std::string>( { "cam_0" } ));
 
-            m_CompressedImagePublisher = this->create_publisher<sensor_msgs::msg::CompressedImage>("image_raw/compressed", 10);
+            m_ImagePublisher = this->create_publisher<sensor_msgs::msg::Image>("image_rect", 10);
             m_CameraInfoPublisher = this->create_publisher<sensor_msgs::msg::CameraInfo>("camera_info", 10);
 
             for (auto &cam_id : m_Cameras) 
             {
-                auto image = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>(this, cam_id + "/image_raw");
+                auto image = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>(this, cam_id + "/image_rect");
                 image->subscribe();
                 m_Images.push_back(image);
 
@@ -62,15 +61,8 @@ class CameraController : public rclcpp::Node
 
     private:
         void camera_callback(const sensor_msgs::msg::Image::ConstSharedPtr& image, const sensor_msgs::msg::CameraInfo::ConstSharedPtr& cinfo) const
-        {
-            sensor_msgs::msg::CompressedImage cimage;
-
-            cimage.header = image->header;
-            cimage.data = image->data;
-
-            cimage.format = "jpeg";
-            
-            m_CompressedImagePublisher->publish(cimage);
+        {            
+            m_ImagePublisher->publish(*image);
             m_CameraInfoPublisher->publish(*cinfo);
         }
 };

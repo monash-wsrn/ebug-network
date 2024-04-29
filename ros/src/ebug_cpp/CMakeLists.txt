@@ -21,8 +21,12 @@ find_package(ebug_interfaces REQUIRED)
 add_executable(camera_controller src/camera_controller.cpp)
 ament_target_dependencies(camera_controller rclcpp sensor_msgs message_filters)
 
+add_executable(byte_rectifier src/byte_rectifier.cpp)
+ament_target_dependencies(byte_rectifier rclcpp sensor_msgs message_filters)
+
 install(TARGETS 
   camera_controller
+  byte_rectifier
   DESTINATION lib/${PROJECT_NAME}
 )
 
