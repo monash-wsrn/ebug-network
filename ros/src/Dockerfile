@@ -8,6 +8,7 @@ RUN sudo apt-get update
 
 # ROS packages
 RUN sudo apt-get install -y \
+    ros-humble-rclcpp-components \
     ros-humble-ament-cmake-clang-format \
     ros-humble-robot-localization \
     ros-humble-tf2-tools \
