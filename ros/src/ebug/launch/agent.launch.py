@@ -14,9 +14,7 @@ def generate_launch_description():
     CAMERA_IDS = os.getenv('CAMERAS', 'cam_0').split(',')
 
     PKG_SHARE = FindPackageShare(package='ebug').find('ebug')
-    APRIL_TAG_PATH = os.path.join(PKG_SHARE, 'config/aprilTag.yaml') 
     EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
-
 
 
     COMPOSABLE_NODES = []
@@ -36,22 +34,6 @@ def generate_launch_description():
                 {'cameras':     CAMERA_IDS  }
             ]
         ) 
-    )
-
-    # launch the apriltag node
-    # https://github.com/christianrauch/apriltag_ros/blob/master/CMakeLists.txt
-    COMPOSABLE_NODES.append( 
-        ComposableNode(
-            package = 'apriltag_ros',
-            plugin = 'AprilTagNode',
-            name = 'AprilTag',
-            namespace = ROBOT_ID,
-            
-            parameters = [ APRIL_TAG_PATH ],
-            remappings = [
-                ('/tf', 'tf_detections'),   # This must be '/tf' as the AprilTag publishes to the absolute topic
-            ]
-        )
     )
 
 
@@ -143,6 +125,7 @@ def create_camera_composable_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
     WIDTH = 640
     HEIGHT = 480
     CAM_INFO = os.path.join(PKG_SHARE, f'calibration/{CAM_ID}.yaml') 
+    APRIL_TAG_PATH = os.path.join(PKG_SHARE, 'config/aprilTag.yaml') 
     NAMESPACE = f'{ROBOT_ID}/{CAM_ID}'
 
     # https://github.com/ros-drivers/usb_cam/blob/ros2/CMakeLists.txt
@@ -204,4 +187,19 @@ def create_camera_composable_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
         ]
     )
 
-    return [CameraNode, ByteRectifier, MotionJPEGDecompress, ImageProcNode]
+    # https://github.com/christianrauch/apriltag_ros/blob/master/CMakeLists.txt
+    # launch the apriltag node
+    AprilTagNode = ComposableNode(
+        package = 'apriltag_ros',
+        plugin = 'AprilTagNode',
+        name = 'AprilTag',
+        namespace = NAMESPACE,
+        
+        parameters = [ APRIL_TAG_PATH ],
+        remappings = [
+            ('/tf', f'/{ROBOT_ID}/tf_detections'),  # This must be '/tf' as the AprilTag publishes to the absolute topic
+                                                    # We also want to publish absolutely to /robot_id/tf_detections
+        ]
+    )
+
+    return [CameraNode, ByteRectifier, MotionJPEGDecompress, ImageProcNode, AprilTagNode]
