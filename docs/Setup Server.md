@@ -1,5 +1,5 @@
 
-## Organise a host device for the Principal and Agent(s)
+## Organise a host device for the Principal
 ***Ensure all virtual/unused network adapaters are disabled on the host device***
 ***Windows cannot be used for this, as WSL introduces a layer of network virtualisation***
 

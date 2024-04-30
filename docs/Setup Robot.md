@@ -116,9 +116,8 @@ Pololu Tutorial [here](https://www.pololu.com/blog/663/building-a-raspberry-pi-r
 Follow the instructions [here](/docs/Deploy%20Containers.md) to build and deploy the relevant container(s).
 
 ## Identify the cameras
-1. Deploy and run an ebug container as a Client
-2. Deploy and run an ebug container as an Agent
-3. Deploy and run another ebug container:
+1. Deploy and run an ebug container as an Agent
+2. Deploy and run another ebug container:
     ```sh
     # Substitute 'robot_0' with the desired robot id
     ros2 topic echo /robot_0/tf_detections | grep "frame_id: cam_"

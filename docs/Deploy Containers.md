@@ -15,11 +15,13 @@
     ```
 
 
-## Deploy the container (Client Mode)
-1. Run the ebug container as a client
+## Deploy the container (Agent Mode)
+*Intended to be run on the Raspberry Pi.*
+1. Run the ebug container as an agent
     ```sh
     # Supply environment variables using the -e flag. The available variable defaults are:
     #    ROBOT_ID (String):         'default'
+    #    ROBOT_ALGO (String):       'BoidsService'
     #    CAMERAS (String):          'cam_0'   // List, separating with a comma, the cameras to use
     
     # Supply host devices using the --device flag. The mappable devices are:
@@ -38,25 +40,12 @@
         --device /dev/i2c-1 --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
-    ./launch client
-    ```
-
-
-## Deploy the container (Agent Mode)
-1. Run the ebug container as an agent
-    ```sh
-    # Supply environment variables using the -e flag. The available variable defaults are:
-    #    ROBOT_ID (String):         'default'
-    #    ROBOT_ALGO (String):       'BoidsService'
-
-    docker run --net host --ipc host --pid host -e ROBOT_ID='robot_0' --rm -it ebug
-    
-    # In the containers interactive terminal, you can launch the ROS2 package
     ./launch agent
     ```
 
 
 ## Deploy the container (Principal Mode)
+*Intended to be run on the central computer.*
 1. Run the ebug container as a principal
     ```sh
     # Supply environment variables using the -e flag. The available variable defaults are:
@@ -70,6 +59,7 @@
 
 
 ## Deploy the container (Pseudo Mode)
+*Intended to be run on a development computer.*
 1. Run the ebug container as a pseudo
     ```sh
     # Supply environment variables using the -e flag. The available variable defaults are:
@@ -89,6 +79,7 @@
 
 
 ## Deploy the container (Visualiser Mode)
+*Intended to be run on a development computer.*
 1. Run the ebug container as a visualiser
     ```sh
     # Supply environment variables using the -e flag. The available variable defaults are:
@@ -105,6 +96,7 @@
 
 
 ## Access the container ROS2 network
+*Intended to be done on a development computer.*
 1. Access the ROS2 network of the container(s) from the host device
     ```sh
     # Enter bash as the root user, which is running the containers
