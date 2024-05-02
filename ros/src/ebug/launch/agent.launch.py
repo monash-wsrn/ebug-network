@@ -22,19 +22,6 @@ def generate_launch_description():
     for cam_id in CAMERA_IDS:
         COMPOSABLE_NODES.extend( create_camera_composable_nodes(ROBOT_ID, cam_id, PKG_SHARE, f'/dev/video{VIDX}') )
         VIDX += 2
-        
-        
-    COMPOSABLE_NODES.append( 
-        ComposableNode(
-            package = 'ebug_base',
-            plugin = 'ebug::CameraController',
-            name = 'CameraController',
-            namespace = ROBOT_ID,
-            parameters=[
-                {'cameras':     CAMERA_IDS  }
-            ]
-        ) 
-    )
 
 
 
