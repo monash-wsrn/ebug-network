@@ -2,8 +2,13 @@
 1. Install the [Arduino IDE](https://www.arduino.cc/en/software)
 2. Optionally install [Windows Drivers](https://www.pololu.com/docs/0J69/5.1)
 3. Add IDE support for the [Pololu Device](https://www.pololu.com/docs/0J69/5.2) <br>
-    i. Optionally, test with a provided example
-4. Load the **RomiRPiSlaveDemo** into the board 
+    i. Install the *Pololu A-Star Boards* package
+    ii. Optionally, test with a provided example
+4. Load the **RomiRPiSlaveLED.ino** into the board, via USB Micro B cable
+    i. Open the code file in the Arduino IDE
+    ii. Select the Pololu A-Star 32U4 Board and corresponding COM port
+    iii. Install the *FastLED* and *PololuRPiSlave* libraries
+    iv. Upload the project ot the Romi, it may display a warning
 
 *Troubleshooting documentation can be found [here](https://support.arduino.cc/hc/en-us/articles/360016495679-Fix-port-access-on-Linux).*
 ***TODO, Refine Romi programming instructions***
