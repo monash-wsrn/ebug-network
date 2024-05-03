@@ -32,7 +32,7 @@
     #    /dev/video6 (Optional) also include /dev/video7
 
     docker run --net host --ipc host --pid host \
-        -e ROBOT_ID='robot_0' -e CAMERAS='cam_0,cam_1,cam_2,cam_3' \
+        -e ROBOT_ID=$HOSTNAME -e CAMERAS='cam_0,cam_1,cam_2,cam_3' \
         --device /dev/video0 --device /dev/video1 \
         --device /dev/video2 --device /dev/video3 \
         --device /dev/video4 --device /dev/video5 \

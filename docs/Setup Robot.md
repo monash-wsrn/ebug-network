@@ -56,6 +56,8 @@
     ```sh
     sudo apt install linux-modules-extra-raspi
     sudo rpi-eeprom-update
+
+    sudo hostnamectl set-hostname <robot_id>
     sudo reboot
     ```
 6. Install Git and [Docker](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
