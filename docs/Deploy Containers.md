@@ -51,7 +51,7 @@
     # Supply environment variables using the -e flag. The available variable defaults are:
     #    ----
 
-    docker run --net host --ipc host --pid host -e --rm -it ebug
+    docker run --net host --ipc host --pid host --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch principal
