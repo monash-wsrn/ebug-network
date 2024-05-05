@@ -17,7 +17,12 @@ RUN sudo apt-get install -y \
     ros-humble-image-transport-plugins \
     ros-humble-image-pipeline \
     ros-humble-apriltag-ros \
-    ros-humble-usb-cam
+    ros-humble-usb-cam \
+    ros-humble-grid-map
+
+# Qt5 Packages
+RUN sudo apt-get install -y \
+    libqt5widgets5
 
 # Python packages
 RUN sudo apt-get install -y \

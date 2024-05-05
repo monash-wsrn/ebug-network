@@ -10,11 +10,18 @@
   <depend>rclpy</depend>
   <depend>rclcpp_components</depend>
 
+  <depend>rviz_default_plugins</depend>
+  
+  <depend>std_srvs</depend>
   <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
 
-  <depend>std_srvs</depend>
+  <depend>grid_map</depend>
+  <depend>grid_map_core</depend>
+  <depend>grid_map_ros</depend>
+  <depend>grid_map_rviz_plugin</depend>
+  <depend>grid_map_visualization</depend>
 
   <depend>tf_transformations</depend>
   <depend>message_filters</depend>
@@ -24,9 +31,6 @@
   
   <depend>ebug_base</depend>
 
-  <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
 
   <export>

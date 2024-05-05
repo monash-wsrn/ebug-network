@@ -4,7 +4,7 @@ from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
 
 from ebug_base.srv import ComputeTarget
-from geometry_msgs.msg import Twist, PoseWithCovarianceStamped, PoseWithCovariance, Pose, Quaternion 
+from geometry_msgs.msg import Twist, PoseWithCovariance, Pose, Quaternion 
 
 class PseudoMovementController(Node):
     def __init__(self):
@@ -56,17 +56,18 @@ class PseudoMovementController(Node):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
 
-        delta = self.delta_time()
+        delta = self.delta_time() * 0.05
         self.yaw                += delta * self.twist.angular.z
         self.pose.position.x    += delta * self.twist.linear.x * math.cos(self.yaw)
         self.pose.position.y    += delta * self.twist.linear.x * math.sin(self.yaw)
         self.pose.orientation = self.quat()
+
+        self.get_logger().info(f"At position ({self.pose.position.x}, {self.pose.position.y}) facing {self.yaw}")
         
         request = ComputeTarget.Request()
         request.robot_id = self.get_namespace()
-        request.pose = PoseWithCovarianceStamped()
-        request.pose.pose = PoseWithCovariance()
-        request.pose.pose.pose = self.pose
+        request.pose = PoseWithCovariance()
+        request.pose.pose = self.pose
 
         future = self.client.call_async(request)
         future.add_done_callback(self.future_callback)

@@ -14,8 +14,9 @@
     sudo usermod -aG docker ${USER}
     su - ${USER}
     ```
-5. Install [XMing for Windows](https://sourceforge.net/projects/xming/) or [XQuartz for macOS](https://www.xquartz.org/)
-6. Run the ***XLaunch*** to capture the visualisation window from the Docker container. For more information, visit [here](https://medium.com/@rndonovan1/running-pygame-gui-in-a-docker-container-on-windows-cc587d99f473).
+5. Install [VcXsrv for Windows](https://github.com/marchaesen/vcxsrv/releases/tag/21.1.10) or [XQuartz for macOS](https://www.xquartz.org/)
+6. Run the ***XLaunch*** to capture the visualisation window from the Docker container. 
+    For more information, visit [here](https://medium.com/@rndonovan1/running-pygame-gui-in-a-docker-container-on-windows-cc587d99f473).
 
 
 ## Running the containers
