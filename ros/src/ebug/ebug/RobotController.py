@@ -87,22 +87,17 @@ class RobotController(Node):
                 continue
     
     def motors(self,left, right, led):
-        while True:
+        self.try_i2c(lambda : self.a_star.motors(int(left), int(right)), "I/O error moving motors")
+        self.try_i2c(lambda : self.a_star.led_ring(int(led.x), int(led.y), int(led.z)), "I/O error setting LEDs")
+    
+    def try_i2c(self, i2c_func, msg):
+        for _ in range(10):
             try:
-                self.a_star.motors(int(left), int(right))
-                break
+                i2c_func()
+                return
             except:
-                self.get_logger().info("I/O error moving motors")
                 continue
-            
-        while True:
-            try:
-                self.a_star.led_ring(int(led.x), int(led.y), int(led.z))
-                break
-            except:
-                self.get_logger().info("I/O error setting LEDs")
-                continue
-
+        self.get_logger().info(msg)
 
     
     # Kinematic motion model
