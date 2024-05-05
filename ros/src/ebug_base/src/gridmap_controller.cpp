@@ -9,6 +9,8 @@ namespace ebug
         this->declare_parameter<double>("sigma_y", 0.5);
         this->declare_parameter<double>("amplitude", 0.0001);
         
+        this->declare_parameter<double>("scale_down", 1);
+        
         rclcpp::Time now = this->get_clock()->now();
         subscription_ = this->create_subscription<ebug_base::msg::RobotPose>(
             "/global_poses", 10, std::bind(&GridmapController::topic_callback, this, std::placeholders::_1));
@@ -33,24 +35,33 @@ namespace ebug
     // void GridmapController::update_grid_map(const ebug_base::msg::RobotPose::SharedPtr& msg, const rclcpp::Time& receive_time)
     void GridmapController::update_grid_map()
     {
+        // Define the parameters of the Gaussian function
+        double sigma_x, sigma_y, amplitude, scale_down;
+        this->get_parameter("sigma_x", sigma_x);
+        this->get_parameter("sigma_y", sigma_y);
+        this->get_parameter("amplitude", amplitude);
+        this->get_parameter("scale_down", scale_down);
+
+        if (scale_down == 0.0)
+            scale_down = 1.0;
+
+        sigma_x /= scale_down;
+        sigma_y /= scale_down;
+
         auto start_time = this->get_clock()->now();
        
         // Initialise the grid map
         grid_map::GridMap map({"elevation"});
         map.setFrameId("map");
-        map.setGeometry(grid_map::Length(19.20, 10.80), 0.03);
+        
+        map.setGeometry(grid_map::Length(19.20 / scale_down, 10.80 / scale_down), 0.03);    //  3 cm x  3 cm per cell
+
         map["elevation"].setConstant(0.0);
 
         // Scale Factors 
-        const double scale_x = 11.1; // cm per RVIZ unit
-        const double scale_y = 12.65;  // cm per RVIZ unit
+        const double scale_x = 11.1 / scale_down; // cm per RVIZ unit
+        const double scale_y = 12.65 / scale_down;  // cm per RVIZ unit
         const double max_uncertainty = 1.5; //To limit the visualisations 
-
-        // Define the parameters of the Gaussian function
-        double sigma_x, sigma_y, amplitude;
-        this->get_parameter("sigma_x", sigma_x);
-        this->get_parameter("sigma_y", sigma_y);
-        this->get_parameter("amplitude", amplitude);
 
 
         //Loop through Robot pose and apply grid map visuals

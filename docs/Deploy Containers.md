@@ -112,6 +112,9 @@
 *Intended to be run on a development computer.*
 1. Run the ebug container as a gridmap instance
     ```sh
+    # Supply environment variables using the -e flag. The available variable defaults are:
+    #    SCALE_DOWN (float):        5.0     // Scale down the 19.20 by 10.80 GridMap
+
     docker run --net host --ipc host --pid host --rm -it ebug
     
     # In the containers interactive terminal, you can launch the ROS2 package

@@ -4,6 +4,8 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
+    SCALE_DOWN = float(os.getenv('SCALE_DOWN', "5.0"))
+
     PKG_SHARE = FindPackageShare(package='ebug').find('ebug')
 
     # Configuration files
@@ -15,7 +17,10 @@ def generate_launch_description():
             package='ebug_base',
             executable='gridmap_controller',
             name='GridmapController',
-            output='screen'
+            output='screen',
+            parameters=[
+                {"scale_down":  SCALE_DOWN }
+            ]
         ),
         Node(
             package='grid_map_visualization',
