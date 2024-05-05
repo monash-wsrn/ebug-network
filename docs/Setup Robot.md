@@ -134,3 +134,5 @@ Follow the instructions [here](/docs/Deploy%20Containers.md) to build and deploy
     # which cam_id corresponds with which physical camera. Swap them around
     # as needed to fit the specifications.
     ```
+3. The camera's should be plugged in as follows:
+    ![Raspberry Pi 4 Camera Port Order](camera_ports.png)

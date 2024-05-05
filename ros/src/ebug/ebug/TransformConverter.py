@@ -12,10 +12,21 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, Transform
 # map_at_0 = np.vstack([np.hstack([R.from_quat(at_0_r).as_matrix(), at_0_t.transpose()]),np.array([0,0,0,1])])
 
 
-CAM_ROBOT_ROT_X = [0.5, 0.707, 0.5, 0.0]
-CAM_ROBOT_ROT_Y = [-0.5, 0.0, 0.5, -0.707]
-CAM_ROBOT_ROT_Z = [0.5, 0.0, -0.5, 0.707]
-CAM_ROBOT_ROT_W = [0.5, 0.707, 0.5, 0.0]
+# CAM_ROBOT_ROT_X = [0.5, 0.707, 0.5, 0.0]
+# CAM_ROBOT_ROT_Y = [-0.5, 0.0, 0.5, -0.707]
+# CAM_ROBOT_ROT_Z = [0.5, 0.0, -0.5, 0.707]
+# CAM_ROBOT_ROT_W = [0.5, 0.707, 0.5, 0.0]
+
+
+# CAM_0 = (0, 0,     0) RPY Radians (FRONT)
+# CAM_1 = (0, 0,  PI/2) RPY Radians (RIGHT)
+# CAM_2 = (0, 0,    PI) RPY Radians (BACK)
+# CAM_3 = (0, 0, 3PI/2) RPY Radians (LEFT)
+
+CAM_ROBOT_ROT_X = [0.0,        0.0,  0.0,         0.0]
+CAM_ROBOT_ROT_Y = [0.0,        0.0,  0.0,         0.0]
+CAM_ROBOT_ROT_Z = [0.0,  0.7071068,  1.0,   0.7071068]
+CAM_ROBOT_ROT_W = [0.0,  0.7071068,  0.0,  -0.7071068]
 
 """
 This code inverse the cam->tag transform
