@@ -49,7 +49,20 @@
 1. Run the ebug container as a principal
     ```sh
     # Supply environment variables using the -e flag. The available variable defaults are:
-    #    ----
+    #    ARENA_LEFT (float):            '-1.08'     // in meters
+    #    ARENA_RIGHT (float):           '1.08'      // in meters
+    #    ARENA_TOP (float):             '0.70'      // in meters
+    #    ARENA_BOTTOM (float):          '-0.70'     // in meters
+    #    BUFFER_SPACE (float):          '0.10'      // in meters
+    #
+    #    MAX_FORWARD_SPEED (float):     '0.50'      // in meters per second
+    #    MAX_ANGULAR_SPEED (float):     '50.0'      // in degrees per second
+    #    SEPARATION_DISTANCE (float):   '0.20'      // in meters
+    #    VIEW_DISTANCE (float):         '0.40'      // in meters
+    #
+    #    ALIGNMENT_FACTOR (float):      '0.01'      // multiplier
+    #    COHESION_FACTOR (float):       '0.001'     // multiplier
+    #    SEPARATION_FACTOR (float):     '1.0'       // multiplier
 
     docker run --net host --ipc host --pid host --rm -it ebug
     
@@ -92,6 +105,17 @@
     
     # In the containers interactive terminal, you can launch the ROS2 package
     ./launch visualiser
+    ```
+
+
+## Deploy the container (GridMap Mode)
+*Intended to be run on a development computer.*
+1. Run the ebug container as a gridmap instance
+    ```sh
+    docker run --net host --ipc host --pid host --rm -it ebug
+    
+    # In the containers interactive terminal, you can launch the ROS2 package
+    ./launch gridmap
     ```
 
 

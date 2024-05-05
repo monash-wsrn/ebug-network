@@ -56,8 +56,8 @@ class PseudoMovementController(Node):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
 
-        delta = self.delta_time() * 0.05
-        self.yaw                += delta * self.twist.angular.z
+        delta = self.delta_time()
+        self.yaw                += delta * self.twist.angular.z * 0.05
         self.pose.position.x    += delta * self.twist.linear.x * math.cos(self.yaw)
         self.pose.position.y    += delta * self.twist.linear.x * math.sin(self.yaw)
         self.pose.orientation = self.quat()

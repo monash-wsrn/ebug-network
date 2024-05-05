@@ -2,15 +2,21 @@ import os
 import math
 
 # Screen dimensions (in m)
-ARENA_WIDTH = int(os.getenv('ARENA_WIDTH', "2"))            # m
-ARENA_HEIGHT = int(os.getenv('ARENA_HEIGHT', "2"))          # m
-BUFFER_SPACE = float(os.getenv('BORDER_BUFFER', "0.10"))    # proportion
+ARENA_LEFT = float(os.getenv('ARENA_LEFT', "-1.08"))            # m
+ARENA_RIGHT = float(os.getenv('ARENA_RIGHT', "1.08"))           # m
 
-LOWER_WIDTH = float(ARENA_WIDTH * BUFFER_SPACE)
-UPPER_WIDTH = ARENA_WIDTH - LOWER_WIDTH
+ARENA_TOP = float(os.getenv('ARENA_TOP', "0.70"))               # m
+ARENA_BOTTOM = float(os.getenv('ARENA_BOTTOM', "-0.70"))        # m
 
-LOWER_HEIGHT = float(ARENA_HEIGHT * BUFFER_SPACE)
-UPPER_HEIGHT = ARENA_HEIGHT - LOWER_HEIGHT
+BUFFER_SPACE = float(os.getenv('BORDER_BUFFER', "0.20"))        # m
+
+
+V_UPPER = ARENA_TOP - BUFFER_SPACE
+V_LOWER = ARENA_BOTTOM + BUFFER_SPACE
+
+H_UPPER = ARENA_RIGHT - BUFFER_SPACE
+H_LOWER = ARENA_LEFT + BUFFER_SPACE
+
 
 # Boid parameters
 MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.50"))       # m /s 
@@ -79,14 +85,14 @@ def next(main_boid, other_boids):
     x_comp = math.cos(resultant_angle)
     y_comp = math.sin(resultant_angle) 
 
-    if (main_boid.position.x < LOWER_WIDTH and x_comp < 0) or (main_boid.position.x > UPPER_WIDTH and x_comp > 0):
+    if (main_boid.position.x < H_LOWER and x_comp < 0) or (main_boid.position.x > H_UPPER and x_comp > 0):
         resultant_angle = math.pi - resultant_angle
      
     resultant_angle = clamp(resultant_angle)
     x_comp = math.cos(resultant_angle)
     y_comp = math.sin(resultant_angle) 
 
-    if (main_boid.position.y < LOWER_HEIGHT and y_comp < 0) or (main_boid.position.y > UPPER_HEIGHT and y_comp > 0):
+    if (main_boid.position.y < V_LOWER and y_comp < 0) or (main_boid.position.y > V_UPPER and y_comp > 0):
         resultant_angle = 2*math.pi - resultant_angle
     
     # Ensure angle stays between 0 and 2*pi
