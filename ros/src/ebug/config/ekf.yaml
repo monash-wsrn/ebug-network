@@ -9,7 +9,7 @@
         # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
         # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
         # filter will generate new output. Defaults to 1 / frequency if not specified.
-        sensor_timeout: 0.1
+        sensor_timeout: 0.03333
 
         # ekf_localization_node and ukf_localization_node both use a 3D omnidirectional motion model. If this parameter is
         # set to true, no 3D information will be used in your state estimate. Use this if you are operating in a planar
@@ -28,7 +28,7 @@
 
         # If you're having trouble, try setting this to true, and then echo the /diagnostics_agg topic to see if the node is
         # unhappy with any settings or data.
-        print_diagnostics: true
+        print_diagnostics: false
 
         # Debug settings. Not for the faint of heart. Outputs a ludicrous amount of information to the file specified by
         # debug_out_file. I hope you like matrices! Please note that setting this to true will have strongly deleterious
@@ -45,7 +45,7 @@
         publish_acceleration: false
 
         # Whether to broadcast the transformation over the /tf topic. Defaults to true if unspecified.
-        publish_tf: true
+        publish_tf: false
 
         # REP-105 (http://www.ros.org/reps/rep-0105.html) specifies four principal coordinate frames: base_link, odom, map, and
         # earth. base_link is the coordinate frame that is affixed to the robot. Both odom and map are world-fixed frames.
