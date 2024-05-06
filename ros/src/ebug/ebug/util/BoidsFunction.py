@@ -20,110 +20,124 @@ H_LOWER = ARENA_LEFT + BUFFER_SPACE
 
 # Boid parameters
 MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.50"))       # m /s 
-MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "50.0"))       # degrees /s 
 SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "0.20"))   # m
 VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "0.40"))               # m
 
 ALIGNMENT_FACTOR = float(os.getenv('ALIGNMENT_FACTOR', "0.01"))
-COHESION_FACTOR = float(os.getenv('COHESION_FACTOR', "0.001"))
+COHESION_FACTOR = float(os.getenv('COHESION_FACTOR', "0.01"))
 SEPARATION_FACTOR = float(os.getenv('SEPARATION_FACTOR', "1.0"))
 
 
 # Function to implement Boid rules
-def next(main_boid, other_boids):
-    cohesion = [0, 0]
-    alignment = [0, 0]
-    separation = [0, 0]
-    count_cohesion = 0
-    count_alignment = 0
-    count_separation = 0
-    led_colour = (255, 255, 255)
+def next_step(main_boid, other_boids):
+    led_colour = [255, 255, 255]
+
+    aggregate_cohesion = Vec2(0.0, 0.0)
+    aggregate_alignment = Vec2(0.0, 0.0)
+    aggregate_separation = Vec2(0.0, 0.0)
     
+    count_cohesion = 0.0
+    count_alignment = 0.0
+    count_separation  = 0.0
+    
+    main_pos = Vec2.from_pose(main_boid)
     for other_boid in other_boids:
-        if distance(main_boid, other_boid) < VIEW_DISTANCE:
-            cohesion[0] += other_boid.position.x # find average x position of all other boids
-            cohesion[1] += other_boid.position.y # find average y position of all other boids
+        other_pos = Vec2.from_pose(other_boid) 
+        
+        diff = other_pos.sub(main_pos)
+        dist = diff.length()
+        
+        if dist <= VIEW_DISTANCE:
+            # Cohesion
+            norm = diff.normalised()
+            aggregate_cohesion= aggregate_cohesion.add(norm)
             count_cohesion += 1
-
-            alignment[0] += math.cos(angle(other_boid))
-            alignment[1] += math.sin(angle(other_boid))
+            
+            # Alignment
+            other_dir = Vec2.from_angle(pose_angle(other_boid))
+            aggregate_alignment = aggregate_alignment.add(other_dir.normalised())
             count_alignment += 1
-
-            if distance(main_boid, other_boid) < SEPARATION_DISTANCE:
-                separation[0] += (main_boid.position.x - other_boid.position.x)
-                separation[1] += (main_boid.position.y - other_boid.position.y)
+            
+            # Separation
+            if (dist <= SEPARATION_DISTANCE):
+                aggregate_separation = aggregate_separation.add(norm.inversed())
                 count_separation += 1
+        
+    print(aggregate_cohesion.x, aggregate_cohesion.y)
     
-    resultant_angle = angle(main_boid)
-    if count_cohesion > 0:
-        cohesion[0] /= count_cohesion
-        cohesion[1] /= count_cohesion
-        target_angle = angle_between(main_boid, cohesion[0], cohesion[1]) # TODO Build pose from cohesion ??
-        resultant_angle = (1 - COHESION_FACTOR) * angle(main_boid) + COHESION_FACTOR * target_angle
-        led_colour = (0, 255, 0)
-
-    if count_alignment > 0:
-        alignment[0] /= count_alignment
-        alignment[1] /= count_alignment
-        target_angle = math.atan2(alignment[1], alignment[0])
-        resultant_angle = (1 - ALIGNMENT_FACTOR) * angle(main_boid) + ALIGNMENT_FACTOR * target_angle
-        led_colour = (0, 0, 255)
-
-    if count_separation > 0:
-        separation[0] /= count_separation
-        separation[1] /= count_separation
-        target_angle = math.atan2(separation[1], separation[0])
-        resultant_angle = (1 - SEPARATION_FACTOR) * angle(main_boid) + SEPARATION_FACTOR * target_angle
-        led_colour = (255, 0, 0)
-
-
-    # Set linear velocity to be the desired constant
-    linear_velocity = MAX_FORWARD_SPEED
-
-    # Deal with boundary conditions
-    resultant_angle = clamp(resultant_angle)
-    x_comp = math.cos(resultant_angle)
-    y_comp = math.sin(resultant_angle) 
-
-    if (main_boid.position.x < H_LOWER and x_comp < 0) or (main_boid.position.x > H_UPPER and x_comp > 0):
-        resultant_angle = math.pi - resultant_angle
-     
-    resultant_angle = clamp(resultant_angle)
-    x_comp = math.cos(resultant_angle)
-    y_comp = math.sin(resultant_angle) 
-
-    if (main_boid.position.y < V_LOWER and y_comp < 0) or (main_boid.position.y > V_UPPER and y_comp > 0):
-        resultant_angle = 2*math.pi - resultant_angle
+    aggregate_cohesion = aggregate_cohesion.divide(count_cohesion)
+    aggregate_alignment = aggregate_alignment.divide(count_alignment)
+    aggregate_separation = aggregate_separation.divide(count_separation)
     
-    # Ensure angle stays between 0 and 2*pi
-    resultant_angle = clamp(resultant_angle)
-
-    # TODO compare resultant_angle with angle(main_boid) to determine angular velocity
-    # Maybe keep a constant linear velocity and only worry about signing it
-    angular_velocity = clamp(resultant_angle - angle(main_boid))
-
-    if (angular_velocity > math.pi):
-        angular_velocity -= 2*math.pi
+    aggregate_cohesion = aggregate_cohesion.scale(COHESION_FACTOR)
+    aggregate_alignment = aggregate_alignment.scale(ALIGNMENT_FACTOR)
+    aggregate_separation = aggregate_separation.scale(SEPARATION_FACTOR)
+    
+    if (count_cohesion > 0):
+        led_colour = [0, 255, 0]
+    if (count_alignment > 0):
+        led_colour = [0, 0, 255]
+    if (count_separation > 0):
+        led_colour = [255, 0, 0]
+    
+    boundary = Vec2(0.0, 0.0)
+    
+    if ((main_pos.x < H_LOWER) or
+        (main_pos.x > H_UPPER) or
+        (main_pos.y < V_LOWER) or 
+        (main_pos.y > V_UPPER)):
+        boundary = main_pos.normalised().inversed()
+    
+    
+    direction = boundary.add(aggregate_cohesion).add(aggregate_alignment).add(aggregate_separation)
+    angular_delta  = direction.angle() * min(direction.length(), 0.05)
 
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
-    return (linear_velocity, angular_velocity, led_colour)
+    return (MAX_SPEED, angular_delta, led_colour)
 
-# Function to rectify an angle to between 0 and 2*pi
-def clamp(angle):
-    return angle % (2*math.pi)
 
-# Function to calculate distance between two boids
-def distance(pose1, pose2):
-    return math.sqrt(
-            ((pose1.position.x - pose2.position.x) ** 2)
-          + ((pose1.position.y - pose2.position.y) ** 2) )
+    
+class Vec2():
+    def __init__(self, x_ = 0.0, y_ = 0.0):
+        self.x = x_
+        self.y = y_
+        
+    def from_pose(pose):
+        return Vec2(pose.position.x, pose.position.y)
+    
+    def from_angle(radians):
+        return Vec2( math.cos(radians), math.sin(radians) )
+    
+    
+    def sub(self, other):
+        return Vec2(self.x - other.x, self.y - other.y)
+    
+    def add(self, other):
+        return Vec2(self.x + other.x, self.y + other.y)
+    
+    def scale(self, scale):
+        return Vec2(self.x * scale, self.y * scale)
+    
+    def divide(self, denom):
+        if (denom == 0.0):
+            return Vec2(0.0, 0.0)
+        return self.scale(1.0 / denom)
+    
+    def inversed(self):
+        return self.scale(-1.0)
+    
+    def length(self):
+        return math.sqrt((self.x ** 2) + (self.y ** 2))
+    
+    def normalised(self):
+        return self.divide(self.length())
+    
+    def angle(self):
+        return math.atan2(self.x, self.y)
 
-# Function to calculate angle between two boids
-def angle_between(pose1, other_x, other_y):
-    return math.atan2(other_y - pose1.position.y, other_x - pose1.position.x)
 
 # Function to get the Euler Z angle of a boid
-def angle(pose):
+def pose_angle(pose):
     x, y, z, w = pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w
 
     # Calculate yaw/z component from quaternion
@@ -132,7 +146,3 @@ def angle(pose):
     yaw_z = math.atan2(t3, t4)
 
     return clamp(yaw_z)
-
-# Function to return the sign of a number
-def sign(num):
-    return -1 if num < 0 else 1
