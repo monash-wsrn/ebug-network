@@ -20,6 +20,7 @@ H_LOWER = ARENA_LEFT + BUFFER_SPACE
 
 # Boid parameters
 MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.50"))       # m /s 
+MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "50.0"))       # m /s 
 SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "0.20"))   # m
 VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "0.40"))               # m
 
@@ -90,7 +91,7 @@ def next(main_boid, other_boids):
     
     
     direction = boundary.add(aggregate_cohesion).add(aggregate_alignment).add(aggregate_separation)
-    angular_delta  = direction.angle() * min(direction.length(), 0.05)
+    angular_delta  = direction.angle() * min(direction.length(), 1.0) * MAX_ANGULAR_SPEED
 
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
     return (MAX_FORWARD_SPEED, angular_delta, led_colour)
