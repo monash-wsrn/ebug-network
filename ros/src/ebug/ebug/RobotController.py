@@ -33,8 +33,8 @@ class RobotController(Node):
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         self.start = 1
 
-        self.r = 0.035
-        self.l = 0.14
+        self.r = 0.0345
+        self.l = 0.142
 
         self.odom_x, self.odom_y, self.odom_th = 0.0, 0.0, 0.0
         self.odom_v, self.odom_w = 0.0,  0.0
@@ -150,7 +150,7 @@ class RobotController(Node):
             odom.twist.twist.angular.x = 0.0
             odom.twist.twist.angular.y = 0.0
             odom.twist.twist.angular.z = float(self.odom_w)
-            odom.twist.covariance = mat6diag(1e-3)
+            odom.twist.covariance = mat6diag(1e-1)
 
             self.odom_pub.publish(odom) 
 
