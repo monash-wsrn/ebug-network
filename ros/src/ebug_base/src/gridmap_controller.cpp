@@ -61,7 +61,7 @@ namespace ebug
         // Scale Factors 
         const double scale_x = 11.1 / scale_down; // cm per RVIZ unit
         const double scale_y = 12.65 / scale_down;  // cm per RVIZ unit
-        const double max_uncertainty = 1.5; //To limit the visualisations 
+        const double max_uncertainty = 1.5 / scale_down; //To limit the visualisations 
 
 
         //Loop through Robot pose and apply grid map visuals
