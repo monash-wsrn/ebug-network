@@ -29,7 +29,7 @@ SEPARATION_FACTOR = float(os.getenv('SEPARATION_FACTOR', "1.0"))
 
 
 # Function to implement Boid rules
-def next_step(main_boid, other_boids):
+def next(main_boid, other_boids):
     led_colour = [255, 255, 255]
 
     aggregate_cohesion = Vec2(0.0, 0.0)
@@ -93,7 +93,7 @@ def next_step(main_boid, other_boids):
     angular_delta  = direction.angle() * min(direction.length(), 0.05)
 
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
-    return (MAX_SPEED, angular_delta, led_colour)
+    return (MAX_FORWARD_SPEED, angular_delta, led_colour)
 
 
     
@@ -143,6 +143,4 @@ def pose_angle(pose):
     # Calculate yaw/z component from quaternion
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (y * y + z * z)
-    yaw_z = math.atan2(t3, t4)
-
-    return clamp(yaw_z)
+    return math.atan2(t3, t4)
