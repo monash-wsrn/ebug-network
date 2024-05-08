@@ -31,7 +31,7 @@ class TransformConverter(Node):
         self.publisher = self.create_publisher(PoseWithCovarianceStamped, 'pose', 100)
 
         self.cameras = [self.get_camera(i) for i in range(4)]
-        self.covariance = mat6diag(1e-3)
+        self.covariance = mat6diag(1e-1)
     
     def get_camera(self, cam_id):
         t = Transform()

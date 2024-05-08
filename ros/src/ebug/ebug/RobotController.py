@@ -116,8 +116,8 @@ class RobotController(Node):
             self.prev_t = current_t
             encoder_l, encoder_r = self.read_encoders_gyro()
 
-            self.wl = min(max(2*math.pi*(self.overflow_corr(encoder_l, self.prev_enc_l))/dt/ENCODER, -12),12)
-            self.wr = min(max(2*math.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12)
+            self.wl = min(max(2*math.pi*(self.overflow_corr(encoder_l, self.prev_enc_l))/dt/ENCODER, -12),12) / 100.0
+            self.wr = min(max(2*math.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12) / 100.0
 
             self.prev_enc_l=encoder_l
             self.prev_enc_r=encoder_r
@@ -142,7 +142,7 @@ class RobotController(Node):
             odom.pose.pose.orientation.y = float(q.y)
             odom.pose.pose.orientation.z = float(q.z)
             odom.pose.pose.orientation.w = float(q.w)
-            odom.pose.covariance = mat6diag(1e-3)
+            odom.pose.covariance = mat6diag(1e-9)
 
             odom.twist.twist.linear.x = float(self.odom_v)
             odom.twist.twist.linear.y = 0.0
@@ -150,7 +150,7 @@ class RobotController(Node):
             odom.twist.twist.angular.x = 0.0
             odom.twist.twist.angular.y = 0.0
             odom.twist.twist.angular.z = float(self.odom_w)
-            odom.twist.covariance = mat6diag(1e-1)
+            odom.twist.covariance = mat6diag(1e-9)
 
             self.odom_pub.publish(odom) 
 
