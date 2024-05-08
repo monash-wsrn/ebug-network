@@ -1,6 +1,15 @@
 import os
 import math
 
+# Screen dimensions (in m)
+ARENA_LEFT = float(os.getenv('ARENA_LEFT', "-1.08"))            # m
+ARENA_RIGHT = float(os.getenv('ARENA_RIGHT', "1.08"))           # m
+
+ARENA_TOP = float(os.getenv('ARENA_TOP', "0.70"))               # m
+ARENA_BOTTOM = float(os.getenv('ARENA_BOTTOM', "-0.70"))        # m
+
+BUFFER_SPACE = float(os.getenv('BORDER_BUFFER', "0.20"))        # m
+
 def party(main_boid, other_boids):
 
     current_angle = pose_angle(main_boid)

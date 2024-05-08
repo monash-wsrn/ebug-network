@@ -11,6 +11,7 @@ from ebug_base.msg import RobotPose
 
 import ebug.util.DiscoMode as Disco
 
+
 class DiscoService(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
