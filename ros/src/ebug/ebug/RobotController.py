@@ -8,7 +8,8 @@ from rclpy.node import Node
 import math
 import time
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion, Vector3, Twist
+from geometry_msgs.msg import Quaternion, Vector3
+from geometry_msgs.msg import PoseWithCovarianceStamped
 from ebug_base.msg import ControlCommand
 
 # PATH = [(0.5, 0.0), (0.0, 0.5), (-0.5, 0.0), (0.0, -0.5), (0.5, 0.0), (1.0, 0.0)]
@@ -32,11 +33,8 @@ class RobotController(Node):
 
         self.timer = self.create_timer(0.05, self.odom_pose_update)
 
-        self.twist_pub = self.create_publisher(Twist, 'twist', 10)
-
         # self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
-
-        # self.imu_pub = self.create_publisher(Imu, 'imu', 10)
+        self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, 'pose_odom', 10)
 
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         self.start = 1
@@ -99,86 +97,61 @@ class RobotController(Node):
     
     # Kinematic motion model
     def odom_pose_update(self):
-
-        if self.start: # first value
-
-            self.start = 0
-            self.prev_t = time.time()
-
-        else:
-            current_t = time.time()
-            dt = current_t - self.prev_t
-            self.prev_t = current_t
-
-            if (dt <= 1e-9):
-                return
-
-            encoder_l, encoder_r = self.read_encoders_gyro()
+        encoder_l, encoder_r = self.read_encoders_gyro()
+        
+        self.wl = encoder_l * ENC_CONST
+        self.wr = encoder_r * ENC_CONST
             
-            self.wl = encoder_l * ENC_CONST / dt
-            self.wr = encoder_r * ENC_CONST / dt
-                
-            self.get_logger().info(f"EL: {encoder_l}, ER: {encoder_r}, WL: {self.wl}, WR: {self.wr}, DT: {dt}")
+        self.get_logger().info(f"EL: {encoder_l}, ER: {encoder_r}, WL: {self.wl}, WR: {self.wr}")
 
-            
-            self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
+        
+        self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
 
-            twist = Twist()
-            twist.linear.x = self.odom_v
-            twist.linear.y = 0.0
-            twist.linear.z = 0.0
-            twist.angular.x = 0.0
-            twist.angular.y = 0.0
-            twist.angular.z = self.odom_w
+        self.odom_th = self.odom_th + self.odom_w
+        self.odom_x = self.odom_x + self.odom_v*math.cos(self.odom_th)
+        self.odom_y = self.odom_y + self.odom_v*math.sin(self.odom_th)
 
-            self.twist_pub.publish(twist)
-            
+        t = self.get_clock().now().to_msg()
+        pose = PoseWithCovarianceStamped()
+        pose.header.frame_id = 'robot'
+        pose.header.stamp = t
+        
+        pose.pose.pose.position.x = self.odom_x
+        pose.pose.pose.position.y = self.odom_y
+        pose.pose.pose.position.z = 0.0
+        pose.pose.pose.orientation.x = float(q.x)
+        pose.pose.pose.orientation.y = float(q.y)
+        pose.pose.pose.orientation.z = float(q.z)
+        pose.pose.pose.orientation.w = float(q.w)
+        pose.pose.covariance = mat6diag(1e-2)
 
-            # self.odom_th = self.odom_th + self.odom_w*dt
-            # self.odom_x = self.odom_x + dt*self.odom_v*math.cos(self.odom_th)
-            # self.odom_y = self.odom_y + dt*self.odom_v*math.sin(self.odom_th)
-
-            # t = self.get_clock().now().to_msg()
-            # odom = Odometry()
-            # odom.header.frame_id = 'robot/odom'
-            # odom.header.stamp = t
-            # odom.child_frame_id ='robot'
-            # q = quat(0.0, 0.0, self.odom_th)
-
-            # odom.pose.pose.position.x = self.odom_x
-            # odom.pose.pose.position.y = self.odom_y
-            # odom.pose.pose.position.z = 0.0
-            # odom.pose.pose.orientation.x = float(q.x)
-            # odom.pose.pose.orientation.y = float(q.y)
-            # odom.pose.pose.orientation.z = float(q.z)
-            # odom.pose.pose.orientation.w = float(q.w)
-            # odom.pose.covariance = mat6diag(1e-2)
-
-            # odom.twist.twist.linear.x = float(self.odom_v)
-            # odom.twist.twist.linear.y = 0.0
-            # odom.twist.twist.linear.z = 0.0
-            # odom.twist.twist.angular.x = 0.0
-            # odom.twist.twist.angular.y = 0.0
-            # odom.twist.twist.angular.z = float(self.odom_w)
-            # odom.twist.covariance = mat6diag(1e-2)
-
-            # self.odom_pub.publish(odom) 
+        self.pose_pub.publish(pose)
 
 
-            # imu = Imu()
-            # imu.header.frame_id = 'robot/odom'
-            # imu.header.stamp = t
+        # odom = Odometry()
+        # odom.header.frame_id = 'robot/odom'
+        # odom.header.stamp = t
+        # odom.child_frame_id ='robot'
+        # q = quat(0.0, 0.0, self.odom_th)
 
-            # imu.orientation.x, imu.orientation.y, imu.orientation.z, imu.orientation.w = 0.0,0.0,0.0,0.0
-            # imu.orientation_covariance = [-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0]
+        # odom.pose.pose.position.x = self.odom_x
+        # odom.pose.pose.position.y = self.odom_y
+        # odom.pose.pose.position.z = 0.0
+        # odom.pose.pose.orientation.x = float(q.x)
+        # odom.pose.pose.orientation.y = float(q.y)
+        # odom.pose.pose.orientation.z = float(q.z)
+        # odom.pose.pose.orientation.w = float(q.w)
+        # odom.pose.covariance = mat6diag(1e-2)
 
-            # imu.angular_velocity.x, imu.angular_velocity.y, imu.angular_velocity.z = float(self.wx), float(self.wy), float(self.wz)
-            # imu.angular_velocity_covariance = [1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1]
+        # odom.twist.twist.linear.x = 0.0
+        # odom.twist.twist.linear.y = 0.0
+        # odom.twist.twist.linear.z = 0.0
+        # odom.twist.twist.angular.x = 0.0
+        # odom.twist.twist.angular.y = 0.0
+        # odom.twist.twist.angular.z = 0.0
+        # odom.twist.covariance = mat6diag(1e-2)
 
-            # imu.linear_acceleration.x, imu.linear_acceleration.y, imu.linear_acceleration.z = 0.0,0.0,0.0
-            # imu.linear_acceleration_covariance = [-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0]
-
-            # self.imu_pub.publish(imu)
+        # self.odom_pub.publish(odom) 
 
 
     def p_control(self,duty_cycle, w_desired,w_measured):
