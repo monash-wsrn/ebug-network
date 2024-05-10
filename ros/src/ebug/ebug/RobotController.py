@@ -130,6 +130,8 @@ class RobotController(Node):
             twist.angular.x = 0.0
             twist.angular.y = 0.0
             twist.angular.z = self.odom_w
+
+            self.twist_pub.publish(twist)
             
 
             # self.odom_th = self.odom_th + self.odom_w*dt
