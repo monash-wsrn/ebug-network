@@ -123,7 +123,7 @@ class RobotController(Node):
             
             self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
 
-            twist = twist()
+            twist = Twist()
             twist.linear.x = self.odom_v
             twist.linear.y = 0.0
             twist.linear.z = 0.0
