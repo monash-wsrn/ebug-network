@@ -43,20 +43,20 @@ def generate_launch_description():
 
     
     # EKF Node taking in wheel odometry and IMU readings
-    EKFContinuous = Node(
+    EKFRelative = Node(
         package = 'robot_localization',
         executable = 'ekf_node',
-        name = 'ekf_filter_continuous',
+        name = 'ekf_filter_relative',
         namespace = ROBOT_ID,
 
         parameters = [ 
-            os.path.join(PKG_SHARE, 'config/ekfContinuous.yaml'),
+            os.path.join(PKG_SHARE, 'config/ekfRelative.yaml'),
             {"odom_frame":      f"{ROBOT_ID}/odom"  },
             {"base_link_frame": f"{ROBOT_ID}"       },
             {"world_frame":     f"{ROBOT_ID}/odom"  },
         ],
         remappings = [
-            ('odometry/filtered', 'ekf_continuous'),
+            ('odometry/filtered', 'ekf_relative'),
         ]
     )
 
@@ -122,7 +122,7 @@ def generate_launch_description():
         ComposablesLoader,
 
         EKFAbsolute,
-        EKFContinuous,
+        EKFRelative,
         TransformConverterNode,
         MovementControllerNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization

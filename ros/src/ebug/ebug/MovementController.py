@@ -39,8 +39,9 @@ class MovementController(Node):
         self.tf2_buffer = Buffer()
         self.tf2_listener = TransformListener(self.tf2_buffer, self)
 
-        self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
+        #self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
         
+        self.robot_id = self.get_namespace()
         self.get_logger().info(f"Created MovementController (ID: {self.robot_id}) using {self.service_name}")
     
 
