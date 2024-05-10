@@ -7,11 +7,14 @@
     ```sh
     cd ~
     git clone https://github.com/monash-wsrn/ebug-network.git
+    
+    cd ~/ebug-network/ros/src
+    chmod 755 update
     ```
 2. Build the EBug container
     ```sh
     cd ~/ebug-network/ros/src
-    docker build -t ebug .
+    ./update
     ```
 
 
