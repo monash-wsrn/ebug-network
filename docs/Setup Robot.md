@@ -20,13 +20,21 @@
 3. Select OS as **General Purpose > Ubuntu Server 22.04.4 LTS (64-Bit)**
 4. Select SD Card as target device (at least 32 GB)
 5. Enter advanced customisation <br>
-    i. Configure username + password <br>
+    i. Configure hostname, as *ebug00*
+    ii. Configure username + password <br>
         User:       *ubuntu* <br>
         Password:   *95000sriaman* <br>
-    ii. Configure wireless connection <br>
+    iii. Configure wireless connection <br>
         SSID:       *lightrobot* <br>
         Password:   *lightrobot2023* <br>
+    iv. Enable SSH capability
 6. Format SD card with customised OS
+
+*The hostname can be changed after setting up the Raspberry Pi using:*
+```sh
+    sudo hostnamectl set-hostname ebug00
+    sudo reboot
+```
 
 
 ## Create a wireless network
