@@ -125,8 +125,8 @@
                        false, false, false,
                        false, false, false,
                        false, false, false]
-        pose0_differential: true
-        pose0_relative: true
+        pose0_differential: false
+        pose0_relative: false
         pose0_queue_size: 2
 
         
