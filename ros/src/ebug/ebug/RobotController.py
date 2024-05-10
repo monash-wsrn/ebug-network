@@ -30,7 +30,7 @@ class RobotController(Node):
 
         self.a_star = AStar()
 
-        self.timer = self.create_timer(0.1, self.odom_pose_update)
+        self.timer = self.create_timer(0.05, self.odom_pose_update)
 
         self.odom_pub=self.create_publisher(Odometry, 'odometry', 10)
 
