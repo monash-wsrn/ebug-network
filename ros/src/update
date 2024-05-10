@@ -5,6 +5,8 @@ git fetch
 git reset --hard origin/main
 git pull
 
+chmod 755 update
+
 echo "Cleaning Docker"
 docker container prune --force
 docker image prune --force
