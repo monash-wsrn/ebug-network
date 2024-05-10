@@ -53,12 +53,12 @@ class MovementController(Node):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
         
-        t = self.try_get_tf('robot')
+        t = self.try_get_tf(self.robot_id)
         if t is None:
             return
         
         request = ComputeTarget.Request()
-        request.robot_id = self.get_namespace()
+        request.robot_id = self.robot_id
         
         request.pose.pose.position.x = t.transform.translation.x
         request.pose.pose.position.y = t.transform.translation.y
