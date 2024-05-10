@@ -69,9 +69,8 @@ class MovementController(Node):
         request.pose.pose.orientation.z = t.transform.rotation.z
         request.pose.pose.orientation.w = t.transform.rotation.w
 
+        # TODO pull actual covariance from ekf_absolute and ekf_relative
         request.pose.covariance = mat6diag(1e-2)
-        
-        self.get_logger().info(f"{self.robot_id} at {t.transform.translation.x}, {t.transform.translation.y}, {t.transform.translation.z}")
 
         future = self.client.call_async(request)
         future.add_done_callback(self.future_callback)
