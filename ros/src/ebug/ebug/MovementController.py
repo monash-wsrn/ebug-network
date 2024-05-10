@@ -5,9 +5,12 @@ from rclpy.qos import QoSProfile
 from ebug_base.srv import ComputeTarget
 from nav_msgs.msg import Odometry
 from ebug_base.msg import ControlCommand
-from geometry_msgs.msg import Twist
 
-import time
+
+from tf2_ros import TransformException
+from tf2_ros.buffer import Buffer
+from tf2_ros.transform_listener import TransformListener
+
 
 class MovementController(Node):
     def __init__(self):
@@ -15,6 +18,10 @@ class MovementController(Node):
 
         self.declare_parameter('service_name', 'ComputeTargetService')
         self.service_name = self.get_parameter('service_name').get_parameter_value().string_value
+
+        
+        self.declare_parameter('frequency', 30.0)
+        self.frequency = self.get_parameter('frequency').get_parameter_value().double_value
 
 
         # TODO shouldn't be the service module but rather the DTO and the service name
@@ -27,11 +34,14 @@ class MovementController(Node):
         # as opposed to this roundabout way that allows the existing pub-sub
         # architecture to utilise a the service model
         qos_profile = QoSProfile(depth=10)
-        self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
         self.pub_target = self.create_publisher(ControlCommand, "cmd_vel", qos_profile)
         
+        self.tf2_buffer = Buffer()
+        self.tf2_listener = TransformListener(self.tf2_buffer, self)
+
+        self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
         
-        self.get_logger().info(f"Created MovementController (ID: {self.get_namespace()}) using {self.service_name}")
+        self.get_logger().info(f"Created MovementController (ID: {self.robot_id}) using {self.service_name}")
     
 
     """
@@ -39,15 +49,30 @@ class MovementController(Node):
     publish to back to the robot. It will do this through the central control
     service that has visibility of all robots' pose
     """
-    def compute_target(self, payload: Odometry):
-
+    def compute_target(self):
         if not self.client.wait_for_service(timeout_sec=0.5):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
         
+        try:
+            t = self.tf2_buffer.lookup_transform('map', self.robot_id, rclpy.time.Time())
+        except TransformException as ex:
+            self.get_logger().info(f'Could not transform \'map\' to \'{self.robot_id}\': {ex}')
+            return
+        
         request = ComputeTarget.Request()
         request.robot_id = self.get_namespace()
-        request.pose = payload.pose
+        
+        request.pose.pose.position.x = t.transform.translation.x
+        request.pose.pose.position.y = t.transform.translation.y
+        request.pose.pose.position.z = t.transform.translation.z
+        
+        request.pose.pose.orientation.x = t.transform.rotation.x
+        request.pose.pose.orientation.y = t.transform.rotation.y
+        request.pose.pose.orientation.z = t.transform.rotation.z
+        request.pose.pose.orientation.w = t.transform.rotation.w
+
+        request.pose.covariance = mat6diag(1e-2)
 
         future = self.client.call_async(request)
         future.add_done_callback(self.future_callback)
@@ -62,7 +87,8 @@ class MovementController(Node):
         self.pub_target.publish(response)
 
 
-
+def mat6diag(v):
+    return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
 
 
 ## Boilerplate

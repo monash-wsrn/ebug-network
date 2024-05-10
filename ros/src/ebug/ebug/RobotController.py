@@ -9,19 +9,16 @@ import math
 import time
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Quaternion, Vector3
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from sensor_msgs.msg import Imu
+
 from ebug_base.msg import ControlCommand
-
-# PATH = [(0.5, 0.0), (0.0, 0.5), (-0.5, 0.0), (0.0, -0.5), (0.5, 0.0), (1.0, 0.0)]
-# PATH = [(0.5, 0.0), (0.5, 0.5), (-0.5, 0.5), (-0.5, -0.5), (0.5, -0.5), (0.5, 0.0), (1.0, 0.0)]
-
-# ENCODER=12*3952/33 # constant for encoder (readings per revolution)
 
 BASELINE = 0.142                                            # Distance between wheels in meters
 WHEEL_RAD = 0.0345                                          # Wheel radius in meter
 GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
 ENC_CPR = 12.0                                              # Encoders Counts-per-revolution
 ENC_CONST = (2.0 * math.pi) / (ENC_CPR * GEAR_RATIO)        # Encoder constant
+                                                            # https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_encoders.html
 
 
 class RobotController(Node):
@@ -33,10 +30,11 @@ class RobotController(Node):
 
         self.timer = self.create_timer(0.02, self.odom_pose_update)
 
-        # self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
-        self.pose_pub = self.create_publisher(PoseWithCovarianceStamped, 'pose_odom', 10)
+        self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
 
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
+        
+        self.robot_id = self.get_namespace()
         self.start = 1
 
         self.r = WHEEL_RAD
@@ -101,12 +99,8 @@ class RobotController(Node):
         
         self.wl = encoder_l * ENC_CONST
         self.wr = encoder_r * ENC_CONST
-            
-        self.get_logger().info(f"EL: {encoder_l}, ER: {encoder_r}, WL: {self.wl}, WR: {self.wr}")
-
         
         self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
-
         self.odom_th = self.odom_th + self.odom_w
         self.odom_x = self.odom_x + self.odom_v*math.cos(self.odom_th)
         self.odom_y = self.odom_y + self.odom_v*math.sin(self.odom_th)
@@ -114,45 +108,29 @@ class RobotController(Node):
         t = self.get_clock().now().to_msg()
         q = quat(0.0, 0.0, self.odom_th)
 
-        pose = PoseWithCovarianceStamped()
-        pose.header.frame_id = 'robot'
-        pose.header.stamp = t
-        
-        pose.pose.pose.position.x = self.odom_x
-        pose.pose.pose.position.y = self.odom_y
-        pose.pose.pose.position.z = 0.0
-        pose.pose.pose.orientation.x = float(q.x)
-        pose.pose.pose.orientation.y = float(q.y)
-        pose.pose.pose.orientation.z = float(q.z)
-        pose.pose.pose.orientation.w = float(q.w)
-        pose.pose.covariance = mat6diag(1e-2)
+        odom = Odometry()
+        odom.header.frame_id = f'{self.robot_id}/odom'
+        odom.header.stamp = t
+        odom.child_frame_id = f'{self.robot_id}'
 
-        self.pose_pub.publish(pose)
+        odom.pose.pose.position.x = self.odom_x
+        odom.pose.pose.position.y = self.odom_y
+        odom.pose.pose.position.z = 0.0
+        odom.pose.pose.orientation.x = float(q.x)
+        odom.pose.pose.orientation.y = float(q.y)
+        odom.pose.pose.orientation.z = float(q.z)
+        odom.pose.pose.orientation.w = float(q.w)
+        odom.pose.covariance = mat6diag(1e-2)
 
+        odom.twist.twist.linear.x = 0.0
+        odom.twist.twist.linear.y = 0.0
+        odom.twist.twist.linear.z = 0.0
+        odom.twist.twist.angular.x = 0.0
+        odom.twist.twist.angular.y = 0.0
+        odom.twist.twist.angular.z = 0.0
+        odom.twist.covariance = mat6diag(1e-2)
 
-        # odom = Odometry()
-        # odom.header.frame_id = 'robot/odom'
-        # odom.header.stamp = t
-        # odom.child_frame_id ='robot'
-
-        # odom.pose.pose.position.x = self.odom_x
-        # odom.pose.pose.position.y = self.odom_y
-        # odom.pose.pose.position.z = 0.0
-        # odom.pose.pose.orientation.x = float(q.x)
-        # odom.pose.pose.orientation.y = float(q.y)
-        # odom.pose.pose.orientation.z = float(q.z)
-        # odom.pose.pose.orientation.w = float(q.w)
-        # odom.pose.covariance = mat6diag(1e-2)
-
-        # odom.twist.twist.linear.x = 0.0
-        # odom.twist.twist.linear.y = 0.0
-        # odom.twist.twist.linear.z = 0.0
-        # odom.twist.twist.angular.x = 0.0
-        # odom.twist.twist.angular.y = 0.0
-        # odom.twist.twist.angular.z = 0.0
-        # odom.twist.covariance = mat6diag(1e-2)
-
-        # self.odom_pub.publish(odom) 
+        self.odom_pub.publish(odom) 
 
 
     def p_control(self,duty_cycle, w_desired,w_measured):

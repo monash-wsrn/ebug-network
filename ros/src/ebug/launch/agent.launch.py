@@ -14,7 +14,6 @@ def generate_launch_description():
     CAMERA_IDS = os.getenv('CAMERAS', 'cam_0').split(',')
 
     PKG_SHARE = FindPackageShare(package='ebug').find('ebug')
-    EKF_POSE_PATH = os.path.join(PKG_SHARE, 'config/ekf.yaml') 
 
 
     COMPOSABLE_NODES = []
@@ -25,16 +24,39 @@ def generate_launch_description():
 
 
 
-    # EKF Node taking in /robot_id/pose and outputting /robot_0/filtered_odom
-    EKFPose = Node(
+    # EKF Node taking in AprilTag detections and wheel odometry
+    EKFAbsolute = Node(
         package = 'robot_localization',
         executable = 'ekf_node',
-        name = 'ekf_filter_node_pose',
+        name = 'ekf_filter_absolute',
         namespace = ROBOT_ID,
 
-        parameters = [ EKF_POSE_PATH ],
+        parameters = [ 
+            os.path.join(PKG_SHARE, 'config/ekfAbsolute.yaml'),
+            {"odom_frame":      f"{ROBOT_ID}/odom"  },
+            {"base_link_frame": f"{ROBOT_ID}"       },
+        ],
         remappings = [
-            ('odometry/filtered', 'filtered_odom'),
+            ('odometry/filtered', 'ekf_absolute'),
+        ]
+    )
+
+    
+    # EKF Node taking in wheel odometry and IMU readings
+    EKFContinuous = Node(
+        package = 'robot_localization',
+        executable = 'ekf_node',
+        name = 'ekf_filter_continuous',
+        namespace = ROBOT_ID,
+
+        parameters = [ 
+            os.path.join(PKG_SHARE, 'config/ekfContinuous.yaml'),
+            {"odom_frame":      f"{ROBOT_ID}/odom"  },
+            {"base_link_frame": f"{ROBOT_ID}"       },
+            {"world_frame":     f"{ROBOT_ID}/odom"  },
+        ],
+        remappings = [
+            ('odometry/filtered', 'ekf_continuous'),
         ]
     )
 
@@ -99,7 +121,8 @@ def generate_launch_description():
         ComposablesContainer,
         ComposablesLoader,
 
-        EKFPose,
+        EKFAbsolute,
+        EKFContinuous,
         TransformConverterNode,
         MovementControllerNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
