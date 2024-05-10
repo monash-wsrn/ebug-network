@@ -32,9 +32,9 @@ class RobotController(Node):
 
         self.timer = self.create_timer(0.1, self.odom_pose_update)
 
-        self.odom_pub=self.create_publisher(Odometry, '/odometry', 10)
+        self.odom_pub=self.create_publisher(Odometry, 'odometry', 10)
 
-        # self.imu_pub = self.create_publisher(Imu, '/imu', 10)
+        # self.imu_pub = self.create_publisher(Imu, 'imu', 10)
 
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         self.start = 1
