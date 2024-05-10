@@ -1,16 +1,18 @@
 """
 Handles the PID controller of the robot and i2c communication with Romi board
 """
-
-from ebug.util.AStar import AStar
-import rclpy
-from rclpy.node import Node
+import os
 import math
 import time
+
+import rclpy
+from rclpy.node import Node
+
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Quaternion, Vector3
 from sensor_msgs.msg import Imu
 
+from ebug.util.AStar import AStar
 from ebug_base.msg import ControlCommand
 
 BASELINE = 0.142                                            # Distance between wheels in meters
@@ -19,9 +21,6 @@ GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
 ENC_CPR = 12.0                                              # Encoders Counts-per-revolution
 ENC_CONST = (2.0 * math.pi) / (ENC_CPR * GEAR_RATIO)        # Encoder constant
                                                             # https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_encoders.html
-
-def clean_namespace(x):
-    return str(x)[1:] if str(x)[0] == '/' else str(x)
 
 class RobotController(Node):
 
@@ -36,7 +35,7 @@ class RobotController(Node):
 
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         
-        self.robot_id = clean_namespace(self.get_namespace()) 
+        self.robot_id = os.getenv('ROBOT_ID', "default")
         self.start = 1
 
         self.r = WHEEL_RAD

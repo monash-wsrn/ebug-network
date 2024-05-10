@@ -1,3 +1,5 @@
+import os
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
@@ -10,10 +12,6 @@ from ebug_base.msg import ControlCommand
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
-
-def clean_namespace(x):
-    return str(x)[1:] if str(x)[0] == '/' else str(x)
-
 
 class MovementController(Node):
     def __init__(self):
@@ -45,7 +43,7 @@ class MovementController(Node):
         #self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
         
         self.timer = self.create_timer(1.0 / self.frequency, self.compute_target)
-        self.robot_id = clean_namespace(self.get_namespace()) 
+        self.robot_id = os.getenv('ROBOT_ID', "default")
 
         self.get_logger().info(f"Created MovementController (ID: {self.robot_id}) using {self.service_name}")
     
