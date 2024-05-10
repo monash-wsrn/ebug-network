@@ -18,10 +18,9 @@ from ebug_base.msg import ControlCommand
 
 BASELINE = 0.142                                    # Distance between wheels in meters
 WHEEL_RAD = 0.0345                                  # Wheel radius in meter
-WHEEL_CIRC = WHEEL_RAD * 2.0 * math.pi              # Wheel circumference in meters 
 GEAR_RATIO = 3952.0 / 33.0                          # Gear Ratio X:1
 ENC_CPR = 12.0                                      # Encoders Counts-per-revolution
-ENC_CONST  = (ENC_CPR * GEAR_RATIO) * WHEEL_CIRC    # Encoder constant
+ENC_CONST  = (ENC_CPR * GEAR_RATIO) * 2.0 * math.pi    # Encoder constant
 
 
 class RobotController(Node):
@@ -122,17 +121,17 @@ class RobotController(Node):
             self.prev_t = current_t
             encoder_l, encoder_r = self.read_encoders_gyro()
 
-            #self.wl = min(max(2*math.pi*(safe_encl)/dt/ENCODER, -12),12) / 100.0
-            #self.wr = min(max(2*math.pi*(safe_encr)/dt/ENCODER, -12),12) / 100.0
+            #self.wl = min(max(2*math.pi*(self.overflow_corr(encoder_l, self.prev_enc_l))/dt/ENCODER, -12),12) / 100.0
+            #self.wr = min(max(2*math.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12) / 100.0
 
             # https://forum.pololu.com/t/measuring-distance-traveled-on-wheeled-vehicle/13828
-            self.wl = self.overflow_corr(encoder_l, self.prev_enc_l) / ENC_CONST
-            self.wr = self.overflow_corr(encoder_r, self.prev_enc_r) / ENC_CONST
+            self.wl = self.overflow_corr(encoder_l, self.prev_enc_l) / ENC_CONST / dt
+            self.wr = self.overflow_corr(encoder_r, self.prev_enc_r) / ENC_CONST / dt
 
             self.prev_enc_l = encoder_l
             self.prev_enc_r = encoder_r
             
-            self.odom_v, self.odom_w = self.base_velocity(self.wl,self.wr)
+            self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
             self.odom_th = self.odom_th + self.odom_w*dt
             self.odom_x = self.odom_x + dt*self.odom_v*math.cos(self.odom_th)
             self.odom_y = self.odom_y + dt*self.odom_v*math.sin(self.odom_th)
