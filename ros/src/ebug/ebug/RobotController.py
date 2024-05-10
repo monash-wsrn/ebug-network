@@ -63,21 +63,21 @@ class RobotController(Node):
     # Veclocity motion model
     def base_velocity(self,wl,wr):
 
-        v = (wl*self.r + wr*self.r)/2.0
+        v = (wl*self.r + wr*self.r) / 2.0
         
-        w = (wr*self.r - wl*self.r)/self.l #modified to adhre to REP103
+        w = (wr*self.r - wl*self.r) / self.l    # modified to adhre to REP103
         
         return v, w
 
-    def overflow_corr(self, enc, prev_enc):
-        val = enc - prev_enc
+    # def overflow_corr(self, enc, prev_enc):
+    #     val = enc - prev_enc
 
-        if val > 32768:
-            return val - 32768
-        elif val < -32768:
-            return val + 32768
+    #     if val > 32768:
+    #         return val - 32768
+    #     elif val < -32768:
+    #         return val + 32768
         
-        return val
+    #     return val
     
     def read_encoders_gyro(self):
 
@@ -116,25 +116,25 @@ class RobotController(Node):
 
         else:
             current_t = time.time()
-            dt = current_t-self.prev_t
+            dt = current_t - self.prev_t
+            self.prev_t = current_t
 
             if (dt <= 1e-9):
                 return
 
-            self.prev_t = current_t
             encoder_l, encoder_r = self.read_encoders_gyro()
 
             #self.wl = min(max(2*math.pi*(self.overflow_corr(encoder_l, self.prev_enc_l))/dt/ENCODER, -12),12) / 100.0
             #self.wr = min(max(2*math.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12) / 100.0
 
-            # https://forum.pololu.com/t/measuring-distance-traveled-on-wheeled-vehicle/13828
-            self.wl = self.overflow_corr(encoder_l, self.prev_enc_l) * ENC_CONST / dt
-            self.wr = self.overflow_corr(encoder_r, self.prev_enc_r) * ENC_CONST / dt
+            
+            self.wl = float(int(encoder_l) - self.prev_enc_l) * ENC_CONST / dt
+            self.wr = float(int(encoder_r) - self.prev_enc_r) * ENC_CONST / dt
                 
-            self.get_logger().info(f"EL: {encoder_l}, ER: {encoder_r}, WL: {self.wl}, WR: {self.wr}")
+            self.get_logger().info(f"EL: {encoder_l}, ER: {encoder_r}, WL: {self.wl}, WR: {self.wr}, DT: {dt}")
 
-            self.prev_enc_l = encoder_l
-            self.prev_enc_r = encoder_r
+            self.prev_enc_l = int(encoder_l)
+            self.prev_enc_r = int(encoder_r)
             
             self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
             self.odom_th = self.odom_th + self.odom_w*dt
