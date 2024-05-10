@@ -74,6 +74,9 @@ class MovementController(Node):
 
         request.pose.covariance = mat6diag(1e-2)
 
+        
+        self.get_logger().info(f"{self.robot_d} at {t.transform.translation.x}, {t.transform.translation.y}, {t.transform.translation.z}")
+
         future = self.client.call_async(request)
         future.add_done_callback(self.future_callback)
 
