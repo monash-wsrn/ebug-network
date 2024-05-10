@@ -41,7 +41,9 @@ class MovementController(Node):
 
         #self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
         
+        self.timer = self.create_timer(1.0 / self.frequency, self.compute_target)
         self.robot_id = self.get_namespace()
+
         self.get_logger().info(f"Created MovementController (ID: {self.robot_id}) using {self.service_name}")
     
 
