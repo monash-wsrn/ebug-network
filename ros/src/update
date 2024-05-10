@@ -7,8 +7,8 @@ git pull
 
 echo "Cleaning Docker"
 docker container prune --force
+docker image prune --force
 docker rmi ebug
-docker image prune
 
 echo "Building Container"
 docker build -t ebug .
