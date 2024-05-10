@@ -131,7 +131,7 @@ class RobotController(Node):
             self.wl = float(int(encoder_l) - self.prev_enc_l) * ENC_CONST / dt
             self.wr = float(int(encoder_r) - self.prev_enc_r) * ENC_CONST / dt
                 
-            self.get_logger().info(f"EL: {encoder_l}, ER: {encoder_r}, WL: {self.wl}, WR: {self.wr}, DT: {dt}")
+            self.get_logger().info(f"EL: {(int(encoder_l) - self.prev_enc_l)}, ER: {(int(encoder_r) - self.prev_enc_r)}, WL: {self.wl}, WR: {self.wr}, DT: {dt}")
 
             self.prev_enc_l = int(encoder_l)
             self.prev_enc_r = int(encoder_r)
