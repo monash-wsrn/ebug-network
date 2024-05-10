@@ -53,6 +53,6 @@ def generate_launch_description():
         StaticTransformAprilTag1,
         StaticTransformAprilTag2,
         StaticTransformAprilTag3,
-        Boids
+        Boids,
         Disco
     ])
