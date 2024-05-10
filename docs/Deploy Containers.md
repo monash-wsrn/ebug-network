@@ -3,15 +3,18 @@
 *This means it will be run as the **root** user. To access it from a host device, please view last section.*
 
 ## Build the ebug container
-1. Clone the EBug Git Repository
+1. Clone the EBug Git Repository (first time only)
     ```sh
     cd ~
     git clone https://github.com/monash-wsrn/ebug-network.git
+
+    cd ~/ebug-network/ros/src
+    chmod 755 update
     ```
 2. Build the EBug container
     ```sh
     cd ~/ebug-network/ros/src
-    chmod 755 update && ./update
+    ./update
     ```
 
 
