@@ -16,11 +16,11 @@ from ebug_base.msg import ControlCommand
 
 # ENCODER=12*3952/33 # constant for encoder (readings per revolution)
 
-BASELINE = 0.142                                    # Distance between wheels in meters
-WHEEL_RAD = 0.0345                                  # Wheel radius in meter
-GEAR_RATIO = 3952.0 / 33.0                          # Gear Ratio X:1
-ENC_CPR = 12.0                                      # Encoders Counts-per-revolution
-ENC_CONST  = (ENC_CPR * GEAR_RATIO) * 2.0 * math.pi    # Encoder constant
+BASELINE = 0.142                                            # Distance between wheels in meters
+WHEEL_RAD = 0.0345                                          # Wheel radius in meter
+GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
+ENC_CPR = 12.0                                              # Encoders Counts-per-revolution
+ENC_CONST  = (1.0 / (ENC_CPR * GEAR_RATIO)) * 2.0 * math.pi # Encoder constant
 
 
 class RobotController(Node):
@@ -125,8 +125,8 @@ class RobotController(Node):
             #self.wr = min(max(2*math.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12) / 100.0
 
             # https://forum.pololu.com/t/measuring-distance-traveled-on-wheeled-vehicle/13828
-            self.wl = self.overflow_corr(encoder_l, self.prev_enc_l) / ENC_CONST / dt
-            self.wr = self.overflow_corr(encoder_r, self.prev_enc_r) / ENC_CONST / dt
+            self.wl = self.overflow_corr(encoder_l, self.prev_enc_l) * ENC_CONST / dt
+            self.wr = self.overflow_corr(encoder_r, self.prev_enc_r) * ENC_CONST / dt
 
             self.prev_enc_l = encoder_l
             self.prev_enc_r = encoder_r
