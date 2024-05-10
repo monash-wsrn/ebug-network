@@ -14,7 +14,14 @@ from ebug_base.msg import ControlCommand
 # PATH = [(0.5, 0.0), (0.0, 0.5), (-0.5, 0.0), (0.0, -0.5), (0.5, 0.0), (1.0, 0.0)]
 # PATH = [(0.5, 0.0), (0.5, 0.5), (-0.5, 0.5), (-0.5, -0.5), (0.5, -0.5), (0.5, 0.0), (1.0, 0.0)]
 
-ENCODER=12*3952/33 # constant for encoder (readings per revolution)
+# ENCODER=12*3952/33 # constant for encoder (readings per revolution)
+
+BASELINE = 0.142                                    # Distance between wheels in meters
+WHEEL_RAD = 0.0345                                  # Wheel radius in meter
+WHEEL_CIRC = WHEEL_RAD * 2.0 * math.pi              # Wheel circumference in meters 
+GEAR_RATIO = 3952.0 / 33.0                          # Gear Ratio X:1
+ENC_CPR = 12.0                                      # Encoders Counts-per-revolution
+ENC_CONST  = (ENC_CPR * GEAR_RATIO) * WHEEL_CIRC    # Encoder constant
 
 
 class RobotController(Node):
@@ -33,8 +40,8 @@ class RobotController(Node):
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         self.start = 1
 
-        self.r = 0.0345
-        self.l = 0.142
+        self.r = WHEEL_RAD
+        self.l = BASELINE
 
         self.odom_x, self.odom_y, self.odom_th = 0.0, 0.0, 0.0
         self.odom_v, self.odom_w = 0.0,  0.0
@@ -54,7 +61,7 @@ class RobotController(Node):
         self.I = 0
         self.e_prev = 0
 
-        # Veclocity motion model
+    # Veclocity motion model
     def base_velocity(self,wl,wr):
 
         v = (wl*self.r + wr*self.r)/2.0
@@ -64,21 +71,18 @@ class RobotController(Node):
         return v, w
 
     def overflow_corr(self, enc, prev_enc):
-
         val = enc - prev_enc
+
         if val > 32768:
-            val = val - 32768
-        
+            return val - 32768
         elif val < -32768:
-
-            val = val + 32768
-
+            return val + 32768
+        
         return val
     
     def read_encoders_gyro(self):
 
         while True:
-
             try:
                 prev_enc_l, prev_enc_r = self.a_star.read_encoders()
                 self.wx, self.wy, self.wz = self.a_star.read_gyroscope() 
@@ -86,10 +90,12 @@ class RobotController(Node):
             except:
                 continue
     
+
     def motors(self,left, right, led):
         self.try_i2c(lambda : self.a_star.motors(int(left), int(right)), "I/O error moving motors")
         self.try_i2c(lambda : self.a_star.led_ring(int(led.x), int(led.y), int(led.z)), "I/O error setting LEDs")
     
+
     def try_i2c(self, i2c_func, msg):
         for _ in range(10):
             try:
@@ -116,11 +122,15 @@ class RobotController(Node):
             self.prev_t = current_t
             encoder_l, encoder_r = self.read_encoders_gyro()
 
-            self.wl = min(max(2*math.pi*(self.overflow_corr(encoder_l, self.prev_enc_l))/dt/ENCODER, -12),12) / 100.0
-            self.wr = min(max(2*math.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12) / 100.0
+            #self.wl = min(max(2*math.pi*(safe_encl)/dt/ENCODER, -12),12) / 100.0
+            #self.wr = min(max(2*math.pi*(safe_encr)/dt/ENCODER, -12),12) / 100.0
 
-            self.prev_enc_l=encoder_l
-            self.prev_enc_r=encoder_r
+            # https://forum.pololu.com/t/measuring-distance-traveled-on-wheeled-vehicle/13828
+            self.wl = self.overflow_corr(encoder_l, self.prev_enc_l) / ENC_CONST
+            self.wr = self.overflow_corr(encoder_r, self.prev_enc_r) / ENC_CONST
+
+            self.prev_enc_l = encoder_l
+            self.prev_enc_r = encoder_r
             
             self.odom_v, self.odom_w = self.base_velocity(self.wl,self.wr)
             self.odom_th = self.odom_th + self.odom_w*dt
@@ -142,7 +152,7 @@ class RobotController(Node):
             odom.pose.pose.orientation.y = float(q.y)
             odom.pose.pose.orientation.z = float(q.z)
             odom.pose.pose.orientation.w = float(q.w)
-            odom.pose.covariance = mat6diag(1e-9)
+            odom.pose.covariance = mat6diag(1e-2)
 
             odom.twist.twist.linear.x = float(self.odom_v)
             odom.twist.twist.linear.y = 0.0
@@ -150,7 +160,7 @@ class RobotController(Node):
             odom.twist.twist.angular.x = 0.0
             odom.twist.twist.angular.y = 0.0
             odom.twist.twist.angular.z = float(self.odom_w)
-            odom.twist.covariance = mat6diag(1e-9)
+            odom.twist.covariance = mat6diag(1e-2)
 
             self.odom_pub.publish(odom) 
 
