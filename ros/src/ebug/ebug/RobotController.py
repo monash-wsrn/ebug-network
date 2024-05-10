@@ -68,16 +68,6 @@ class RobotController(Node):
         w = (wr*self.r - wl*self.r) / self.l    # modified to adhre to REP103
         
         return v, w
-
-    def overflow_corr(self, enc, prev_enc):
-        val = enc - prev_enc
-
-        if val > 32768:
-            return float(val - 32768)
-        elif val < -32768:
-            return float(val + 32768)
-        
-        return float(val)
     
     def read_encoders_gyro(self):
 
@@ -112,7 +102,6 @@ class RobotController(Node):
 
             self.start = 0
             self.prev_t = time.time()
-            self.prev_enc_l, self.prev_enc_r = self.read_encoders_gyro()
 
         else:
             current_t = time.time()
@@ -123,18 +112,12 @@ class RobotController(Node):
                 return
 
             encoder_l, encoder_r = self.read_encoders_gyro()
-
-            #self.wl = min(max(2*math.pi*(self.overflow_corr(encoder_l, self.prev_enc_l))/dt/ENCODER, -12),12) / 100.0
-            #self.wr = min(max(2*math.pi*(self.overflow_corr(encoder_r, self.prev_enc_r))/dt/ENCODER, -12),12) / 100.0
-
             
-            self.wl = self.overflow_corr(encoder_l, self.prev_enc_l) * ENC_CONST / dt
-            self.wr = self.overflow_corr(encoder_r, self.prev_enc_r) * ENC_CONST / dt
+            self.wl = encoder_l * ENC_CONST / dt
+            self.wr = encoder_r * ENC_CONST / dt
                 
-            self.get_logger().info(f"EL: {self.overflow_corr(encoder_l, self.prev_enc_l)}, ER: {self.overflow_corr(encoder_r, self.prev_enc_r)}, WL: {self.wl}, WR: {self.wr}, DT: {dt}")
+            self.get_logger().info(f"EL: {encoder_l}, ER: {encoder_r}, WL: {self.wl}, WR: {self.wr}, DT: {dt}")
 
-            self.prev_enc_l = int(encoder_l)
-            self.prev_enc_r = int(encoder_r)
             
             self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
             self.odom_th = self.odom_th + self.odom_w*dt

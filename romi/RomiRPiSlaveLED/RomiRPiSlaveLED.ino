@@ -130,8 +130,8 @@ void loop()
     startedPlaying = false;
   }
 
-  slave.buffer.leftEncoder = encoders.getCountsLeft();
-  slave.buffer.rightEncoder = encoders.getCountsRight();
+  slave.buffer.leftEncoder = encoders.getCountsAndResetLeft();
+  slave.buffer.rightEncoder = encoders.getCountsAndResetRight();
 
   // When you are done WRITING, call finalizeWrites() to make modified
   // data available to I2C master.
