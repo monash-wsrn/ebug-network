@@ -128,7 +128,16 @@
         pose0_differential: false
         pose0_relative: false
         pose0_queue_size: 2
-      
+
+
+        twist0: twist
+        twist0_config: [false, false, false,
+                        false, false, false,
+                        true,  true,  true,
+                        false, false, false,
+                        false, false, false]
+        twist0_queue_size: 3
+        twist0_rejection_threshold: 2.0
 
         # # [ADVANCED] The process noise covariance matrix can be difficult to tune, and can vary for each application, so it is
         # # exposed as a configuration parameter. This matrix represents the noise we add to the total error after each

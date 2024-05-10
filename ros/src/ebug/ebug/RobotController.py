@@ -8,7 +8,7 @@ from rclpy.node import Node
 import math
 import time
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion, Vector3
+from geometry_msgs.msg import Quaternion, Vector3, Twist
 from ebug_base.msg import ControlCommand
 
 # PATH = [(0.5, 0.0), (0.0, 0.5), (-0.5, 0.0), (0.0, -0.5), (0.5, 0.0), (1.0, 0.0)]
@@ -32,7 +32,9 @@ class RobotController(Node):
 
         self.timer = self.create_timer(0.05, self.odom_pose_update)
 
-        self.odom_pub=self.create_publisher(Odometry, 'odometry', 10)
+        self.twist_pub = self.create_publisher(Twist, 'twist', 10)
+
+        # self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
 
         # self.imu_pub = self.create_publisher(Imu, 'imu', 10)
 
@@ -120,36 +122,45 @@ class RobotController(Node):
 
             
             self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
-            self.odom_th = self.odom_th + self.odom_w*dt
-            self.odom_x = self.odom_x + dt*self.odom_v*math.cos(self.odom_th)
-            self.odom_y = self.odom_y + dt*self.odom_v*math.sin(self.odom_th)
+
+            twist = twist()
+            twist.linear.x = self.odom_v
+            twist.linear.y = 0.0
+            twist.linear.z = 0.0
+            twist.angular.x = 0.0
+            twist.angular.y = 0.0
+            twist.angular.z = self.odom_w
             
 
-            t = self.get_clock().now().to_msg()
-            odom = Odometry()
-            odom.header.frame_id = 'robot/odom'
-            odom.header.stamp = t
-            odom.child_frame_id ='robot'
-            q = quat(0.0, 0.0, self.odom_th)
+            # self.odom_th = self.odom_th + self.odom_w*dt
+            # self.odom_x = self.odom_x + dt*self.odom_v*math.cos(self.odom_th)
+            # self.odom_y = self.odom_y + dt*self.odom_v*math.sin(self.odom_th)
 
-            odom.pose.pose.position.x = self.odom_x
-            odom.pose.pose.position.y = self.odom_y
-            odom.pose.pose.position.z = 0.0
-            odom.pose.pose.orientation.x = float(q.x)
-            odom.pose.pose.orientation.y = float(q.y)
-            odom.pose.pose.orientation.z = float(q.z)
-            odom.pose.pose.orientation.w = float(q.w)
-            odom.pose.covariance = mat6diag(1e-2)
+            # t = self.get_clock().now().to_msg()
+            # odom = Odometry()
+            # odom.header.frame_id = 'robot/odom'
+            # odom.header.stamp = t
+            # odom.child_frame_id ='robot'
+            # q = quat(0.0, 0.0, self.odom_th)
 
-            odom.twist.twist.linear.x = float(self.odom_v)
-            odom.twist.twist.linear.y = 0.0
-            odom.twist.twist.linear.z = 0.0
-            odom.twist.twist.angular.x = 0.0
-            odom.twist.twist.angular.y = 0.0
-            odom.twist.twist.angular.z = float(self.odom_w)
-            odom.twist.covariance = mat6diag(1e-2)
+            # odom.pose.pose.position.x = self.odom_x
+            # odom.pose.pose.position.y = self.odom_y
+            # odom.pose.pose.position.z = 0.0
+            # odom.pose.pose.orientation.x = float(q.x)
+            # odom.pose.pose.orientation.y = float(q.y)
+            # odom.pose.pose.orientation.z = float(q.z)
+            # odom.pose.pose.orientation.w = float(q.w)
+            # odom.pose.covariance = mat6diag(1e-2)
 
-            self.odom_pub.publish(odom) 
+            # odom.twist.twist.linear.x = float(self.odom_v)
+            # odom.twist.twist.linear.y = 0.0
+            # odom.twist.twist.linear.z = 0.0
+            # odom.twist.twist.angular.x = 0.0
+            # odom.twist.twist.angular.y = 0.0
+            # odom.twist.twist.angular.z = float(self.odom_w)
+            # odom.twist.covariance = mat6diag(1e-2)
+
+            # self.odom_pub.publish(odom) 
 
 
             # imu = Imu()
