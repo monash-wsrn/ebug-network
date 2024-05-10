@@ -20,6 +20,8 @@ ENC_CPR = 12.0                                              # Encoders Counts-pe
 ENC_CONST = (2.0 * math.pi) / (ENC_CPR * GEAR_RATIO)        # Encoder constant
                                                             # https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_encoders.html
 
+def clean_namespace(x):
+    return str(x)[1:] if str(x)[0] == '/' else str(x)
 
 class RobotController(Node):
 
@@ -34,7 +36,7 @@ class RobotController(Node):
 
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         
-        self.robot_id = self.get_namespace()
+        self.robot_id = clean_namespace(self.get_namespace()) 
         self.start = 1
 
         self.r = WHEEL_RAD
