@@ -20,7 +20,7 @@ BASELINE = 0.142                                            # Distance between w
 WHEEL_RAD = 0.0345                                          # Wheel radius in meter
 GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
 ENC_CPR = 12.0                                              # Encoders Counts-per-revolution
-ENC_CONST  = (1.0 / (ENC_CPR * GEAR_RATIO)) * 2.0 * math.pi # Encoder constant
+ENC_CONST = (2.0 * math.pi) / (ENC_CPR * GEAR_RATIO)        # Encoder constant
 
 
 class RobotController(Node):
@@ -118,6 +118,9 @@ class RobotController(Node):
             current_t = time.time()
             dt = current_t-self.prev_t
 
+            if (dt <= 1e-9):
+                return
+
             self.prev_t = current_t
             encoder_l, encoder_r = self.read_encoders_gyro()
 
@@ -127,6 +130,8 @@ class RobotController(Node):
             # https://forum.pololu.com/t/measuring-distance-traveled-on-wheeled-vehicle/13828
             self.wl = self.overflow_corr(encoder_l, self.prev_enc_l) * ENC_CONST / dt
             self.wr = self.overflow_corr(encoder_r, self.prev_enc_r) * ENC_CONST / dt
+                
+            self.get_logger().info(f"EL: {encoder_l}, ER: {encoder_r}, WL: {self.wl}, WR: {self.wr}")
 
             self.prev_enc_l = encoder_l
             self.prev_enc_r = encoder_r
