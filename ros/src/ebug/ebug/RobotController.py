@@ -112,6 +112,8 @@ class RobotController(Node):
         self.odom_y = self.odom_y + self.odom_v*math.sin(self.odom_th)
 
         t = self.get_clock().now().to_msg()
+        q = quat(0.0, 0.0, self.odom_th)
+
         pose = PoseWithCovarianceStamped()
         pose.header.frame_id = 'robot'
         pose.header.stamp = t
@@ -132,7 +134,6 @@ class RobotController(Node):
         # odom.header.frame_id = 'robot/odom'
         # odom.header.stamp = t
         # odom.child_frame_id ='robot'
-        # q = quat(0.0, 0.0, self.odom_th)
 
         # odom.pose.pose.position.x = self.odom_x
         # odom.pose.pose.position.y = self.odom_y
