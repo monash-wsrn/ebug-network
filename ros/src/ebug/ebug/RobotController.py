@@ -1,7 +1,6 @@
 """
 Handles the PID controller of the robot and i2c communication with Romi board
 """
-import os
 import math
 import time
 
@@ -10,7 +9,6 @@ from rclpy.node import Node
 
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Quaternion, Vector3
-from sensor_msgs.msg import Imu
 
 from ebug.util.AStar import AStar
 from ebug_base.msg import ControlCommand
@@ -35,7 +33,6 @@ class RobotController(Node):
 
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         
-        self.robot_id = os.getenv('ROBOT_ID', "default")
         self.start = 1
 
         self.r = WHEEL_RAD
@@ -110,9 +107,9 @@ class RobotController(Node):
         q = quat(0.0, 0.0, self.odom_th)
 
         odom = Odometry()
-        odom.header.frame_id = f'{self.robot_id}/odom'
+        odom.header.frame_id = 'robot/odom'
         odom.header.stamp = t
-        odom.child_frame_id = f'{self.robot_id}'
+        odom.child_frame_id = 'robot'
 
         odom.pose.pose.position.x = self.odom_x
         odom.pose.pose.position.y = self.odom_y

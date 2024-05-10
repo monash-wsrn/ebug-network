@@ -23,7 +23,7 @@ def generate_launch_description():
         VIDX += 2
 
 
-
+    # https://answers.ros.org/question/222970/fusing-absolute-position-information-and-imu-data-using-the-ekf_localization_node/
     # EKF Node taking in AprilTag detections and wheel odometry
     EKFAbsolute = Node(
         package = 'robot_localization',
@@ -31,11 +31,7 @@ def generate_launch_description():
         name = 'ekf_filter_absolute',
         namespace = ROBOT_ID,
 
-        parameters = [ 
-            os.path.join(PKG_SHARE, 'config/ekfAbsolute.yaml'),
-            {"odom_frame":      f"{ROBOT_ID}/odom"  },
-            {"base_link_frame": f"{ROBOT_ID}"       },
-        ],
+        parameters = [ os.path.join(PKG_SHARE, 'config/ekfAbsolute.yaml') ],
         remappings = [
             ('odometry/filtered', 'ekf_absolute'),
         ]
@@ -49,12 +45,7 @@ def generate_launch_description():
         name = 'ekf_filter_relative',
         namespace = ROBOT_ID,
 
-        parameters = [ 
-            os.path.join(PKG_SHARE, 'config/ekfRelative.yaml'),
-            {"odom_frame":      f"{ROBOT_ID}/odom"  },
-            {"base_link_frame": f"{ROBOT_ID}"       },
-            {"world_frame":     f"{ROBOT_ID}/odom"  },
-        ],
+        parameters = [ os.path.join(PKG_SHARE, 'config/ekfRelative.yaml') ],
         remappings = [
             ('odometry/filtered', 'ekf_relative'),
         ]

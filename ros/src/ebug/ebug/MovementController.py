@@ -1,5 +1,3 @@
-import os
-
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
@@ -43,9 +41,7 @@ class MovementController(Node):
         #self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
         
         self.timer = self.create_timer(1.0 / self.frequency, self.compute_target)
-        self.robot_id = os.getenv('ROBOT_ID', "default")
-
-        self.get_logger().info(f"Created MovementController (ID: {self.robot_id}) using {self.service_name}")
+        self.get_logger().info(f"Created MovementController (ID: {self.get_namespace()}) using {self.service_name}")
     
 
     """
@@ -58,10 +54,8 @@ class MovementController(Node):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
         
-        try:
-            t = self.tf2_buffer.lookup_transform('map', self.robot_id, rclpy.time.Time())
-        except TransformException as ex:
-            self.get_logger().info(f'Could not transform \'map\' to \'{self.robot_id}\': {ex}')
+        t = self.try_get_tf('robot')
+        if t is None:
             return
         
         request = ComputeTarget.Request()
@@ -77,12 +71,12 @@ class MovementController(Node):
         request.pose.pose.orientation.w = t.transform.rotation.w
 
         request.pose.covariance = mat6diag(1e-2)
-
         
-        self.get_logger().info(f"{self.robot_d} at {t.transform.translation.x}, {t.transform.translation.y}, {t.transform.translation.z}")
+        self.get_logger().info(f"{self.robot_id} at {t.transform.translation.x}, {t.transform.translation.y}, {t.transform.translation.z}")
 
         future = self.client.call_async(request)
         future.add_done_callback(self.future_callback)
+
 
     def future_callback(self, future):
         result = future.result() # Returns a ControlCommand
@@ -94,9 +88,18 @@ class MovementController(Node):
         self.pub_target.publish(response)
 
 
+    def try_get_tf(self, frame):
+        for _ in range(10):
+            try:
+                return self.tf2_buffer.lookup_transform('map', frame, rclpy.time.Time())
+            except TransformException as ex:
+                continue
+
+        self.get_logger().info(f'Could not transform \'map\' to \'robot\': {ex}')
+        return None
+
 def mat6diag(v):
     return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
-
 
 ## Boilerplate
 
