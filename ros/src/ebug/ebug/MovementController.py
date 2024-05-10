@@ -1,11 +1,11 @@
+import os
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
 
 from ebug_base.srv import ComputeTarget
-from nav_msgs.msg import Odometry
 from ebug_base.msg import ControlCommand
-
 
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
@@ -37,9 +37,8 @@ class MovementController(Node):
         
         self.tf2_buffer = Buffer()
         self.tf2_listener = TransformListener(self.tf2_buffer, self)
-
-        #self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
         
+        self.robot_id = os.getenv('ROBOT_ID', "default")
         self.timer = self.create_timer(1.0 / self.frequency, self.compute_target)
         self.get_logger().info(f"Created MovementController (ID: {self.get_namespace()}) using {self.service_name}")
     
@@ -89,10 +88,12 @@ class MovementController(Node):
 
 
     def try_get_tf(self, frame):
+        ex = None
         for _ in range(10):
             try:
                 return self.tf2_buffer.lookup_transform('map', frame, rclpy.time.Time())
-            except TransformException as ex:
+            except TransformException as e:
+                ex = e
                 continue
 
         self.get_logger().info(f'Could not transform \'map\' to \'robot\': {ex}')

@@ -31,7 +31,11 @@ def generate_launch_description():
         name = 'ekf_filter_absolute',
         namespace = ROBOT_ID,
 
-        parameters = [ os.path.join(PKG_SHARE, 'config/ekfAbsolute.yaml') ],
+        parameters = [ 
+            os.path.join(PKG_SHARE, 'config/ekfAbsolute.yaml'),
+            {"odom_frame":      f"{ROBOT_ID}/odom"  },
+            {"base_link_frame": f"{ROBOT_ID}"       },
+        ],
         remappings = [
             ('odometry/filtered', 'ekf_absolute'),
         ]
@@ -45,7 +49,12 @@ def generate_launch_description():
         name = 'ekf_filter_relative',
         namespace = ROBOT_ID,
 
-        parameters = [ os.path.join(PKG_SHARE, 'config/ekfRelative.yaml') ],
+        parameters = [ 
+            os.path.join(PKG_SHARE, 'config/ekfRelative.yaml'),
+            {"odom_frame":      f"{ROBOT_ID}/odom"  },
+            {"base_link_frame": f"{ROBOT_ID}"       },
+            {"world_frame":     f"{ROBOT_ID}/odom"  },
+        ],
         remappings = [
             ('odometry/filtered', 'ekf_relative'),
         ]
