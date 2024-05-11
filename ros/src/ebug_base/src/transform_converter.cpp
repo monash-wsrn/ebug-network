@@ -35,9 +35,10 @@ namespace ebug
         for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
         {
             const int cam_id = (int)(ts.child_frame_id.back() - '0');
-
-            tf2::Transform tag_cam;
-            tf2::convert(ts.transform, tag_cam);
+            
+            tf2::Vector3 offset(ts.transform.translation.x, ts.transform.translation.y, ts.transform.translation.z);
+            tf2::Quaternion rot(ts.transform.rotation.x, ts.transform.rotation.y, ts.transform.rotation.z, ts.transform.rotation.w);
+            tf2::Transform tag_cam(rot, pos);
 
             tf2::Transform cam_tag = tag_cam.inverse();
             tf2::Transform robot_cam = m_Cameras[cam_id];
