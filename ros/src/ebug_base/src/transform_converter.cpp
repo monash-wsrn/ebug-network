@@ -10,7 +10,7 @@ namespace ebug
 
         m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 10, std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
 
-        tf2::Vector3 offset(0.0, 0.0, -0.05);
+        tf2::Vector3 offset(0.0, 0.0, -0.025);
 
 
         tf2::Quaternion rot_0(0.0, 0.0, 0.0, 0.0);
@@ -32,13 +32,13 @@ namespace ebug
 
     void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const
     {
-        RCLCPP_INFO(this->get_logger(), "Callback reached");
+        // RCLCPP_INFO(this->get_logger(), "Callback reached");
 
         for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
         {            
             const int cam_id = (int)(ts.header.frame_id.back() - '0');
             
-            RCLCPP_INFO(this->get_logger(), "    Iterating stamped transforms from camera %d", cam_id);
+            // RCLCPP_INFO(this->get_logger(), "    Iterating stamped transforms from camera %d", cam_id);
             
             tf2::Vector3 pos(ts.transform.translation.x, ts.transform.translation.y, ts.transform.translation.z);
             tf2::Quaternion rot(ts.transform.rotation.x, ts.transform.rotation.y, ts.transform.rotation.z, ts.transform.rotation.w);
@@ -49,7 +49,7 @@ namespace ebug
             tf2::Transform robot_tag = robot_cam * cam_tag;
 
             
-            RCLCPP_INFO(this->get_logger(), "    Creating adjusted transform for tag %s %.6f %.6f", ts.child_frame_id.c_str(), tag_cam.getOrigin().getZ(), robot_tag.getOrigin().getZ());
+            // RCLCPP_INFO(this->get_logger(), "    Creating adjusted transform for tag %s %.6f %.6f", ts.child_frame_id.c_str(), tag_cam.getOrigin().getZ(), robot_tag.getOrigin().getZ());
             geometry_msgs::msg::PoseWithCovarianceStamped msg;
             msg.header.stamp = ts.header.stamp;
             msg.header.frame_id = ts.child_frame_id;
