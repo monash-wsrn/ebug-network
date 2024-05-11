@@ -5,7 +5,8 @@ from rclpy.node import Node
 from tf2_msgs.msg import TFMessage
 from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped, Transform
 
-import tf2_py as tf2
+import tf2_py._tf2_py as tf2
+
 
 
 # CAM_0 = (0, 0,     0) RPY Radians (FRONT)
@@ -27,12 +28,17 @@ class TransformConverter(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
 
+        import inspect
+        for name, obj in inspect.getmembers(tf2):
+            self.get_logger().warn(f'{name} : {obj}')
+
 
         self.subscription = self.create_subscription(TFMessage, 'tf_detections', self.listener_callback, 100)
         self.publisher = self.create_publisher(PoseWithCovarianceStamped, 'pose', 100)
 
         self.cameras = [self.get_camera(i) for i in range(4)]
         self.covariance = mat6diag(1e-1)
+
     
     def get_camera(self, cam_id):
         t = Transform()
