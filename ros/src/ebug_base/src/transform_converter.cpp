@@ -32,8 +32,12 @@ namespace ebug
 
     void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const
     {
+        RCLCPP_INFO(this->get_logger(), "Callback reached");
+
         for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
         {
+            RCLCPP_INFO(this->get_logger(), "    Iterating stamped transforms");
+            
             const int cam_id = (int)(ts.child_frame_id.back() - '0');
             
             tf2::Vector3 pos(ts.transform.translation.x, ts.transform.translation.y, ts.transform.translation.z);
@@ -45,6 +49,7 @@ namespace ebug
             tf2::Transform robot_tag = robot_cam * cam_tag;
 
             
+            RCLCPP_INFO(this->get_logger(), "    Creating adjusted transform");
             geometry_msgs::msg::PoseWithCovarianceStamped msg;
             msg.header.stamp = ts.header.stamp;
             msg.header.frame_id = ts.child_frame_id;
