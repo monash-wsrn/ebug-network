@@ -6,9 +6,9 @@ namespace ebug
 {
     TransformConverter::TransformConverter(const rclcpp::NodeOptions& options) : Node("TransformConverter", options)
     {
-        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 10);
+        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 100);
 
-        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 10, std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
+        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 100, std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
 
         m_Covariance = {
             0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -41,7 +41,11 @@ namespace ebug
 
     void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const
     {
+        if (detections->transforms.size() == 0)
+            return;
+            
         RCLCPP_INFO(this->get_logger(), "Callback");
+
         for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
         {            
             const int cam_id = (int)(ts.header.frame_id.back() - '0');
