@@ -52,9 +52,6 @@ namespace ebug
             tf2::Transform cam_tag = tag_cam.inverse();
             tf2::Transform robot_cam = m_Cameras[cam_id];
             tf2::Transform robot_tag = robot_cam * cam_tag;
-
-            
-            RCLCPP_INFO(this->get_logger(), "%.4f %.4f %.4f", robot_tag.getOrigin().getX(), robot_tag.getOrigin().getY(), robot_tag.getOrigin().getZ());
             
             geometry_msgs::msg::PoseWithCovarianceStamped msg;
             msg.header.stamp = ts.header.stamp;
