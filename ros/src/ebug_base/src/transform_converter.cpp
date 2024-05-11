@@ -6,9 +6,18 @@ namespace ebug
 {
     TransformConverter::TransformConverter(const rclcpp::NodeOptions& options) : Node("TransformConverter", options)
     {
-        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 10);
+        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 100);
 
-        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 10, std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
+        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 100, std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
+
+        m_Covariance = {
+            0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.1, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.1, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.1
+        };
 
         tf2::Vector3 offset(0.0, 0.0, -0.025);
 
@@ -62,6 +71,8 @@ namespace ebug
             msg.pose.pose.orientation.y = robot_tag.getRotation().getAxis().getY();
             msg.pose.pose.orientation.z = robot_tag.getRotation().getAxis().getZ();
             msg.pose.pose.orientation.w = robot_tag.getRotation().getW();
+
+            msg.pose.covariance = m_Covariance;
             
             m_Publisher->publish(msg);
         }

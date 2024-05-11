@@ -38,7 +38,7 @@ namespace ebug
             rclcpp::Subscription<tf2_msgs::msg::TFMessage>::SharedPtr m_Subscription;
             
             std::vector<tf2::Transform> m_Cameras;
-
+            std::array<double, 36> m_Covariance;
         public:
             explicit TransformConverter(const rclcpp::NodeOptions& options);
 
