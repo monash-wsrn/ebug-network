@@ -28,8 +28,7 @@ setup(
     entry_points={
         'console_scripts': [
             'RobotController = ebug.RobotController:main',
-
-            'TransformConverter = ebug.TransformConverter:main',
+            
             'MovementController = ebug.MovementController:main',
 
             'BoidsService = ebug.BoidsService:main',

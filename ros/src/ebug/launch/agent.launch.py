@@ -22,10 +22,19 @@ def generate_launch_description():
         COMPOSABLE_NODES.extend( create_camera_composable_nodes(ROBOT_ID, cam_id, PKG_SHARE, f'/dev/video{VIDX}') )
         VIDX += 2
 
+    
+
+    # converter node to invert the transform of cam->tag
+    COMPOSABLE_NODES.append(Node(
+        package = 'ebug_base',
+        executable = 'ebug::TransformConverter',
+        name = 'TransformConverter',
+        namespace = ROBOT_ID,
+    ))
 
     # https://answers.ros.org/question/222970/fusing-absolute-position-information-and-imu-data-using-the-ekf_localization_node/
     # EKF Node taking in AprilTag detections and wheel odometry
-    EKFAbsolute = Node(
+    COMPOSABLE_NODES.append(Node(
         package = 'robot_localization',
         executable = 'ekf_node',
         name = 'ekf_filter_absolute',
@@ -39,11 +48,11 @@ def generate_launch_description():
         remappings = [
             ('odometry/filtered', 'ekf_absolute'),
         ]
-    )
+    ))
 
     
     # EKF Node taking in wheel odometry and IMU readings
-    EKFRelative = Node(
+    COMPOSABLE_NODES.append(Node(
         package = 'robot_localization',
         executable = 'ekf_node',
         name = 'ekf_filter_relative',
@@ -58,7 +67,10 @@ def generate_launch_description():
         remappings = [
             ('odometry/filtered', 'ekf_relative'),
         ]
-    )
+    ))
+
+
+    
 
     # This node takes the velocity and color commands and sends it across I2C
     RobotControllerNode = Node(
@@ -66,14 +78,6 @@ def generate_launch_description():
         executable = 'RobotController',
         name = 'RobotController',
         namespace = ROBOT_ID
-    )
-
-    # converter node to invert the transform of cam->tag
-    TransformConverterNode = Node(
-        package = 'ebug',
-        executable = 'TransformConverter',
-        name = 'TransformConverter',
-        namespace = ROBOT_ID,
     )
 
     # This node is the connector between the central controller and an individual robot.
@@ -121,9 +125,6 @@ def generate_launch_description():
         ComposablesContainer,
         ComposablesLoader,
 
-        EKFAbsolute,
-        EKFRelative,
-        TransformConverterNode,
         MovementControllerNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
@@ -168,8 +169,8 @@ def create_camera_composable_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
     # https://github.com/ros-perception/image_common/blob/rolling/image_transport/CMakeLists.txt
     # Decompress jpeg format into raw image
     MotionJPEGDecompress = ComposableNode(
-        package = 'ebug_base',               #'image_transport',
-        plugin = 'ebug::JpegRepublisher',   #'image_transport::Republisher',
+        package = 'ebug_base',
+        plugin = 'ebug::JpegRepublisher',
         name = 'DecompressMJPEG',
         namespace = NAMESPACE,
     

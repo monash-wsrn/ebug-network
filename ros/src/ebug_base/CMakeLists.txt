@@ -18,6 +18,8 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_msgs REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(compressed_image_transport REQUIRED)
@@ -50,6 +52,9 @@ rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typ
 add_library(byte_rectifier_component SHARED src/byte_rectifier.cpp)
 ament_target_dependencies(byte_rectifier_component rclcpp rclcpp_components sensor_msgs)
 
+add_library(transform_converter_component SHARED src/transform_converter.cpp)
+ament_target_dependencies(transform_converter_component rclcpp rclcpp_components sensor_msgs tf2 tf2_msgs)
+
 add_library(jpeg_republisher_component SHARED src/jpeg_republisher.cpp)
 ament_target_dependencies(jpeg_republisher_component rclcpp rclcpp_components sensor_msgs image_transport pluginlib)
 
@@ -64,6 +69,12 @@ rclcpp_components_register_node(
   byte_rectifier_component
   PLUGIN "ebug::ByteRectifier"
   EXECUTABLE byte_rectifier
+)
+
+rclcpp_components_register_node(
+  transform_converter_component
+  PLUGIN "ebug::TransformConverter"
+  EXECUTABLE transform_converter
 )
 
 rclcpp_components_register_node(
@@ -84,6 +95,7 @@ install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
 
 install(TARGETS
   byte_rectifier_component
+  transform_converter_component
   jpeg_republisher_component
   gridmap_controller_component
 

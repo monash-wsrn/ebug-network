@@ -29,8 +29,7 @@ RUN sudo apt-get install -y \
     python3-colcon-common-extensions \
     python3-pip \
     python3-smbus \
-    i2c-tools   \
-    ros-humble-tf2-py
+    i2c-tools
 
 ENV ROS_DOMAIN_ID=${DOMAIN_ID:-13}
 ENV DISPLAY="host.docker.internal:0.0"

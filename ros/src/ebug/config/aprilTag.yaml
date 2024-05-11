@@ -20,7 +20,7 @@
     # # If defined, 'frames' and 'sizes' must have the same length as 'ids'.
     tag:
       ids:    [0,1,2,3]         # tag IDs for which to publish transform
-      frames: ['0', '1', '2','3']   # frame names
+      frames: ['apriltag_0', 'apriltag_1', 'apriltag_2','apriltag_3']   # frame names
  
 
     
