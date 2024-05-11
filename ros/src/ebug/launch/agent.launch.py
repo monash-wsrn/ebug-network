@@ -27,7 +27,7 @@ def generate_launch_description():
     # converter node to invert the transform of cam->tag
     COMPOSABLE_NODES.append(ComposableNode(
         package = 'ebug_base',
-        executable = 'ebug::TransformConverter',
+        plugin = 'ebug::TransformConverter',
         name = 'TransformConverter',
         namespace = ROBOT_ID,
     ))
