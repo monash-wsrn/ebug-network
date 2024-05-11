@@ -25,7 +25,7 @@ def generate_launch_description():
     
 
     # converter node to invert the transform of cam->tag
-    COMPOSABLE_NODES.append(Node(
+    COMPOSABLE_NODES.append(ComposableNode(
         package = 'ebug_base',
         executable = 'ebug::TransformConverter',
         name = 'TransformConverter',
@@ -34,7 +34,7 @@ def generate_launch_description():
 
     # https://answers.ros.org/question/222970/fusing-absolute-position-information-and-imu-data-using-the-ekf_localization_node/
     # EKF Node taking in AprilTag detections and wheel odometry
-    COMPOSABLE_NODES.append(Node(
+    EKFAbsolute = Node(
         package = 'robot_localization',
         executable = 'ekf_node',
         name = 'ekf_filter_absolute',
@@ -48,11 +48,11 @@ def generate_launch_description():
         remappings = [
             ('odometry/filtered', 'ekf_absolute'),
         ]
-    ))
+    )
 
     
     # EKF Node taking in wheel odometry and IMU readings
-    COMPOSABLE_NODES.append(Node(
+    EKFRelative = Node(
         package = 'robot_localization',
         executable = 'ekf_node',
         name = 'ekf_filter_relative',
@@ -67,10 +67,10 @@ def generate_launch_description():
         remappings = [
             ('odometry/filtered', 'ekf_relative'),
         ]
-    ))
+    )
 
 
-    
+
 
     # This node takes the velocity and color commands and sends it across I2C
     RobotControllerNode = Node(
@@ -124,7 +124,9 @@ def generate_launch_description():
         ContainerLaunchArg,
         ComposablesContainer,
         ComposablesLoader,
-
+        
+        EKFAbsolute,
+        EKFRelative,
         MovementControllerNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
