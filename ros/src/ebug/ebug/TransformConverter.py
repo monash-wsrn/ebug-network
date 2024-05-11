@@ -3,8 +3,9 @@ import rclpy
 from rclpy.node import Node
 
 from tf2_msgs.msg import TFMessage
-from geometry_msgs.msg import PoseWithCovarianceStamped, Transform
+from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped, Transform
 
+import tf2
 
 
 # CAM_0 = (0, 0,     0) RPY Radians (FRONT)
@@ -12,10 +13,10 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, Transform
 # CAM_2 = (0, 0,    PI) RPY Radians (BACK)
 # CAM_3 = (0, 0, 3PI/2) RPY Radians (LEFT)
 
-CAM_ROBOT_ROT_X = [0.0,        0.0,  0.0,         0.0]
-CAM_ROBOT_ROT_Y = [0.0,        0.0,  0.0,         0.0]
-CAM_ROBOT_ROT_Z = [0.0,  0.7071068,  1.0,   0.7071068]
-CAM_ROBOT_ROT_W = [0.0,  0.7071068,  0.0,  -0.7071068]
+ROBOT_CAM_ROT_X = [0.0,        0.0,  0.0,         0.0]
+ROBOT_CAM_ROT_Y = [0.0,        0.0,  0.0,         0.0]
+ROBOT_CAM_ROT_Z = [0.0,  0.7071068,  1.0,   0.7071068]
+ROBOT_CAM_ROT_W = [0.0,  0.7071068,  0.0,  -0.7071068]
 
 """
 This code inverse the cam->tag transform
@@ -38,14 +39,14 @@ class TransformConverter(Node):
 
         t.translation.x = 0.0
         t.translation.y = 0.0
-        t.translation.z = -0.025
+        t.translation.z = -0.05
 
-        t.rotation.x = CAM_ROBOT_ROT_X[cam_id]
-        t.rotation.y = CAM_ROBOT_ROT_Y[cam_id]
-        t.rotation.z = CAM_ROBOT_ROT_Z[cam_id]
-        t.rotation.w = CAM_ROBOT_ROT_W[cam_id]
+        t.rotation.x = ROBOT_CAM_ROT_X[cam_id]
+        t.rotation.y = ROBOT_CAM_ROT_Y[cam_id]
+        t.rotation.z = ROBOT_CAM_ROT_Z[cam_id]
+        t.rotation.w = ROBOT_CAM_ROT_W[cam_id]
         
-        return t
+        return msg2tf(t)
 
 
     def listener_callback(self, tf_det:TFMessage):
@@ -53,79 +54,60 @@ class TransformConverter(Node):
             return
         
         for t in tf_det.transforms:    
-            cam_id = int(t.child_frame_id[-1])
+            tag_id = int(t.child_frame_id[-1])  # Get the AprilTag number, from '0' format
+            cam_id = int(str(t.frame_id)[4:])   # Get the camera number, from 'cam_0' format
 
-            tag_cam = inverse(t.transform)
-            cam_robot = self.cameras[ cam_id ]
-            tag_robot = combine(tag_cam, cam_robot)
-            robot_tag = inverse(tag_robot)
-
-            msg = PoseWithCovarianceStamped()
-            msg.header = t.header
-            msg.header.frame_id = f'apriltag_{cam_id}'
+            tag_cam = msg2tf(t)                         # (tf2.Transform) Apriltag relative to Camera
+            cam_tag = tag_cam.inverse()                 # (tf2.Transform) Camera relative to AprilTag
+            robot_cam = self.cameras[ cam_id ]          # (tf2.Transform) Robot relative to Camera
+            robot_tag = robot_cam.mult(cam_tag)         # (tf2.Transform) Robot relative to AprilTag
             
-            msg.pose.pose.position.x = robot_tag.translation.x
-            msg.pose.pose.position.y = robot_tag.translation.y
-            msg.pose.pose.position.z = robot_tag.translation.z
+            # Pose of the robot within the frame of the detected Apriltag
+            msg = PoseWithCovarianceStamped()
+            msg.header.stamp = t.header.stamp
+            msg.header.frame_id = f'apriltag_{tag_id}'
+            
+            msg.pose.pose.position.x = robot_tag.getOrigin().getX()
+            msg.pose.pose.position.y = robot_tag.getOrigin().getY()
+            msg.pose.pose.position.z = robot_tag.getOrigin().getZ()
 
-            msg.pose.pose.orientation.x = robot_tag.rotation.x
-            msg.pose.pose.orientation.y = robot_tag.rotation.y
-            msg.pose.pose.orientation.z = robot_tag.rotation.z
-            msg.pose.pose.orientation.w = robot_tag.rotation.w
+            msg.pose.pose.orientation.x = robot_tag.getRotation().getAxis().getX()
+            msg.pose.pose.orientation.y = robot_tag.getRotation().getAxis().getY()
+            msg.pose.pose.orientation.z = robot_tag.getRotation().getAxis().getZ()
+            msg.pose.pose.orientation.w = robot_tag.getRotation().getW()
 
             msg.pose.covariance = self.covariance
             self.publisher.publish(msg)
 
 
-def combine(t1, t2):
-    t = Transform()
 
-    t.translation.x = t1.translation.x + t2.translation.x
-    t.translation.y = t1.translation.y + t2.translation.y
-    t.translation.z = t1.translation.z + t2.translation.z
-
-    qx, qy, qz, qw = mulQuat(t1.rotation, t2.rotation)
-    t.rotation.x = qx
-    t.rotation.y = qy
-    t.rotation.z = qz
-    t.rotation.w = qw
-    
-    return t
+def msg2tf(msg):
+    translation = tf2.Vector3(msg.transform.translation.x, msg.transform.translation.y, msg.transform.translation.z)
+    rotation = tf2.Quaternion(msg.transform.rotation.x, msg.transform.rotation.y, msg.transform.rotation.z, msg.transform.rotation.w)
+    return tf2.Transform(rotation, translation)
 
 
-def inverse(t1):    
-    t = Transform()
+# def tf2msg(tf, stamp, frame, child_frame):
+#     msg = TransformStamped()
+#     msg.header.stamp = stamp
+#     msg.header.frame_id  = frame
+#     msg.child_frame_id = child_frame
 
-    t.translation.x = -t1.translation.x
-    t.translation.y = -t1.translation.y
-    t.translation.z = -t1.translation.z
+#     msg.transform.translation.x = tf.getOrigin().getX()
+#     msg.transform.translation.y = tf.getOrigin().getY()
+#     msg.transform.translation.z = tf.getOrigin().getZ()  
 
-    qx, qy, qz, qw = invQuat(t1.rotation)
-    t.rotation.x = qx
-    t.rotation.y = qy
-    t.rotation.z = qz
-    t.rotation.w = qw
-    
-    return t
+#     msg.transform.rotation.x = tf.getRotation().getAxis().getX()
+#     msg.transform.rotation.y = tf.getRotation().getAxis().getY()
+#     msg.transform.rotation.z = tf.getRotation().getAxis().getZ()
+#     msg.transform.rotation.w = tf.getRotation().getW()
 
+#     return msg
 
-def invQuat(q1):
-    d = q1.x*q1.x + q1.y*q1.y + q1.z*q1.z + q1.w*q1.w
-    d += 1e-12   # Add epsilon value to avoid div 0 error
-    return q1.x/d, -q1.y/d, -q1.z/d, -q1.w/d
-
-
-def mulQuat(q1, q2):
-    x_ = q1.x * q2.w + q1.w * q2.x + q1.y * q2.z - q1.z * q2.y
-    y_ = q1.y * q2.w + q1.w * q2.y + q1.z * q2.x - q1.x * q2.z
-    z_ = q1.z * q2.w + q1.w * q2.z + q1.x * q2.y - q1.y * q2.x
-    w_ = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z
-    return x_, y_, z_, w_
 
 
 def mat6diag(v):
     return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
-
                 
 def main():
     rclpy.init()
