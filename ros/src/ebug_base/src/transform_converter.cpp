@@ -41,6 +41,7 @@ namespace ebug
 
     void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const
     {
+        RCLCPP_INFO(this->get_logger(), "Callback");
         for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
         {            
             const int cam_id = (int)(ts.header.frame_id.back() - '0');
