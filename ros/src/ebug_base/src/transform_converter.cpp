@@ -36,7 +36,7 @@ namespace ebug
 
         for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
         {            
-            const int cam_id = (int)(ts.frame_id.back() - '0');
+            const int cam_id = (int)(ts.header.frame_id.back() - '0');
             
             RCLCPP_INFO(this->get_logger(), "    Iterating stamped transforms from camera %d", cam_id);
             
