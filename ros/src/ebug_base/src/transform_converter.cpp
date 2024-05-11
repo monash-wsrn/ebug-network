@@ -38,7 +38,7 @@ namespace ebug
         {            
             const int cam_id = (int)(ts.frame_id.back() - '0');
             
-            RCLCPP_INFO(this->get_logger(), "    Iterating stamped transforms from camera %d", cam_Id);
+            RCLCPP_INFO(this->get_logger(), "    Iterating stamped transforms from camera %d", cam_id);
             
             tf2::Vector3 pos(ts.transform.translation.x, ts.transform.translation.y, ts.transform.translation.z);
             tf2::Quaternion rot(ts.transform.rotation.x, ts.transform.rotation.y, ts.transform.rotation.z, ts.transform.rotation.w);
