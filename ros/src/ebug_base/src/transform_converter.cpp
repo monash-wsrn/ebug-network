@@ -49,26 +49,26 @@ namespace ebug
             tf2::Quaternion rot(ts.transform.rotation.x, ts.transform.rotation.y, ts.transform.rotation.z, ts.transform.rotation.w);
             tf2::Transform tag_cam(rot, pos);
 
-            tf2::Transform cam_tag = tag_cam.inverse();
-            tf2::Transform robot_cam = m_Cameras[cam_id];
-            tf2::Transform robot_tag = robot_cam * cam_tag;
+            tf2::Transform robot_tag = m_Cameras[cam_id] * tag_cam.inverse();
             
             geometry_msgs::msg::PoseWithCovarianceStamped msg;
             msg.header.stamp = ts.header.stamp;
             msg.header.frame_id = ts.child_frame_id;
             
-            msg.pose.pose.position.x = robot_tag.getOrigin().getX();
-            msg.pose.pose.position.y = robot_tag.getOrigin().getY();
-            msg.pose.pose.position.z = robot_tag.getOrigin().getZ();
+            msg.pose.pose.position.x = (double) robot_tag.getOrigin().getX();
+            msg.pose.pose.position.y = (double) robot_tag.getOrigin().getY();
+            msg.pose.pose.position.z = (double) robot_tag.getOrigin().getZ();
 
-            msg.pose.pose.orientation.x = robot_tag.getRotation().getAxis().getX();
-            msg.pose.pose.orientation.y = robot_tag.getRotation().getAxis().getY();
-            msg.pose.pose.orientation.z = robot_tag.getRotation().getAxis().getZ();
-            msg.pose.pose.orientation.w = robot_tag.getRotation().getW();
+            msg.pose.pose.orientation.x = (double) robot_tag.getRotation().getAxis().getX();
+            msg.pose.pose.orientation.y = (double) robot_tag.getRotation().getAxis().getY();
+            msg.pose.pose.orientation.z = (double) robot_tag.getRotation().getAxis().getZ();
+            msg.pose.pose.orientation.w = (double) robot_tag.getRotation().getW();
 
             msg.pose.covariance = m_Covariance;
             
-            m_Publisher->publish(msg);
+            m_Publisher->publish(std::move(msg));
+            
+            // RCLCPP_INFO(this->get_logger(), "%.4f %.4f %.4f", robot_tag.getOrigin().getX(), robot_tag.getOrigin().getY(), robot_tag.getOrigin().getZ());
         }
     }
 }

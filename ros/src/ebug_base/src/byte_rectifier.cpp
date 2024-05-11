@@ -20,7 +20,7 @@ namespace ebug
 
         cimage.format = "jpeg";
         
-        m_CompressedImagePublisher->publish(cimage);
+        m_CompressedImagePublisher->publish(std::move(cimage));
     }
 }
 
