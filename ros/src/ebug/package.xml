@@ -23,6 +23,9 @@
   <depend>grid_map_rviz_plugin</depend>
   <depend>grid_map_visualization</depend>
 
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_py</depend>
   <depend>tf_transformations</depend>
   <depend>message_filters</depend>
   <depend>image_transport</depend>
