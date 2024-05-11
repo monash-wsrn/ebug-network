@@ -36,7 +36,7 @@ namespace ebug
         {
             const int cam_id = (int)(ts.child_frame_id.back() - '0');
             
-            tf2::Vector3 offset(ts.transform.translation.x, ts.transform.translation.y, ts.transform.translation.z);
+            tf2::Vector3 pos(ts.transform.translation.x, ts.transform.translation.y, ts.transform.translation.z);
             tf2::Quaternion rot(ts.transform.rotation.x, ts.transform.rotation.y, ts.transform.rotation.z, ts.transform.rotation.w);
             tf2::Transform tag_cam(rot, pos);
 
