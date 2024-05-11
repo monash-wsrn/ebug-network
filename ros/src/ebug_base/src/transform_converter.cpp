@@ -49,7 +49,7 @@ namespace ebug
             tf2::Transform robot_tag = robot_cam * cam_tag;
 
             
-            RCLCPP_INFO(this->get_logger(), "    Creating adjusted transform for tag %s %.6f", ts.child_frame_id, tag_cam.getOrigin().getZ());
+            RCLCPP_INFO(this->get_logger(), "    Creating adjusted transform for tag %s %.6f", ts.child_frame_id.c_str(), tag_cam.getOrigin().getZ());
             geometry_msgs::msg::PoseWithCovarianceStamped msg;
             msg.header.stamp = ts.header.stamp;
             msg.header.frame_id = ts.child_frame_id;
