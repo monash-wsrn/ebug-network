@@ -6,9 +6,9 @@ namespace ebug
 {
     TransformConverter::TransformConverter(const rclcpp::NodeOptions& options) : Node("TransformConverter", options)
     {
-        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 100);
+        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 1);
 
-        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 100, std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
+        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 1, std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
 
         m_Covariance = {
             0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -43,7 +43,7 @@ namespace ebug
     {
         if (detections->transforms.size() == 0)
             return;
-            
+
         RCLCPP_INFO(this->get_logger(), "Callback");
 
         for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
