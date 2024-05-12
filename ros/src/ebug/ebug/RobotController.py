@@ -130,7 +130,7 @@ class RobotController(Node):
         odom.twist.twist.angular.z = float(self.odom_w)
         odom.twist.covariance = mat6diag(1e-2)
 
-        self.odom_pub.publish(odom) 
+        # self.odom_pub.publish(odom) 
 
 
     def p_control(self,duty_cycle, w_desired,w_measured):
