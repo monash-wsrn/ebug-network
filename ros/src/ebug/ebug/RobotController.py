@@ -109,7 +109,7 @@ class RobotController(Node):
         q = quat(0.0, 0.0, self.odom_th)
 
         odom = Odometry()
-        odom.header.frame_id = f'{self.robot_id}/odom'
+        odom.header.frame_id = f'{self.robot_id}_odom'
         odom.header.stamp = t
         odom.child_frame_id = f'{self.robot_id}'
 

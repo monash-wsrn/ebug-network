@@ -66,9 +66,9 @@
         #     3b. MAKE SURE something else is generating the odom->base_link transform. Note that this can even be another state
         #         estimation node from robot_localization! However, that instance should *not* fuse the global data.
         map_frame: map                      # Defaults to "map" if unspecified
-        odom_frame: robot/odom              # Defaults to "odom" if unspecified
+        odom_frame: robot_odom              # Defaults to "odom" if unspecified
         base_link_frame: robot              # Defaults to "base_link" if unspecified
-        world_frame: robot/odom             # Defaults to the value of odom_frame if unspecified
+        world_frame: robot_odom             # Defaults to the value of odom_frame if unspecified
 
         # The filter accepts an arbitrary number of inputs from each input message type (nav_msgs/Odometry,
         # geometry_msgs/PoseWithCovarianceStamped, geometry_msgs/TwistWithCovarianceStamped,
@@ -84,8 +84,8 @@
         # do not provide some of the state variables estimated by the filter. For example, a TwistWithCovarianceStamped message
         # has no pose information, so the first six values would be meaningless in that case. Each vector defaults to all false
         # if unspecified, effectively making this parameter required for each sensor.
-        odom0_config: [false, false, false,
-                       false, false, false,
+        odom0_config: [true , true , true ,
+                       true , true , true ,
                        true , false, false,
                        false, false, true ,
                        false, false, false]
@@ -102,7 +102,7 @@
         # data is converted to velocity data by differentiating the absolute pose measurements. These velocities are then
         # integrated as usual. NOTE: this only applies to sensors that provide pose measurements; setting differential to true
         # for twist measurements has no effect.
-        odom0_differential: false
+        odom0_differential: true
 
         # [ADVANCED] When the node starts, if this parameter is true, then the first measurement is treated as a "zero point"
         # for all future measurements. While you can achieve the same effect with the differential paremeter, the key

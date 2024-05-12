@@ -42,7 +42,7 @@ def generate_launch_description():
 
         parameters = [ 
             os.path.join(PKG_SHARE, 'config/ekfAbsolute.yaml'),
-            {"odom_frame":      f"{ROBOT_ID}/odom"  },
+            {"odom_frame":      f"{ROBOT_ID}_odom"  },
             {"base_link_frame": f"{ROBOT_ID}"       },
         ],
         remappings = [
@@ -60,9 +60,9 @@ def generate_launch_description():
 
         parameters = [ 
             os.path.join(PKG_SHARE, 'config/ekfRelative.yaml'),
-            {"odom_frame":      f"{ROBOT_ID}/odom"  },
+            {"odom_frame":      f"{ROBOT_ID}_odom"  },
             {"base_link_frame": f"{ROBOT_ID}"       },
-            {"world_frame":     f"{ROBOT_ID}/odom"  },
+            {"world_frame":     f"{ROBOT_ID}_odom"  },
         ],
         remappings = [
             ('odometry/filtered', 'ekf_relative'),
