@@ -44,15 +44,14 @@ namespace ebug
 
     void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const
     {
-        RCLCPP_INFO(this->get_logger(), "Callback A");
+        auto tfs = detections->transforms;
+        RCLCPP_INFO(this->get_logger(), "Callback A ->  %d", tfs.size());
 
-        if (detections->transforms.size() == 0)
-            return;
 
-        RCLCPP_INFO(this->get_logger(), "Callback B");
+        for(const geometry_msgs::msg::TransformStamped& ts : tfs) 
+        {
+            RCLCPP_INFO(this->get_logger(), "Callback B");            
 
-        for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
-        {            
             const int cam_id = (int)(ts.header.frame_id.back() - '0');
             
             tf2::Vector3 pos(ts.transform.translation.x, ts.transform.translation.y, ts.transform.translation.z);
