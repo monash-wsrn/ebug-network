@@ -45,13 +45,9 @@ namespace ebug
     void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr msg) const
     {
         const tf2_msgs::msg::TFMessage& detections = *msg;
-        
-        RCLCPP_INFO(this->get_logger(), "Callback A ->  %d", (int) detections.transforms.size());
 
         for(const geometry_msgs::msg::TransformStamped& ts : detections.transforms) 
         {
-            RCLCPP_INFO(this->get_logger(), "Callback B");            
-
             const int cam_id = (int)(ts.header.frame_id.back() - '0');
             
             tf2::Vector3 pos(ts.transform.translation.x, ts.transform.translation.y, ts.transform.translation.z);
@@ -59,8 +55,6 @@ namespace ebug
             tf2::Transform tag_cam(rot, pos);
 
             tf2::Transform robot_tag = m_Cameras[cam_id] * tag_cam.inverse();
-            
-            RCLCPP_INFO(this->get_logger(), "Callback C");
             
             geometry_msgs::msg::PoseWithCovarianceStamped msg;
             msg.header.stamp = ts.header.stamp;
@@ -76,14 +70,7 @@ namespace ebug
             msg.pose.pose.orientation.w = (double) robot_tag.getRotation().getW();
 
             msg.pose.covariance = m_Covariance;
-            
-            RCLCPP_INFO(this->get_logger(), "Callback D");
-
             m_Publisher->publish(std::move(msg));
-            
-            RCLCPP_INFO(this->get_logger(), "Callback E");
-            
-            // RCLCPP_INFO(this->get_logger(), "%.4f %.4f %.4f", robot_tag.getOrigin().getX(), robot_tag.getOrigin().getY(), robot_tag.getOrigin().getZ());
         }
     }
 }
