@@ -30,6 +30,8 @@ setup(
             'RobotController = ebug.RobotController:main',
             
             'MovementController = ebug.MovementController:main',
+            
+            'TransformConverter = ebug.TransformConverter:main',
 
             'BoidsService = ebug.BoidsService:main',
             'DiscoService = ebug.DiscoService:main',

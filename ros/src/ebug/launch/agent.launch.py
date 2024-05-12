@@ -25,12 +25,12 @@ def generate_launch_description():
     
 
     # converter node to invert the transform of cam->tag
-    COMPOSABLE_NODES.append(ComposableNode(
-        package = 'ebug_base',
-        plugin = 'ebug::TransformConverter',
+    Transformer = Node(
+        package = 'ebug',
+        executable = 'TransformConverter',
         name = 'TransformConverter',
         namespace = ROBOT_ID,
-    ))
+    )
 
     # https://answers.ros.org/question/222970/fusing-absolute-position-information-and-imu-data-using-the-ekf_localization_node/
     # EKF Node taking in AprilTag detections and wheel odometry
@@ -125,6 +125,7 @@ def generate_launch_description():
         ComposablesContainer,
         ComposablesLoader,
         
+        Transformer,
         EKFAbsolute,
         EKFRelative,
         MovementControllerNode,
