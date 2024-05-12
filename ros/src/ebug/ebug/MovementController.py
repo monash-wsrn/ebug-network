@@ -9,10 +9,6 @@ from ebug_base.msg import ControlCommand
 
 from nav_msgs.msg import Odometry
 
-from tf2_ros import TransformException
-from tf2_ros.buffer import Buffer
-from tf2_ros.transform_listener import TransformListener
-
 class MovementController(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
@@ -68,19 +64,6 @@ class MovementController(Node):
         response.color = result.color       # Vector3
 
         self.pub_target.publish(response)
-
-
-    def try_get_tf(self, frame):
-        ex = None
-        for _ in range(10):
-            try:
-                return self.tf2_buffer.lookup_transform('map', frame, rclpy.time.Time())
-            except TransformException as e:
-                ex = e
-                continue
-
-        self.get_logger().info(f'Could not transform \'map\' to \'robot\': {ex}')
-        return None
 
 def mat6diag(v):
     return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
