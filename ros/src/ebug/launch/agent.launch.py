@@ -140,9 +140,9 @@ def generate_launch_description():
         ComposablesLoader,
         
         Transformer,
-        EKFNode,
-        # EKFAbsolute,
-        # EKFRelative,
+        # EKFNode,
+        EKFAbsolute,
+        EKFRelative,
         MovementControllerNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])
