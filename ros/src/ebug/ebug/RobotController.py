@@ -35,6 +35,7 @@ class RobotController(Node):
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         
         self.robot_id = os.getenv('ROBOT_ID', "default")
+        self.start = True
 
         self.r = WHEEL_RAD
         self.l = BASELINE
@@ -57,8 +58,7 @@ class RobotController(Node):
         self.I = 0
         self.e_prev = 0
 
-        self.timestamp = self.get_clock().now().nanoseconds
-        self.pencode_l, self.pencode_r = 0.0, 0.0
+        self.timestamp = 0
 
     # Veclocity motion model
     def base_velocity(self,wl,wr):
@@ -129,10 +129,14 @@ class RobotController(Node):
     # Kinematic motion model
     def odom_pose_update(self):
         dt = self.delta_time()
-
         encoder_l, encoder_r = self.read_encoders_gyro()
-        sencode_l, sencode_r = self.encoder_congruence(encoder_l, encoder_r)
 
+        if (self.start):
+            self.start = False
+            self.pencode_l, self.pencode_r = int(encoder_l), int(encoder_r)
+            return
+        
+        sencode_l, sencode_r = self.encoder_congruence(encoder_l, encoder_r)
         self.wl = float(sencode_l) * ENC_CONST
         self.wr = float(sencode_r) * ENC_CONST
         
