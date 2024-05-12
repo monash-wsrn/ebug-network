@@ -102,8 +102,8 @@ class RobotController(Node):
         
         self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
         self.odom_th = self.odom_th + self.odom_w
-        self.odom_x = self.odom_x + self.odom_v*math.cos(self.odom_th)
-        self.odom_y = self.odom_y + self.odom_v*math.sin(self.odom_th)
+        self.odom_x = self.odom_x + self.odom_v * math.cos(self.odom_th)
+        self.odom_y = self.odom_y + self.odom_v * math.sin(self.odom_th)
 
         t = self.get_clock().now().to_msg()
         q = quat(0.0, 0.0, self.odom_th)
@@ -122,12 +122,12 @@ class RobotController(Node):
         odom.pose.pose.orientation.w = float(q.w)
         odom.pose.covariance = mat6diag(1e-2)
 
-        odom.twist.twist.linear.x = 0.0
+        odom.twist.twist.linear.x = float(self.odom_v)
         odom.twist.twist.linear.y = 0.0
         odom.twist.twist.linear.z = 0.0
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
-        odom.twist.twist.angular.z = 0.0
+        odom.twist.twist.angular.z = float(self.odom_w)
         odom.twist.covariance = mat6diag(1e-2)
 
         self.odom_pub.publish(odom) 
