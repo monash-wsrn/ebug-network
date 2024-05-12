@@ -28,14 +28,14 @@ class RobotController(Node):
 
         self.a_star = AStar()
 
-        self.timer = self.create_timer(0.02, self.odom_pose_update)
+        self.timer = self.create_timer(0.05, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
 
         self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
         
         self.robot_id = os.getenv('ROBOT_ID', "default")
-        self.start = 1
+        self.start = True
 
         self.r = WHEEL_RAD
         self.l = BASELINE
@@ -49,7 +49,7 @@ class RobotController(Node):
         self.Kd = 5
         self.exp_alpha = 1
 
-        self.wl, self.wr = 0.0,  0.0
+        self.wl, self.wr = 0.0, 0.0
 
         self.path_idx = 0
         self.done = 0
@@ -94,6 +94,7 @@ class RobotController(Node):
                 continue
         self.get_logger().info(msg)
 
+
     def delta_time(self):
         def ns():
             return self.get_clock().now().nanoseconds
@@ -106,16 +107,38 @@ class RobotController(Node):
 
         return delta
     
+    def encoder_congruence(self, encoder_l, encoder_r):
+        ldiff = encoder_l - self.pencode_l
+        rdiff = encoder_r - self.pencode_r
+
+        while (ldiff > 32767):
+            ldiff -= 32768
+        while (ldiff < -32768):
+            ldiff -= 32768
+
+        while (rdiff > 32767):
+            rdiff -= 32768
+        while (rdiff < -32768):
+            rdiff -= 32768
+
+        self.pencode_l = encoder_l
+        self.pencode_r = encoder_r
+        return ldiff, rdiff
+
+    
     # Kinematic motion model
     def odom_pose_update(self):
         dt = self.delta_time()
-        if dt < 1e-9:
-            return
-
         encoder_l, encoder_r = self.read_encoders_gyro()
+
+        if (self.start):
+            self.start = False
+            self.pencode_l, self.pencode_r = int(encoder_l), int(encoder_r)
+            return
         
-        self.wl = encoder_l * ENC_CONST
-        self.wr = encoder_r * ENC_CONST
+        sencode_l, sencode_r = self.encoder_congruence(encoder_l, encoder_r)
+        self.wl = float(sencode_l) * ENC_CONST
+        self.wr = float(sencode_r) * ENC_CONST
         
         self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
         self.odom_th = self.odom_th + self.odom_w
