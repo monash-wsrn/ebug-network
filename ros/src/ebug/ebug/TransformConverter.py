@@ -51,10 +51,8 @@ class TransformConverter(Node):
     def listener_callback(self, tf_det:TFMessage):
         for t in tf_det.transforms:
             cam_id = int(t.header.frame_id[-1])
-
-            cam_tag = t.transform
-            robot_cam = self.cameras[ cam_id ]
-            robot_tag = inverse(combine(robot_cam, cam_tag))
+            
+            robot_tag = inverse(combine(t.transform, self.cameras[ cam_id ]))
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
