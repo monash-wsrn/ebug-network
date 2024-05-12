@@ -43,7 +43,7 @@ namespace ebug
             explicit TransformConverter(const rclcpp::NodeOptions& options);
 
         private:
-            void transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const;
+            void transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr msg) const;
     };
 }
 #endif  // EBUG_TRANSFORM_CONVERTER_HPP_
