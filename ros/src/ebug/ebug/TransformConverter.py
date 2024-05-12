@@ -28,7 +28,7 @@ class TransformConverter(Node):
 
 
         self.subscription = self.create_subscription(TFMessage, 'tf_detections', self.listener_callback, 100)
-        self.publisher = self.create_publisher(PoseWithCovarianceStamped, 'pose', 10)
+        self.publisher = self.create_publisher(PoseWithCovarianceStamped, 'pose', 100)
 
         self.cameras = [self.get_camera(i) for i in range(4)]
         self.covariance = mat6diag(1e-1)
