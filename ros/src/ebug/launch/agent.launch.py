@@ -35,7 +35,7 @@ def generate_launch_description():
     EKFNode = Node(
         package = 'robot_localization',
         executable = 'ekf_node',
-        name = 'ekf_filter_absolute',
+        name = 'ekf_filter',
         namespace = ROBOT_ID,
 
         parameters = [ 
