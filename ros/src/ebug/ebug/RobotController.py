@@ -28,7 +28,7 @@ class RobotController(Node):
 
         self.a_star = AStar()
 
-        self.timer = self.create_timer(0.04, self.odom_pose_update)
+        self.timer = self.create_timer(0.05, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
 
@@ -121,8 +121,8 @@ class RobotController(Node):
         while (rdiff < -32768):
             rdiff -= 32768
 
-        self.pencode_l = encoder_l
-        self.pencode_r = encoder_r
+        self.pencode_l = int(encoder_l)
+        self.pencode_r = int(encoder_r)
         return ldiff, rdiff
 
     
