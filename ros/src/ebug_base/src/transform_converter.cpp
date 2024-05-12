@@ -6,12 +6,10 @@ namespace ebug
 {
     TransformConverter::TransformConverter(const rclcpp::NodeOptions& options) : Node("TransformConverter", options)
     {
-        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 
-            rclcpp::QoS(1).best_effort().durability_volatile());
+        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 10);
 
-        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 
-            rclcpp::QoS(1).reliable().durability_volatile(), 
-            std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
+        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections",  100, 
+            std::move(std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1)));
 
         m_Covariance = {
             0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -42,13 +40,13 @@ namespace ebug
         m_Cameras.push_back(cam_3);
     }
 
-    void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const
+    void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr msg) const
     {
-        auto tfs = detections->transforms;
-        RCLCPP_INFO(this->get_logger(), "Callback A ->  %d", (int) tfs.size());
+        const tf2_msgs::msg::TFMessage& detections = *msg;
+        
+        RCLCPP_INFO(this->get_logger(), "Callback A ->  %d", (int) detections.transforms.size());
 
-
-        for(const geometry_msgs::msg::TransformStamped& ts : tfs) 
+        for(const geometry_msgs::msg::TransformStamped& ts : detections.transforms) 
         {
             RCLCPP_INFO(this->get_logger(), "Callback B");            
 
