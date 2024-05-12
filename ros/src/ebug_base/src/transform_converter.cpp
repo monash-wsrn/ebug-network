@@ -6,9 +6,12 @@ namespace ebug
 {
     TransformConverter::TransformConverter(const rclcpp::NodeOptions& options) : Node("TransformConverter", options)
     {
-        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", rclcpp::QoS(1).best_effort().durability_volatile());
+        m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 
+            rclcpp::QoS(1).best_effort().durability_volatile());
 
-        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", rclcpp::QoS(1).best_effort(), std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
+        m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 
+            rclcpp::QoS(1).reliable().durability_volatile(), 
+            std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1));
 
         m_Covariance = {
             0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -41,10 +44,12 @@ namespace ebug
 
     void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const
     {
+        RCLCPP_INFO(this->get_logger(), "Callback A");
+
         if (detections->transforms.size() == 0)
             return;
 
-        RCLCPP_INFO(this->get_logger(), "Callback");
+        RCLCPP_INFO(this->get_logger(), "Callback B");
 
         for(const geometry_msgs::msg::TransformStamped& ts : detections->transforms) 
         {            
@@ -55,6 +60,8 @@ namespace ebug
             tf2::Transform tag_cam(rot, pos);
 
             tf2::Transform robot_tag = m_Cameras[cam_id] * tag_cam.inverse();
+            
+            RCLCPP_INFO(this->get_logger(), "Callback C");
             
             geometry_msgs::msg::PoseWithCovarianceStamped msg;
             msg.header.stamp = ts.header.stamp;
@@ -71,7 +78,11 @@ namespace ebug
 
             msg.pose.covariance = m_Covariance;
             
+            RCLCPP_INFO(this->get_logger(), "Callback D");
+
             m_Publisher->publish(std::move(msg));
+            
+            RCLCPP_INFO(this->get_logger(), "Callback E");
             
             // RCLCPP_INFO(this->get_logger(), "%.4f %.4f %.4f", robot_tag.getOrigin().getX(), robot_tag.getOrigin().getY(), robot_tag.getOrigin().getZ());
         }
