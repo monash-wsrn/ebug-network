@@ -32,22 +32,6 @@ def generate_launch_description():
         namespace = ROBOT_ID,
     )
 
-    EKFNode = Node(
-        package = 'robot_localization',
-        executable = 'ekf_node',
-        name = 'ekf_filter',
-        namespace = ROBOT_ID,
-
-        parameters = [ 
-            os.path.join(PKG_SHARE, 'config/ekf.yaml'),
-            {"odom_frame":      f"{ROBOT_ID}_odom"  },
-            {"base_link_frame": f"{ROBOT_ID}"       },
-        ],
-        remappings = [
-            ('odometry/filtered', 'filtered_odom'),
-        ]
-    )
-
     # https://answers.ros.org/question/222970/fusing-absolute-position-information-and-imu-data-using-the-ekf_localization_node/
     # EKF Node taking in AprilTag detections and wheel odometry
     EKFAbsolute = Node(
@@ -142,9 +126,8 @@ def generate_launch_description():
         ComposablesLoader,
         
         Transformer,
-        EKFNode,
-        # EKFAbsolute,
-        # EKFRelative,
+        EKFAbsolute,
+        EKFRelative,
         MovementControllerNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])

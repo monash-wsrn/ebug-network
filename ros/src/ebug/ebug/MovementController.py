@@ -38,46 +38,8 @@ class MovementController(Node):
         qos_profile = QoSProfile(depth=10)
         self.pub_target = self.create_publisher(ControlCommand, "cmd_vel", qos_profile)
         
-        # self.tf2_buffer = Buffer()
-        # self.tf2_listener = TransformListener(self.tf2_buffer, self)
-        
-        # self.timer = self.create_timer(1.0 / self.frequency, self.compute_target_timer)
-        
-        self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
+        self.sub_location = self.create_subscription(Odometry, "ekf_absolute", self.compute_target, qos_profile)
         self.get_logger().info(f"Created MovementController (ID: {self.get_namespace()}) using {self.service_name}")
-    
-
-    """
-    Upon receiving a pose update from a robot, calculate target velocity and 
-    publish to back to the robot. It will do this through the central control
-    service that has visibility of all robots' pose
-    """
-    def compute_target_timer(self):
-        if not self.client.wait_for_service(timeout_sec=0.5):
-            self.get_logger().warn('Service unavailable, no action undertaken')
-            return
-        
-        t = self.try_get_tf(self.robot_id)
-        if t is None:
-            return
-        
-        request = ComputeTarget.Request()
-        request.robot_id = self.robot_id
-        
-        request.pose.pose.position.x = t.transform.translation.x
-        request.pose.pose.position.y = t.transform.translation.y
-        request.pose.pose.position.z = t.transform.translation.z
-        
-        request.pose.pose.orientation.x = t.transform.rotation.x
-        request.pose.pose.orientation.y = t.transform.rotation.y
-        request.pose.pose.orientation.z = t.transform.rotation.z
-        request.pose.pose.orientation.w = t.transform.rotation.w
-
-        # TODO pull actual covariance from ekf_absolute and ekf_relative
-        request.pose.covariance = mat6diag(1e-2)
-
-        future = self.client.call_async(request)
-        future.add_done_callback(self.future_callback)
 
 
     """
