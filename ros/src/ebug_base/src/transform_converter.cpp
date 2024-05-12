@@ -45,7 +45,7 @@ namespace ebug
     void TransformConverter::transform_callback(const tf2_msgs::msg::TFMessage::ConstSharedPtr& detections) const
     {
         auto tfs = detections->transforms;
-        RCLCPP_INFO(this->get_logger(), "Callback A ->  %d", tfs.size());
+        RCLCPP_INFO(this->get_logger(), "Callback A ->  %d", (int) tfs.size());
 
 
         for(const geometry_msgs::msg::TransformStamped& ts : tfs) 
