@@ -39,9 +39,7 @@ def generate_launch_description():
         namespace = ROBOT_ID,
 
         parameters = [ 
-            os.path.join(PKG_SHARE, 'config/ekf.yaml'),
-            {"odom_frame":      f"{ROBOT_ID}_odom"  },
-            {"base_link_frame": f"{ROBOT_ID}"       },
+            os.path.join(PKG_SHARE, 'config/ekf.yaml')
         ],
         remappings = [
             ('odometry/filtered', 'filtered_odom'),
