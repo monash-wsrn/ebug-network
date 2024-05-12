@@ -32,6 +32,20 @@ def generate_launch_description():
         namespace = ROBOT_ID,
     )
 
+    EKFNode = Node(
+        package = 'robot_localization',
+        executable = 'ekf_node',
+        name = 'ekf_filter_absolute',
+        namespace = ROBOT_ID,
+
+        parameters = [ 
+            os.path.join(PKG_SHARE, 'config/ekf.yaml')
+        ],
+        remappings = [
+            ('odometry/filtered', 'filtered_odom'),
+        ]
+    )
+
     # https://answers.ros.org/question/222970/fusing-absolute-position-information-and-imu-data-using-the-ekf_localization_node/
     # EKF Node taking in AprilTag detections and wheel odometry
     EKFAbsolute = Node(
@@ -126,6 +140,7 @@ def generate_launch_description():
         ComposablesLoader,
         
         Transformer,
+        EKFNode,
         EKFAbsolute,
         EKFRelative,
         MovementControllerNode,
