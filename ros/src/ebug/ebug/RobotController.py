@@ -58,6 +58,8 @@ class RobotController(Node):
         self.I = 0
         self.e_prev = 0
 
+        self.timestamp = 0
+
     # Veclocity motion model
     def base_velocity(self,wl,wr):
 
@@ -92,9 +94,24 @@ class RobotController(Node):
                 continue
         self.get_logger().info(msg)
 
+    def delta_time(self):
+        def ns():
+            return self.get_clock().now().nanoseconds
+
+        if self.timestamp == 0:
+            self.timestamp = ns()
+        
+        delta = float(ns() - self.timestamp) / 1_000_000_000.0
+        self.timestamp = ns()
+
+        return delta
     
     # Kinematic motion model
     def odom_pose_update(self):
+        dt = self.delta_time()
+        if dt < 1e-9:
+            return
+
         encoder_l, encoder_r = self.read_encoders_gyro()
         
         self.wl = encoder_l * ENC_CONST
@@ -122,12 +139,12 @@ class RobotController(Node):
         odom.pose.pose.orientation.w = float(q.w)
         odom.pose.covariance = mat6diag(1e-2)
 
-        odom.twist.twist.linear.x = float(self.odom_v)
+        odom.twist.twist.linear.x = float(self.odom_v) / dt
         odom.twist.twist.linear.y = 0.0
         odom.twist.twist.linear.z = 0.0
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
-        odom.twist.twist.angular.z = float(self.odom_w)
+        odom.twist.twist.angular.z = float(self.odom_w) / dt
         odom.twist.covariance = mat6diag(1e-2)
 
         self.odom_pub.publish(odom) 
