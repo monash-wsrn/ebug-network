@@ -15,7 +15,7 @@ from ebug.util.AStar import AStar
 from ebug_base.msg import ControlCommand
 
 BASELINE = 0.142                                            # Distance between wheels in meters
-WHEEL_RAD = 0.0345                                          # Wheel radius in meter
+WHEEL_RAD = 0.0351                                          # Wheel radius in meter
 GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
 ENC_CPR = 12.0                                              # Encoders Counts-per-revolution
 ENC_CONST = (2.0 * math.pi) / (ENC_CPR * GEAR_RATIO)        # Encoder constant
@@ -108,8 +108,8 @@ class RobotController(Node):
         return delta
     
     def encoder_congruence(self, encoder_l, encoder_r):
-        ldiff = encoder_l - self.pencode_l
-        rdiff = encoder_r - self.pencode_r
+        ldiff = int(encoder_l) - int(self.pencode_l)
+        rdiff = int(encoder_r) - int(self.pencode_r)
 
         while (ldiff > 32767):
             ldiff -= 32768
