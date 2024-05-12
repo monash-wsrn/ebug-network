@@ -12,9 +12,9 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, Transform
 # CAM_2 = (0, 0,    PI) RPY Radians (BACK)
 # CAM_3 = (0, 0, 3PI/2) RPY Radians (LEFT)
 
-CAM_ROBOT_ROT_X = [0.0,        0.0,  0.0,         0.0]
+CAM_ROBOT_ROT_X = [0.0,  0.7071068,  1.0,   0.7071068]
 CAM_ROBOT_ROT_Y = [0.0,        0.0,  0.0,         0.0]
-CAM_ROBOT_ROT_Z = [0.0,  0.7071068,  1.0,   0.7071068]
+CAM_ROBOT_ROT_Z = [0.0,        0.0,  0.0,         0.0]
 CAM_ROBOT_ROT_W = [0.0,  0.7071068,  0.0,  -0.7071068]
 
 """
@@ -52,10 +52,9 @@ class TransformConverter(Node):
         for t in tf_det.transforms:
             cam_id = int(t.header.frame_id[-1])
 
-            tag_cam = inverse(t.transform)
-            cam_robot = self.cameras[ cam_id ]
-            tag_robot = combine(tag_cam, cam_robot)
-            robot_tag = inverse(tag_robot)
+            cam_tag = inverse(t.transform)
+            robot_cam = self.cameras[ cam_id ]
+            robot_tag = combine(robot_cam, cam_tag)
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
