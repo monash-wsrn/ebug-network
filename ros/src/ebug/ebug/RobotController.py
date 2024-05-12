@@ -137,8 +137,8 @@ class RobotController(Node):
             return
         
         sencode_l, sencode_r = self.encoder_congruence(encoder_l, encoder_r)
-        self.wl = float(sencode_l) * ENC_CONST
-        self.wr = float(sencode_r) * ENC_CONST
+        self.wl = float(sencode_l + 1.0) * ENC_CONST
+        self.wr = float(sencode_r + 1.0) * ENC_CONST
         
         self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
         self.odom_th = self.odom_th + self.odom_w
