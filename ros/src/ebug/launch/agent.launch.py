@@ -39,7 +39,9 @@ def generate_launch_description():
         namespace = ROBOT_ID,
 
         parameters = [ 
-            os.path.join(PKG_SHARE, 'config/ekf.yaml')
+            os.path.join(PKG_SHARE, 'config/ekf.yaml'),
+            {"odom_frame":      f"{ROBOT_ID}_odom"  },
+            {"base_link_frame": f"{ROBOT_ID}"       },
         ],
         remappings = [
             ('odometry/filtered', 'filtered_odom'),
@@ -140,9 +142,9 @@ def generate_launch_description():
         ComposablesLoader,
         
         Transformer,
-        # EKFNode,
-        EKFAbsolute,
-        EKFRelative,
+        EKFNode,
+        # EKFAbsolute,
+        # EKFRelative,
         MovementControllerNode,
         TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
     ])

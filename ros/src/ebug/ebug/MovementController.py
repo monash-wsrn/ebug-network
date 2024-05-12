@@ -7,6 +7,8 @@ from rclpy.qos import QoSProfile
 from ebug_base.srv import ComputeTarget
 from ebug_base.msg import ControlCommand
 
+from nav_msgs.msg import Odometry
+
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
@@ -22,6 +24,7 @@ class MovementController(Node):
         self.declare_parameter('frequency', 30.0)
         self.frequency = self.get_parameter('frequency').get_parameter_value().double_value
 
+        self.robot_id = os.getenv('ROBOT_ID', "default")
 
         # TODO shouldn't be the service module but rather the DTO and the service name
         self.client = self.create_client(ComputeTarget, f'/{self.service_name}')
@@ -35,11 +38,12 @@ class MovementController(Node):
         qos_profile = QoSProfile(depth=10)
         self.pub_target = self.create_publisher(ControlCommand, "cmd_vel", qos_profile)
         
-        self.tf2_buffer = Buffer()
-        self.tf2_listener = TransformListener(self.tf2_buffer, self)
+        # self.tf2_buffer = Buffer()
+        # self.tf2_listener = TransformListener(self.tf2_buffer, self)
         
-        self.robot_id = os.getenv('ROBOT_ID', "default")
-        self.timer = self.create_timer(1.0 / self.frequency, self.compute_target)
+        # self.timer = self.create_timer(1.0 / self.frequency, self.compute_target_timer)
+        
+        self.sub_location = self.create_subscription(Odometry, "filtered_odom", self.compute_target, qos_profile)
         self.get_logger().info(f"Created MovementController (ID: {self.get_namespace()}) using {self.service_name}")
     
 
@@ -48,7 +52,7 @@ class MovementController(Node):
     publish to back to the robot. It will do this through the central control
     service that has visibility of all robots' pose
     """
-    def compute_target(self):
+    def compute_target_timer(self):
         if not self.client.wait_for_service(timeout_sec=0.5):
             self.get_logger().warn('Service unavailable, no action undertaken')
             return
@@ -75,6 +79,24 @@ class MovementController(Node):
         future = self.client.call_async(request)
         future.add_done_callback(self.future_callback)
 
+
+    """
+    Upon receiving a pose update from a robot, calculate target velocity and 
+    publish to back to the robot. It will do this through the central control
+    service that has visibility of all robots' pose
+    """
+    def compute_target(self, payload: Odometry):
+
+        if not self.client.wait_for_service(timeout_sec=0.5):
+            self.get_logger().warn('Service unavailable, no action undertaken')
+            return
+        
+        request = ComputeTarget.Request()
+        request.robot_id = self.robot_id
+        request.pose = payload.pose
+
+        future = self.client.call_async(request)
+        future.add_done_callback(self.future_callback)
 
     def future_callback(self, future):
         result = future.result() # Returns a ControlCommand
