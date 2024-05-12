@@ -7,10 +7,10 @@ namespace ebug
     TransformConverter::TransformConverter(const rclcpp::NodeOptions& options) : Node("TransformConverter", options)
     {
         m_Publisher = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 
-            rclcpp::QoS(1).reliable().durability_volatile());
+            rclcpp::QoS(1128).reliable().durability_volatile().keep_all());
 
         m_Subscription = this->create_subscription<tf2_msgs::msg::TFMessage>("tf_detections", 
-            rclcpp::QoS(1).reliable().durability_volatile(), 
+            rclcpp::QoS(128).reliable().durability_volatile().keep_all(), 
             std::move(std::bind(&TransformConverter::transform_callback, this, std::placeholders::_1)));
 
         m_Covariance = {
