@@ -52,7 +52,7 @@ class TransformConverter(Node):
         for t in tf_det.transforms:
             cam_id = int(t.header.frame_id[-1])
 
-            robot_tag = combine(self.cameras[ cam_id ], inverse(t.transform))
+            robot_tag = inverse(combine(self.cameras[ cam_id ], inverse(t.transform)))
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
@@ -71,7 +71,7 @@ class TransformConverter(Node):
             self.publisher.publish(msg)
 
 
-def combine(t1, t2):
+def combine(t1, t2):    
     t = Transform()
 
     t.translation.x = t1.translation.x + t2.translation.x
