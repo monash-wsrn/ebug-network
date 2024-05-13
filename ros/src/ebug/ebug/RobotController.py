@@ -137,8 +137,7 @@ class RobotController(Node):
         self.wr = float(sencode_r) * ENC_CONST
         
         self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
-        # self.odom_th = self.odom_th + self.odom_w
-        self.odom_th = self.odom_th - self.odom_w
+        self.odom_th = self.odom_th + self.odom_w
         self.odom_x = self.odom_x + self.odom_v * math.cos(self.odom_th)
         self.odom_y = self.odom_y + self.odom_v * math.sin(self.odom_th)
 
