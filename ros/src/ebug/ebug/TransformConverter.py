@@ -41,7 +41,8 @@ class TransformConverter(Node):
             cam_id = int(t.header.frame_id[-1])
 
             distance = t.transform.translation.z + CAM_OFFSET
-            rotation = CAM_ROTATION[cam_id] - quat2roll(t.transform.rotation)
+            roll, pitch, _ = quat2rpy(t.transform.rotation)
+            rotation = CAM_ROTATION[cam_id] - pitch
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
@@ -51,7 +52,7 @@ class TransformConverter(Node):
             msg.pose.pose.position.y = 0.0
             msg.pose.pose.position.z = distance
 
-            qx, qy, qz, qw = roll2quat(rotation)
+            qx, qy, qz, qw = rpy2quat(rotation, roll, 0.0)
             msg.pose.pose.orientation.x = qx
             msg.pose.pose.orientation.y = qy
             msg.pose.pose.orientation.z = qz
@@ -65,20 +66,28 @@ def mat6diag(v):
     return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
 
 
-# Function to get the pitch (radians) of a quaternion
-def quat2pich(quat):
+# Function to get the rpy (radians) of a quaternion
+def quat2rpy(quat):
     x, y, z, w = quat.x, quat.y, quat.z, quat.w
 
     # https://automaticaddison.com/how-to-convert-a-quaternion-into-euler-angles-in-python/
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + y * y)
+    roll_x = math.atan2(t0, t1)
+    
     t2 = +2.0 * (w * y - z * x)
     t2 = +1.0 if t2 > +1.0 else t2
     t2 = -1.0 if t2 < -1.0 else t2
-    return math.asin(t2)
-
-# Function to get the quaternion of a pitch (radians)
-def pitch2quat(pitch):
-    roll, yaw = 0.0, 0.0
+    pitch_y = math.asin(t2)
     
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (y * y + z * z)
+    yaw_z = math.atan2(t3, t4)
+    
+    return roll_x, pitch_y, yaw_z # in radians
+
+# Function to get the quaternion of a rpy (radians)
+def rpy2quat(roll, pitch, yaw):    
     # https://automaticaddison.com/how-to-convert-euler-angles-to-quaternions-using-python/
     qx = math.sin(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) - math.cos(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
     qy = math.cos(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0)
