@@ -43,10 +43,11 @@ class RobotController(Node):
 
         self.odom_x, self.odom_y, self.odom_th = 0.0, 0.0, 0.0
         self.odom_v, self.odom_w = 0.0,  0.0
-        
+
+        self.pencode_l, self.pencode_r = self.read_encoders_gyro()
         self.wl, self.wr = 0.0, 0.0
         self.timestamp = 0
-        
+
         self.duty_cycle_l, self.duty_cycle_r = 0, 0
         
         
