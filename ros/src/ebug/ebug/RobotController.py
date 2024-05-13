@@ -127,6 +127,11 @@ class RobotController(Node):
             return
         
         sencode_l, sencode_r = self.encoder_congruence(encoder_l, encoder_r)
+
+        # Filter out spikes
+        if (sencode_l / dt) > 14400 or (sencode_r / dt) > 14400:
+            return
+
         self.wl = float(sencode_l) * ENC_CONST
         self.wr = float(sencode_r) * ENC_CONST
         
