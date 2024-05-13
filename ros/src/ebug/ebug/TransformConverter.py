@@ -41,7 +41,7 @@ class TransformConverter(Node):
             cam_id = int(t.header.frame_id[-1])
 
             distance = t.transform.translation.z + CAM_OFFSET
-            rotation = quat2roll(t.transform.rotation) + CAM_ROTATION[cam_id]
+            rotation = (math.pi + quat2roll(t.transform.rotation)) + CAM_ROTATION[cam_id]
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
