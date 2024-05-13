@@ -48,11 +48,11 @@ class TransformConverter(Node):
             msg.header = t.header
             msg.header.frame_id = t.child_frame_id
             
-            msg.pose.pose.position.x = 0.0
+            msg.pose.pose.position.x = math.cos(-pitch) * distance      # Distance perpindicular to the normal
             msg.pose.pose.position.y = 0.0
-            msg.pose.pose.position.z = distance
+            msg.pose.pose.position.z = math.sin(-pitch) * distance      # Distance along the normal
 
-            qx, qy, qz, qw = rpy2quat(-pitch, rotation, 0.0)
+            qx, qy, qz, qw = rpy2quat(0.0, rotation, 0.0)
             msg.pose.pose.orientation.x = qx
             msg.pose.pose.orientation.y = qy
             msg.pose.pose.orientation.z = qz
