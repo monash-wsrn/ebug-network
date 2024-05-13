@@ -42,7 +42,7 @@ class TransformConverter(Node):
 
             distance = t.transform.translation.z + CAM_OFFSET
             roll, pitch, _ = quat2rpy(t.transform.rotation)
-            rotation = CAM_ROTATION[cam_id] - pitch
+            rotation = CAM_ROTATION[cam_id] - roll + math.pi
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
@@ -52,7 +52,7 @@ class TransformConverter(Node):
             msg.pose.pose.position.y = 0.0
             msg.pose.pose.position.z = distance
 
-            qx, qy, qz, qw = rpy2quat(rotation, roll, 0.0)
+            qx, qy, qz, qw = rpy2quat(-pitch, rotation, 0.0)
             msg.pose.pose.orientation.x = qx
             msg.pose.pose.orientation.y = qy
             msg.pose.pose.orientation.z = qz
