@@ -49,9 +49,9 @@ class TransformConverter(Node):
             
             msg.pose.pose.position.x = 0.0
             msg.pose.pose.position.y = 0.0
-            msg.pose.pose.position.z = -distance
+            msg.pose.pose.position.z = distance
 
-            qx, qy, qz, qw = roll2quat(rotation + math.pi)
+            qx, qy, qz, qw = roll2quat(rotation)
             msg.pose.pose.orientation.x = qx
             msg.pose.pose.orientation.y = qy
             msg.pose.pose.orientation.z = qz
