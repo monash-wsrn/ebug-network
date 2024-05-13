@@ -4,12 +4,12 @@
         # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
         # computation until it receives at least one message from one of the inputs. It will then run continuously at the
         # frequency specified here, regardless of whether it receives more measurements. Defaults to 30 if unspecified.
-        frequency: 30.0
+        frequency: 10.0
 
         # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
         # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
         # filter will generate new output. Defaults to 1 / frequency if not specified.
-        sensor_timeout: 0.05
+        sensor_timeout: 0.1
 
         # ekf_localization_node and ukf_localization_node both use a 3D omnidirectional motion model. If this parameter is
         # set to true, no 3D information will be used in your state estimate. Use this if you are operating in a planar
@@ -28,7 +28,7 @@
 
         # If you're having trouble, try setting this to true, and then echo the /diagnostics_agg topic to see if the node is
         # unhappy with any settings or data.
-        print_diagnostics: false
+        print_diagnostics: true
 
         # Debug settings. Not for the faint of heart. Outputs a ludicrous amount of information to the file specified by
         # debug_out_file. I hope you like matrices! Please note that setting this to true will have strongly deleterious
@@ -67,9 +67,9 @@
         #     3b. MAKE SURE something else is generating the odom->base_link transform. Note that this can even be another state
         #         estimation node from robot_localization! However, that instance should *not* fuse the global data.
         map_frame: map              # Defaults to "map" if unspecified
-        odom_frame: robot/odom      # Defaults to "odom" if unspecified
-        base_link_frame: robot      # Defaults to "base_link" if unspecified
-        world_frame: map            # Defaults to the value of odom_frame if unspecified
+        odom_frame: robot_0/odom           # Defaults to "odom" if unspecified
+        base_link_frame: robot_0  # Defaults to "base_link" if unspecified
+        world_frame: map    # Defaults to the value of odom_frame if unspecified
 
         # The filter accepts an arbitrary number of inputs from each input message type (nav_msgs/Odometry,
         # geometry_msgs/PoseWithCovarianceStamped, geometry_msgs/TwistWithCovarianceStamped,
@@ -85,15 +85,15 @@
         # do not provide some of the state variables estimated by the filter. For example, a TwistWithCovarianceStamped message
         # has no pose information, so the first six values would be meaningless in that case. Each vector defaults to all false
         # if unspecified, effectively making this parameter required for each sensor.
-        odom0_config: [true , true , true ,
-                       true , true , true ,
-                       true , true , true ,
-                       true , true , true ,
+        odom0_config: [false,  false,  false,
+                       false, false, false,
+                       true, true, true,
+                       true, true, true,
                        false, false, false]
 
         # If you have high-frequency data or are running with a low frequency parameter value, then you may want to increase
         # the size of the subscription queue so that more measurements are fused.
-        odom0_queue_size: 1
+        odom0_queue_size: 2
 
         # [ADVANCED] When measuring one pose variable with two sensors, a situation can arise in which both sensors under-
         # report their covariances. This can lead to the filter rapidly jumping back and forth between each measurement as they
@@ -103,13 +103,13 @@
         # data is converted to velocity data by differentiating the absolute pose measurements. These velocities are then
         # integrated as usual. NOTE: this only applies to sensors that provide pose measurements; setting differential to true
         # for twist measurements has no effect.
-        odom0_differential: true
+        odom0_differential: false
 
         # [ADVANCED] When the node starts, if this parameter is true, then the first measurement is treated as a "zero point"
         # for all future measurements. While you can achieve the same effect with the differential paremeter, the key
         # difference is that the relative parameter doesn't cause the measurement to be converted to a velocity before
         # integrating it. If you simply want your measurements to start at 0 for a given sensor, set this to true.
-        odom0_relative: true
+        odom0_relative: false
 
         # [ADVANCED] Whether to use the starting pose of child_frame_id as the origin of odometry.
         # Note: this is different from setting odom0_relative to true, as when child_frame is different from 
@@ -121,13 +121,13 @@
 
         pose0: pose
         pose0_config: [true,  true,  true,
-                       true,  true,  true,
+                       true, true, true,
                        false, false, false,
                        false, false, false,
                        false, false, false]
         pose0_differential: false
         pose0_relative: false
-        pose0_queue_size: 1
+        pose0_queue_size: 5
       
 
         # # [ADVANCED] The process noise covariance matrix can be difficult to tune, and can vary for each application, so it is
@@ -140,21 +140,21 @@
         # # unspecified.
         # # Note: the specification of covariance matrices can be cumbersome, so all matrix parameters in this package support
         # # both full specification or specification of only the diagonal values.
-        process_noise_covariance: [0.05, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.05, 0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.06, 0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.03, 0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.03, 0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.06, 0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.025, 0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.025, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.04, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.01, 0.0,    0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.01, 0.0,    0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.02, 0.0,    0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.01, 0.0,    0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.01, 0.0,
-                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.015]
+        # process_noise_covariance: [0.05, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.05, 0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.06, 0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.03, 0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.03, 0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.06, 0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.025, 0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.025, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.04, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.01, 0.0,    0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.01, 0.0,    0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.02, 0.0,    0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.01, 0.0,    0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.01, 0.0,
+        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.015]
 
         # # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
         # # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
