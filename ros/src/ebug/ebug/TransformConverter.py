@@ -5,6 +5,7 @@ from rclpy.node import Node
 from tf2_msgs.msg import TFMessage
 from geometry_msgs.msg import PoseWithCovarianceStamped, Transform
 
+import math
 
 
 # CAM_0 = (0, 0,     0) RPY Radians (FRONT)
@@ -12,10 +13,13 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, Transform
 # CAM_2 = (0, 0,    PI) RPY Radians (BACK)
 # CAM_3 = (0, 0, 3PI/2) RPY Radians (LEFT)
 
-CAM_ROBOT_ROT_X = [0.0,  0.7071068,  1.0,   0.7071068]
-CAM_ROBOT_ROT_Y = [0.0,        0.0,  0.0,         0.0]
-CAM_ROBOT_ROT_Z = [0.0,        0.0,  0.0,         0.0]
-CAM_ROBOT_ROT_W = [0.0,  0.7071068,  0.0,  -0.7071068]
+CAM_OFFSET = 0.025
+CAM_ROTATION = [
+    0.0,                    # Camera 0: Forward
+    math.pi / 2.0,          # Camera 1: Right
+    math.pi,                # Camera 2: Behind
+    3.0 * math.pi / 2.0     # Camera 3: Left
+]
 
 """
 This code inverse the cam->tag transform
@@ -26,101 +30,63 @@ class TransformConverter(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
 
-
         self.subscription = self.create_subscription(TFMessage, 'tf_detections', self.listener_callback, 100)
         self.publisher = self.create_publisher(PoseWithCovarianceStamped, 'pose', 100)
 
-        self.cameras = [self.get_camera(i) for i in range(4)]
         self.covariance = mat6diag(1e-1)
-    
-    def get_camera(self, cam_id):
-        t = Transform()
-
-        t.translation.x = 0.0
-        t.translation.y = 0.0
-        t.translation.z = -0.025
-
-        t.rotation.x = CAM_ROBOT_ROT_X[cam_id]
-        t.rotation.y = CAM_ROBOT_ROT_Y[cam_id]
-        t.rotation.z = CAM_ROBOT_ROT_Z[cam_id]
-        t.rotation.w = CAM_ROBOT_ROT_W[cam_id]
-        
-        return t
 
 
     def listener_callback(self, tf_det:TFMessage):
         for t in tf_det.transforms:
             cam_id = int(t.header.frame_id[-1])
 
-            robot_tag = inverse(combine(self.cameras[ cam_id ], inverse(t.transform)))
+            distance = t.transform.translation.z + CAM_OFFSET
+            rotation = quat2roll(t.transform.rotation) + CAM_ROTATION[cam_id]
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
             msg.header.frame_id = t.child_frame_id
             
-            msg.pose.pose.position.x = robot_tag.translation.x
-            msg.pose.pose.position.y = robot_tag.translation.y
-            msg.pose.pose.position.z = robot_tag.translation.z
+            msg.pose.pose.position.x = 0.0
+            msg.pose.pose.position.y = 0.0
+            msg.pose.pose.position.z = -distance
 
-            msg.pose.pose.orientation.x = robot_tag.rotation.x
-            msg.pose.pose.orientation.y = robot_tag.rotation.y
-            msg.pose.pose.orientation.z = robot_tag.rotation.z
-            msg.pose.pose.orientation.w = robot_tag.rotation.w
+            qx, qy, qz, qw = roll2quat(rotation + math.pi)
+            msg.pose.pose.orientation.x = qx
+            msg.pose.pose.orientation.y = qy
+            msg.pose.pose.orientation.z = qz
+            msg.pose.pose.orientation.w = qw
 
             msg.pose.covariance = self.covariance
             self.publisher.publish(msg)
 
 
-def combine(t1, t2):    
-    t = Transform()
-
-    t.translation.x = t1.translation.x + t2.translation.x
-    t.translation.y = t1.translation.y + t2.translation.y
-    t.translation.z = t1.translation.z + t2.translation.z
-
-    qx, qy, qz, qw = mulQuat(t1.rotation, t2.rotation)
-    t.rotation.x = qx
-    t.rotation.y = qy
-    t.rotation.z = qz
-    t.rotation.w = qw
-    
-    return t
-
-
-def inverse(t1):    
-    t = Transform()
-
-    t.translation.x = -t1.translation.x
-    t.translation.y = -t1.translation.y
-    t.translation.z = -t1.translation.z
-
-    qx, qy, qz, qw = invQuat(t1.rotation)
-    t.rotation.x = qx
-    t.rotation.y = qy
-    t.rotation.z = qz
-    t.rotation.w = qw
-    
-    return t
-
-
-def invQuat(q1):
-    d = q1.x*q1.x + q1.y*q1.y + q1.z*q1.z + q1.w*q1.w
-    d += 1e-12   # Add epsilon value to avoid div 0 error
-    return q1.x/d, -q1.y/d, -q1.z/d, -q1.w/d
-
-
-def mulQuat(q1, q2):
-    x_ = q1.x * q2.w + q1.w * q2.x + q1.y * q2.z - q1.z * q2.y
-    y_ = q1.y * q2.w + q1.w * q2.y + q1.z * q2.x - q1.x * q2.z
-    z_ = q1.z * q2.w + q1.w * q2.z + q1.x * q2.y - q1.y * q2.x
-    w_ = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z
-    return x_, y_, z_, w_
-
-
 def mat6diag(v):
     return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
 
+
+# Function to get the roll (radians) of a quaternion
+def quat2roll(quat):
+    x, y, z, w = quat.x, quat.y, quat.z, quat.w
+
+    # https://automaticaddison.com/how-to-convert-a-quaternion-into-euler-angles-in-python/
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + y * y)
+    return math.atan2(t0, t1)
+
+# Function to get the quaternion of a roll (radians)
+def roll2quat(roll):
+    pitch, yaw = 0.0, 0.0
+    
+    # https://stackoverflow.com/q/53033620
+    qx = math.sin(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) - math.cos(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
+    qy = math.cos(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0)
+    qz = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0) - math.sin(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0)
+    qw = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
+    return [qx, qy, qz, qw]
                 
+
+
 def main():
     rclpy.init()
     node = TransformConverter()
