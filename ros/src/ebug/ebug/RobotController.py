@@ -28,7 +28,7 @@ class RobotController(Node):
 
         self.a_star = AStar()
 
-        self.timer = self.create_timer(0.04, self.odom_pose_update)
+        self.timer = self.create_timer(0.025, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
 
@@ -111,15 +111,15 @@ class RobotController(Node):
         ldiff = int(encoder_l) - int(self.pencode_l)
         rdiff = int(encoder_r) - int(self.pencode_r)
 
-        while (ldiff > 32767):
-            ldiff -= 32768
-        while (ldiff < -32768):
-            ldiff -= 32768
+        if (ldiff > 32767):
+            ldiff -= 65535
+        elif (ldiff < -32768):
+            ldiff += 65536
 
-        while (rdiff > 32767):
-            rdiff -= 32768
-        while (rdiff < -32768):
-            rdiff -= 32768
+        if (rdiff > 32767):
+            rdiff -= 65535
+        elif (rdiff < -32768):
+            rdiff += 65536
 
         self.pencode_l = int(encoder_l)
         self.pencode_r = int(encoder_r)
@@ -160,7 +160,7 @@ class RobotController(Node):
         odom.pose.pose.orientation.y = float(q.y)
         odom.pose.pose.orientation.z = float(q.z)
         odom.pose.pose.orientation.w = float(q.w)
-        odom.pose.covariance = mat6diag(1e-2)
+        odom.pose.covariance = mat6diag(1e-3)
 
         odom.twist.twist.linear.x = float(self.odom_v) / dt
         odom.twist.twist.linear.y = 0.0
@@ -168,7 +168,7 @@ class RobotController(Node):
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
         odom.twist.twist.angular.z = float(self.odom_w) / dt
-        odom.twist.covariance = mat6diag(1e-1)
+        odom.twist.covariance = mat6diag(1e-3)
 
         self.odom_pub.publish(odom) 
 
