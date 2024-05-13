@@ -14,6 +14,7 @@ from geometry_msgs.msg import Quaternion, Vector3
 from ebug.util.AStar import AStar
 from ebug_base.msg import ControlCommand
 
+# https://www.cs.columbia.edu/~allen/F17/NOTES/icckinematics.pdf
 BASELINE = 0.142                                            # Distance between wheels in meters
 WHEEL_RAD = 0.0351                                          # Wheel radius in meter
 GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
@@ -63,9 +64,8 @@ class RobotController(Node):
     # Veclocity motion model
     def base_velocity(self,wl,wr):
 
-        v = (wl*self.r + wr*self.r) / 2.0
-        
-        w = (wr*self.r - wl*self.r) / self.l    # modified to adhre to REP103
+        v = (wl + wr) * self.r / 2.0
+        w = (wr - wl) * self.r / self.l    # modified to adhre to REP103
         
         return v, w
     
@@ -171,43 +171,25 @@ class RobotController(Node):
         odom.twist.covariance = mat6diag(1e-3)
 
         self.odom_pub.publish(odom) 
-
-
-    def p_control(self,duty_cycle, w_desired,w_measured):
         
+    def drive(self,v_desired,w_desired):
+        # https://automaticaddison.com/calculating-wheel-velocities-for-a-differential-drive-robot/
+        factor = float(w_desired * self.l) / 2.0
+        wl_desired = float(v_desired - factor) / self.r
+        wr_desired = float(v_desired + factor) / self.r
+        
+        # https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_motors.html#a1c19beaeeb5a86a9d1ab7e054c825c13
+        self.duty_cycle_l = wl_desired * 7  # -300 is full reverse, +300 is full forward
+        self.duty_cycle_r = wr_desired * 7  # -300 is full reverse, +300 is full forward
 
-        e = min(max(w_desired-w_measured, -200), 200)
-        
-        P = self.Kp*e
-        self.I = self.I + self.Ki*e
-        D = self.Kd*(e - self.e_prev)
-
-        self.e_prev = e
-
-        duty_cycle = self.exp_alpha*min(max(P + self.I + D, -200),200) + (1-self.exp_alpha)*duty_cycle
-        return duty_cycle
-        
-        
-    def drive(self,v_desired,w_desired,wl,wr):
-        
-
-        wl_desired = (v_desired - self.l*w_desired/2)/self.r
-        wr_desired = (v_desired + self.l*w_desired/2)/self.r
-        
-        self.duty_cycle_l = wl_desired * 7 #self.p_control(self.duty_cycle_l, wl_desired,wl)*1.005
-        self.duty_cycle_r = wr_desired * 7 #self.p_control(self.duty_cycle_r, wr_desired,wr)
         return self.duty_cycle_l, self.duty_cycle_r
-
-    def distance(self,goal_x, goal_y, x, y):
-
-        return math.sqrt((goal_x-x)**2 + (goal_y-y)**2)
 
     def cmd_vel_callback(self, msg:ControlCommand):
 
         self.desired_v = msg.control.linear.x
         self.desired_w = msg.control.angular.z
 
-        duty_cycle_l,duty_cycle_r = self.drive(self.desired_v, self.desired_w, self.wl, self.wr)
+        duty_cycle_l,duty_cycle_r = self.drive(self.desired_v, self.desired_w)
         self.motors(duty_cycle_l, duty_cycle_r, msg.color)
 
 
