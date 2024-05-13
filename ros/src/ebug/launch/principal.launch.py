@@ -19,27 +19,27 @@ def generate_launch_description():
 
     StaticTransformAprilTag0 = Node(
         package = 'tf2_ros',
-        executable = 'static_transform_publisher',
-        arguments = ['--x', '1.08', '--y', '0.7', '--z', '0', '--yaw', '-0.785398', '--pitch', '-1.5708', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_0']
+        executable = 'static_transform_publisher',  # -45 (-135)
+        arguments = ['--x', '1.08', '--y', '0.7', '--z', '0', '--yaw', '-2.35619', '--pitch', '0.0', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_0']
     )
 
     StaticTransformAprilTag1 = Node(
         package = 'tf2_ros',
-        executable = 'static_transform_publisher',
-        arguments = ['--x', '1.08', '--y', '-0.7', '--z', '0', '--yaw', '-2.35619', '--pitch', '-1.5708', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_1']
+        executable = 'static_transform_publisher',  # -135 (135)
+        arguments = ['--x', '1.08', '--y', '-0.7', '--z', '0', '--yaw', '2.35619', '--pitch', '0.0', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_1']
     )
 
     StaticTransformAprilTag2 = Node(
         package = 'tf2_ros',
-        executable = 'static_transform_publisher',
-        arguments = ['--x', '-1.08', '--y', '-0.7', '--z', '0', '--yaw', '2.35619', '--pitch', '-1.5708', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_2']
+        executable = 'static_transform_publisher',  # 135  (45)
+        arguments = ['--x', '-1.08', '--y', '-0.7', '--z', '0', '--yaw', '0.785398', '--pitch', '0.0', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_2']
     )
 
 
     StaticTransformAprilTag3 = Node(
         package = 'tf2_ros',
-        executable = 'static_transform_publisher',
-        arguments = ['--x', '-1.08', '--y', '0.7', '--z', '0', '--yaw', '0.785398', '--pitch', '-1.5708', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_3']
+        executable = 'static_transform_publisher',  # 45    (-45)
+        arguments = ['--x', '-1.08', '--y', '0.7', '--z', '0', '--yaw', '-0.785398', '--pitch', '0.0', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_3']
     )
 
 
