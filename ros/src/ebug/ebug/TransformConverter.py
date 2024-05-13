@@ -33,7 +33,7 @@ class TransformConverter(Node):
         self.subscription = self.create_subscription(TFMessage, 'tf_detections', self.listener_callback, 100)
         self.publisher = self.create_publisher(PoseWithCovarianceStamped, 'pose', 100)
 
-        self.covariance = mat6diag(1e-1)
+        self.covariance = mat6diag(1e-3)
 
 
     def listener_callback(self, tf_det:TFMessage):

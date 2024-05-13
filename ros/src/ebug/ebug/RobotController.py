@@ -168,7 +168,7 @@ class RobotController(Node):
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
         odom.twist.twist.angular.z = float(self.odom_w) / dt
-        odom.twist.covariance = mat6diag(1e-2)
+        odom.twist.covariance = mat6diag(1e-1)
 
         self.odom_pub.publish(odom) 
 
