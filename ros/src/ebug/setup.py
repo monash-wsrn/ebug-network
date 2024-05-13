@@ -35,6 +35,7 @@ setup(
 
             'BoidsService = ebug.BoidsService:main',
             'DiscoService = ebug.DiscoService:main',
+            'DebugService = ebug.DebugService:main',
 
             'PseudoMovementController = ebug.PseudoMovementController:main',
 
