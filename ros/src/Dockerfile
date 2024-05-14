@@ -18,7 +18,7 @@ RUN sudo apt-get install -y \
     ros-humble-image-pipeline \
     ros-humble-apriltag-ros \
     ros-humble-usb-cam \
-    ros-humble-grid-map
+    ros-humble-grid-map 
 
 # Qt5 Packages
 RUN sudo apt-get install -y \
@@ -29,7 +29,8 @@ RUN sudo apt-get install -y \
     python3-colcon-common-extensions \
     python3-pip \
     python3-smbus \
-    i2c-tools
+    i2c-tools  \ 
+    ros-humble-teleop-twist-keyboard 
 
 ENV ROS_DOMAIN_ID=${DOMAIN_ID:-13}
 ENV DISPLAY="host.docker.internal:0.0"

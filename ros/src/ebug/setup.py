@@ -39,7 +39,10 @@ setup(
 
             'PseudoMovementController = ebug.PseudoMovementController:main',
 
-            'PyGameDisplay = ebug.PyGameDisplay:main'
+            'PyGameDisplay = ebug.PyGameDisplay:main', 
+
+            'TeleoperationController = ebug.TeleoperationController:main',
+            'sim_robot = ebug.sim_robot:main'
 
         ],
     },
