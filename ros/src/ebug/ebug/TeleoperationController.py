@@ -12,6 +12,7 @@ from ebug.util.AStar import AStar
 MULTIPLIER = float(os.getenv('WHEEL_MULT', "1.0862"))
 BASELINE = 0.142                                            # Distance between wheels in meters
 WHEEL_RAD = 0.0351 * MULTIPLIER                             # Wheel radius in meters
+PUBLISH_INTERVAL = 0.1  # Interval in seconds to publish the pose
 
 class RobotController(Node):
 
@@ -27,6 +28,9 @@ class RobotController(Node):
         self.r = WHEEL_RAD
         self.l = BASELINE
         self.odom_x, self.odom_y, self.odom_th = 0.0, 0.0, 0.0
+
+        # Timer to publish the robot's pose at regular intervals
+        self.timer = self.create_timer(PUBLISH_INTERVAL, self.publish_current_pose)
 
     def motors(self, left, right):
         self.try_i2c(lambda : self.a_star.motors(int(left), int(right)), "I/O error moving motors")
@@ -57,18 +61,25 @@ class RobotController(Node):
         v_desired = msg.linear.x
         w_desired = msg.angular.z
 
-        duty_cycle_l, duty_cycle_r = self.drive(v_desired, w_desired)
+        # Handle pivoting on the spot
+        if v_desired == 0 and w_desired != 0:
+            duty_cycle_l = -w_desired * self.l * 7 / (2 * self.r)
+            duty_cycle_r = w_desired * self.l * 7 / (2 * self.r)
+        else:
+            duty_cycle_l, duty_cycle_r = self.drive(v_desired, w_desired)
+
         self.motors(duty_cycle_l, duty_cycle_r)
         
         # Update robot's pose based on the velocity and publish to /global_poses
         self.update_odometry(v_desired, w_desired)
 
     def update_odometry(self, v, w):
-        dt = 0.1  # Assuming a fixed time step for simplicity
+        dt = PUBLISH_INTERVAL  # Use the same interval as the timer for simplicity
         self.odom_th += w * dt
         self.odom_x += v * math.cos(self.odom_th) * dt
         self.odom_y += v * math.sin(self.odom_th) * dt
 
+    def publish_current_pose(self):
         odom_msg = Odometry()
         odom_msg.header.stamp = self.get_clock().now().to_msg()
         odom_msg.header.frame_id = f"{self.robot_id}_odom"

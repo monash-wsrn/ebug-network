@@ -1,0 +1,105 @@
+running egg_info
+creating ../../../build/ebug/ebug.egg-info
+writing ../../../build/ebug/ebug.egg-info/PKG-INFO
+writing dependency_links to ../../../build/ebug/ebug.egg-info/dependency_links.txt
+writing entry points to ../../../build/ebug/ebug.egg-info/entry_points.txt
+writing requirements to ../../../build/ebug/ebug.egg-info/requires.txt
+writing top-level names to ../../../build/ebug/ebug.egg-info/top_level.txt
+writing manifest file '../../../build/ebug/ebug.egg-info/SOURCES.txt'
+reading manifest file '../../../build/ebug/ebug.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file '../../../build/ebug/ebug.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/laprp/Documents/ebug-network/build/ebug/build
+creating /home/laprp/Documents/ebug-network/build/ebug/build/lib
+creating /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/BoidsService.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/PyGameDisplay.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/__init__.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/TransformConverter.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/sim_robot.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/TeleoperationController.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/DebugService.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/RobotController.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/MovementController.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/DiscoService.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+copying ebug/PseudoMovementController.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug
+creating /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util
+copying ebug/util/__init__.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util
+copying ebug/util/AStar.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util
+copying ebug/util/DiscoMode.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util
+copying ebug/util/BoidsFunction.py -> /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util
+running install
+running install_lib
+creating /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/BoidsService.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/PyGameDisplay.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/__init__.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/TransformConverter.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/sim_robot.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/TeleoperationController.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/DebugService.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/RobotController.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/MovementController.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/DiscoService.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/PseudoMovementController.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug
+creating /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util/__init__.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util/AStar.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util/DiscoMode.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util
+copying /home/laprp/Documents/ebug-network/build/ebug/build/lib/ebug/util/BoidsFunction.py -> /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/BoidsService.py to BoidsService.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/PyGameDisplay.py to PyGameDisplay.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/TransformConverter.py to TransformConverter.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/sim_robot.py to sim_robot.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/TeleoperationController.py to TeleoperationController.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/DebugService.py to DebugService.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/RobotController.py to RobotController.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/MovementController.py to MovementController.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/DiscoService.py to DiscoService.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/PseudoMovementController.py to PseudoMovementController.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util/AStar.py to AStar.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util/DiscoMode.py to DiscoMode.cpython-310.pyc
+byte-compiling /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug/util/BoidsFunction.py to BoidsFunction.cpython-310.pyc
+running install_data
+creating /home/laprp/Documents/ebug-network/install/ebug/share/ament_index
+creating /home/laprp/Documents/ebug-network/install/ebug/share/ament_index/resource_index
+creating /home/laprp/Documents/ebug-network/install/ebug/share/ament_index/resource_index/packages
+copying resource/ebug -> /home/laprp/Documents/ebug-network/install/ebug/share/ament_index/resource_index/packages
+copying package.xml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug
+creating /home/laprp/Documents/ebug-network/install/ebug/share/ebug/rviz
+copying rviz/gridmap.rviz -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/rviz
+creating /home/laprp/Documents/ebug-network/install/ebug/share/ebug/config
+copying config/ekfAbsolute.yaml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/config
+copying config/aprilTag.yaml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/config
+copying config/gridmap.yaml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/config
+copying config/ekfRelative.yaml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/config
+creating /home/laprp/Documents/ebug-network/install/ebug/share/ebug/calibration
+copying calibration/cam_2.yaml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/calibration
+copying calibration/cam_3.yaml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/calibration
+copying calibration/cam_1.yaml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/calibration
+copying calibration/cam_0.yaml -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/calibration
+creating /home/laprp/Documents/ebug-network/install/ebug/share/ebug/launch
+copying launch/teleoperate.launch.py -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/launch
+copying launch/agent.launch.py -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/launch
+copying launch/visualiser.launch.py -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/launch
+copying launch/pseudo.launch.py -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/launch
+copying launch/gridmap.launch.py -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/launch
+copying launch/principal.launch.py -> /home/laprp/Documents/ebug-network/install/ebug/share/ebug/launch
+running install_egg_info
+Copying ../../../build/ebug/ebug.egg-info to /home/laprp/Documents/ebug-network/install/ebug/lib/python3.10/site-packages/ebug-0.0.0-py3.10.egg-info
+running install_scripts
+Installing BoidsService script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing DebugService script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing DiscoService script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing MovementController script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing PseudoMovementController script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing PyGameDisplay script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing RobotController script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing TeleoperationController script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing TransformConverter script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+Installing sim_robot script to /home/laprp/Documents/ebug-network/install/ebug/lib/ebug
+writing list of installed files to '/home/laprp/Documents/ebug-network/build/ebug/install.log'

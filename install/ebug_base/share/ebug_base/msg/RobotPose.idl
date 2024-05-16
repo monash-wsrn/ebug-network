@@ -1,0 +1,15 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from ebug_base/msg/RobotPose.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/PoseWithCovariance.idl"
+
+module ebug_base {
+  module msg {
+    struct RobotPose {
+      string robot_id;
+
+      geometry_msgs::msg::PoseWithCovariance pose;
+    };
+  };
+};
