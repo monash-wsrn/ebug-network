@@ -1,0 +1,16 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from ebug_base/msg/ControlCommand.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Twist.idl"
+#include "geometry_msgs/msg/Vector3.idl"
+
+module ebug_base {
+  module msg {
+    struct ControlCommand {
+      geometry_msgs::msg::Twist control;
+
+      geometry_msgs::msg::Vector3 color;
+    };
+  };
+};

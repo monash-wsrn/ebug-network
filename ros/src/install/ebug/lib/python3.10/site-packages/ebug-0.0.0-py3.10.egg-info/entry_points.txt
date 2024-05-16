@@ -1,0 +1,12 @@
+[console_scripts]
+BoidsService = ebug.BoidsService:main
+DebugService = ebug.DebugService:main
+DiscoService = ebug.DiscoService:main
+MovementController = ebug.MovementController:main
+PseudoMovementController = ebug.PseudoMovementController:main
+PyGameDisplay = ebug.PyGameDisplay:main
+RobotController = ebug.RobotController:main
+TeleoperationController = ebug.TeleoperationController:main
+TransformConverter = ebug.TransformConverter:main
+sim_robot = ebug.sim_robot:main
+

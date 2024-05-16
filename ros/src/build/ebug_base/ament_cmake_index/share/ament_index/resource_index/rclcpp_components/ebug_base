@@ -1,0 +1,3 @@
+ebug::ByteRectifier;lib/libbyte_rectifier_component.so
+ebug::JpegRepublisher;lib/libjpeg_republisher_component.so
+ebug::GridmapController;lib/libgridmap_controller_component.so
