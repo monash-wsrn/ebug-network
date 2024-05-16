@@ -2,7 +2,7 @@ import os
 import math
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Vector3
 from nav_msgs.msg import Odometry
 from ebug_base.msg import RobotPose
 
@@ -12,7 +12,6 @@ from ebug.util.AStar import AStar
 MULTIPLIER = float(os.getenv('WHEEL_MULT', "1.0862"))
 BASELINE = 0.142                                            # Distance between wheels in meters
 WHEEL_RAD = 0.0351 * MULTIPLIER                             # Wheel radius in meters
-PUBLISH_INTERVAL = 0.1  # Interval in seconds to publish the pose
 
 class RobotController(Node):
 
@@ -29,12 +28,12 @@ class RobotController(Node):
         self.l = BASELINE
         self.odom_x, self.odom_y, self.odom_th = 0.0, 0.0, 0.0
 
-        # Timer to publish the robot's pose at regular intervals
-        self.timer = self.create_timer(PUBLISH_INTERVAL, self.publish_current_pose)
+        # Timer to periodically update and publish robot's pose
+        self.timer = self.create_timer(0.1, self.timer_callback)
 
     def motors(self, left, right):
         self.try_i2c(lambda : self.a_star.motors(int(left), int(right)), "I/O error moving motors")
-        self.try_i2c(lambda : self.a_star.led_ring(0, 0, 255), "I/O error setting LEDs to blue")
+        self.try_i2c(lambda : self.a_star.led_ring(int(0), int(0), int(255)), "I/O error setting LEDs to blue")
     
     def try_i2c(self, i2c_func, msg):
         for _ in range(10):
@@ -61,25 +60,23 @@ class RobotController(Node):
         v_desired = msg.linear.x
         w_desired = msg.angular.z
 
-        # Handle pivoting on the spot
-        if v_desired == 0 and w_desired != 0:
-            duty_cycle_l = -w_desired * self.l * 7 / (2 * self.r)
-            duty_cycle_r = w_desired * self.l * 7 / (2 * self.r)
-        else:
-            duty_cycle_l, duty_cycle_r = self.drive(v_desired, w_desired)
-
+        duty_cycle_l, duty_cycle_r = self.drive(v_desired, w_desired)
         self.motors(duty_cycle_l, duty_cycle_r)
         
-        # Update robot's pose based on the velocity and publish to /global_poses
+        # Update robot's pose based on the velocity
         self.update_odometry(v_desired, w_desired)
 
+    def timer_callback(self):
+        # Publish the current pose at a fixed interval
+        self.publish_robot_pose()
+
     def update_odometry(self, v, w):
-        dt = PUBLISH_INTERVAL  # Use the same interval as the timer for simplicity
+        dt = 0.1  # Assuming a fixed time step for simplicity
         self.odom_th += w * dt
         self.odom_x += v * math.cos(self.odom_th) * dt
         self.odom_y += v * math.sin(self.odom_th) * dt
 
-    def publish_current_pose(self):
+    def publish_robot_pose(self):
         odom_msg = Odometry()
         odom_msg.header.stamp = self.get_clock().now().to_msg()
         odom_msg.header.frame_id = f"{self.robot_id}_odom"
@@ -90,9 +87,6 @@ class RobotController(Node):
         odom_msg.pose.pose.orientation.z = math.sin(self.odom_th / 2.0)
         odom_msg.pose.pose.orientation.w = math.cos(self.odom_th / 2.0)
 
-        self.publish_robot_pose(odom_msg)
-
-    def publish_robot_pose(self, odom_msg):
         robot_pose = RobotPose()
         robot_pose.robot_id = self.robot_id
         robot_pose.pose = odom_msg.pose
