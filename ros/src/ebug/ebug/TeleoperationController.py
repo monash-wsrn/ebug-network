@@ -46,9 +46,14 @@ class RobotController(Node):
         
     def drive(self, v_desired, w_desired):
         # https://automaticaddison.com/calculating-wheel-velocities-for-a-differential-drive-robot/
-        factor = float(w_desired * self.l) / 2.0
-        wl_desired = float(v_desired - factor) / self.r
-        wr_desired = float(v_desired + factor) / self.r
+        if v_desired == 0 and w_desired != 0:
+            # Pivoting on the spot
+            wl_desired = -w_desired * self.l / self.r
+            wr_desired = w_desired * self.l / self.r
+        else:
+            factor = float(w_desired * self.l) / 2.0
+            wl_desired = float(v_desired - factor) / self.r
+            wr_desired = float(v_desired + factor) / self.r
         
         # Convert to duty cycle: -300 is full reverse, +300 is full forward
         duty_cycle_l = wl_desired * 7
