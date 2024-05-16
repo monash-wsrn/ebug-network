@@ -16,7 +16,7 @@ DRIFT_CORRECTION = 1.118  # Adjusted drift correction factor
 
 # Fine-tune factors for left and right wheels (if needed)
 LEFT_WHEEL_CORRECTION = 1.0
-RIGHT_WHEEL_CORRECTION = 1.0
+RIGHT_WHEEL_CORRECTION = DRIFT_CORRECTION
 
 class RobotController(Node):
 
@@ -66,7 +66,7 @@ class RobotController(Node):
 
     def cmd_vel_callback(self, msg: Twist):
         v_desired = msg.linear.x
-        w_desired = msg.angular.z * DRIFT_CORRECTION  # Apply drift correction
+        w_desired = msg.angular.z
 
         duty_cycle_l, duty_cycle_r = self.drive(v_desired, w_desired)
         self.motors(duty_cycle_l, duty_cycle_r)
