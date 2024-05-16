@@ -27,9 +27,13 @@ class RobotController(Node):
         self.r = WHEEL_RAD
         self.l = BASELINE
         self.odom_x, self.odom_y, self.odom_th = 0.0, 0.0, 0.0
+        self.last_v, self.last_w = 0.0, 0.0
 
         # Timer to periodically update and publish robot's pose
         self.timer = self.create_timer(0.1, self.timer_callback)
+        
+        # Last update time
+        self.last_time = self.get_clock().now()
 
     def motors(self, left, right):
         self.try_i2c(lambda : self.a_star.motors(int(left), int(right)), "I/O error moving motors")
@@ -65,18 +69,22 @@ class RobotController(Node):
         v_desired = msg.linear.x
         w_desired = msg.angular.z
 
+        self.last_v = v_desired
+        self.last_w = w_desired
+
         duty_cycle_l, duty_cycle_r = self.drive(v_desired, w_desired)
         self.motors(duty_cycle_l, duty_cycle_r)
         
-        # Update robot's pose based on the velocity
-        self.update_odometry(v_desired, w_desired)
-
     def timer_callback(self):
-        # Publish the current pose at a fixed interval
+        # Update robot's pose based on the last commanded velocities
+        self.update_odometry(self.last_v, self.last_w)
         self.publish_robot_pose()
 
     def update_odometry(self, v, w):
-        dt = 0.1  # Assuming a fixed time step for simplicity
+        current_time = self.get_clock().now()
+        dt = (current_time - self.last_time).nanoseconds / 1e9  # Time in seconds
+        self.last_time = current_time
+
         self.odom_th += w * dt
         self.odom_x += v * math.cos(self.odom_th) * dt
         self.odom_y += v * math.sin(self.odom_th) * dt
