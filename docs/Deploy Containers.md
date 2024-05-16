@@ -17,6 +17,9 @@
     ./update
     ```
 
+docker run --net host --ipc host --pid host \
+        -e ROBOT_ID=$HOSTNAME \
+        --device /dev/i2c-1 --rm -it ebug
 
 ## Deploy the container (Agent Mode)
 *Intended to be run on the Raspberry Pi.*

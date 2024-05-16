@@ -30,7 +30,7 @@ class RobotController(Node):
 
     def motors(self, left, right):
         self.try_i2c(lambda : self.a_star.motors(int(left), int(right)), "I/O error moving motors")
-        self.try_i2c(lambda : self.a_star.led_ring(int(255), int(0), int(0)), "I/O error setting LEDs")
+        self.try_i2c(lambda : self.a_star.led_ring(0, 0, 255), "I/O error setting LEDs to blue")
     
     def try_i2c(self, i2c_func, msg):
         for _ in range(10):
@@ -71,12 +71,12 @@ class RobotController(Node):
 
         odom_msg = Odometry()
         odom_msg.header.stamp = self.get_clock().now().to_msg()
-        odom_msg.header.frame_id = f"{self.robot_id}msg.color_odom"
+        odom_msg.header.frame_id = f"{self.robot_id}_odom"
         odom_msg.child_frame_id = self.robot_id
 
         odom_msg.pose.pose.position.x = self.odom_x
         odom_msg.pose.pose.position.y = self.odom_y
-        odom_msg.pose.pose.orientation.z = msg.colormath.sin(self.odom_th / 2.0)
+        odom_msg.pose.pose.orientation.z = math.sin(self.odom_th / 2.0)
         odom_msg.pose.pose.orientation.w = math.cos(self.odom_th / 2.0)
 
         self.publish_robot_pose(odom_msg)
