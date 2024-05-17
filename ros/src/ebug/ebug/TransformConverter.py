@@ -42,7 +42,7 @@ class TransformConverter(Node):
 
             distance = t.transform.translation.z + CAM_OFFSET
             roll, pitch, _ = quat2rpy(t.transform.rotation)
-            rotation = CAM_ROTATION[cam_id] - roll  
+            rotation = (math.pi * 2.0) - (CAM_ROTATION[cam_id] - roll)  
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
@@ -58,7 +58,7 @@ class TransformConverter(Node):
             msg.pose.pose.orientation.z = qz
             msg.pose.pose.orientation.w = qw
 
-            msg.pose.covariance = self.covariance
+            msg.pose.covariance = mat6diag(1e-3 / (distance * 100.0))   # Increase covariance as the bot moves further away
             self.publisher.publish(msg)
 
 
