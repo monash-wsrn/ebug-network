@@ -129,7 +129,7 @@ def generate_launch_description():
         EKFAbsolute,
         EKFRelative,
         MovementControllerNode,
-        TimerAction(period=5.0, actions=[RobotControllerNode]) # Apply delayed start to movement controller, allow initial localization
+        RobotControllerNode
     ])
 
 
