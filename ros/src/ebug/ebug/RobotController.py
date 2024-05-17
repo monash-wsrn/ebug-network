@@ -29,7 +29,7 @@ class RobotController(Node):
 
         self.a_star = AStar()
 
-        self.frequency = float(os.getenv('ODOM_FREQUENCY', "25.0"))
+        self.frequency = float(os.getenv('ODOM_FREQUENCY', "40.0"))
         self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
@@ -133,8 +133,8 @@ class RobotController(Node):
         if abs(sencode_l) > 1440 or abs(sencode_r) > 1440:
             return
 
-        sencode_l = math.min(math.max(sencode_l, -180), 180)
-        sencode_r = math.min(math.max(sencode_r, -180), 180)
+        sencode_l = min(max(sencode_l, -180), 180)
+        sencode_r = min(max(sencode_r, -180), 180)
 
         self.wl = float(sencode_l) * ENC_CONST
         self.wr = float(sencode_r) * ENC_CONST
