@@ -29,7 +29,7 @@ class RobotController(Node):
         import time
 
         self.a_star = AStar()
-        time.sleep(500)
+        time.sleep(0.5)
 
         self.frequency = float(os.getenv('ODOM_FREQUENCY', "25.0"))
         self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
@@ -48,7 +48,7 @@ class RobotController(Node):
         self.odom_v, self.odom_w = 0.0,  0.0
 
         self.pencode_l, self.pencode_r = self.read_encoders_gyro()
-        time.sleep(1500)
+        time.sleep(1.5)
 
         self.wl, self.wr = 0.0, 0.0
         self.timestamp = 0
