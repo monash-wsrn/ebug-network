@@ -142,7 +142,7 @@ def argmax(a, b, c):
         return 0
     elif (b > c):
         return 1
-    else
+    else:
         return 2
 
 # Function to get the Euler Z angle of a boid
