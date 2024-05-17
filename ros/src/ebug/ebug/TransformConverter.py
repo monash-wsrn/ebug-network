@@ -43,15 +43,16 @@ class TransformConverter(Node):
             distance = t.transform.translation.z + CAM_OFFSET
             roll, pitch, _ = quat2rpy(t.transform.rotation)
 
-            orienation = CAM_ROTATION[cam_id] - roll                    # Calculate the final orientation of the actual robot
+            orienation = CAM_ROTATION[cam_id] - roll                        # Calculate the final orientation of the actual robot
+            rotation = (math.pi * 2.0) - pitch                              # Calculate the relative rotation of camera to apriltag
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
             msg.header.frame_id = t.child_frame_id
             
-            msg.pose.pose.position.x =  math.cos(-pitch) * distance    # Distance perpindicular to the normal
+            msg.pose.pose.position.x = math.cos(rotation) * distance        # Distance perpindicular to the normal
             msg.pose.pose.position.y = 0.0
-            msg.pose.pose.position.z = -math.sin(-pitch) * distance    # Distance along the normal
+            msg.pose.pose.position.z = math.sin(rotation) * distance        # Distance along the normal
 
             qx, qy, qz, qw = rpy2quat(0.0, orienation, 0.0)
             msg.pose.pose.orientation.x = qx
@@ -59,7 +60,10 @@ class TransformConverter(Node):
             msg.pose.pose.orientation.z = qz
             msg.pose.pose.orientation.w = qw
 
-            msg.pose.covariance = mat6diag(1e-3 / abs(distance * 100.0))   # Increase covariance as the bot moves further away
+            cov_distance = 1.0 / abs(distance * 100.0)               # A greater distance between the camera and apriltag increases covariance
+            cov_angle = 1.0 / ((abs(pitch) - 180.0) / 1.8)           # A sharper angle between the camera and apriltag increases covariance
+
+            msg.pose.covariance = mat6diag(1e-3 * cov_distance * cov_angle)     # Increase covariance as the bot moves further away
             self.publisher.publish(msg)
 
 
