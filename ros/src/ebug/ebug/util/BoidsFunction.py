@@ -80,7 +80,7 @@ def next(main_boid, other_boids):
         led_decision = argmax(aggregate_separation.length(), aggregate_cohesion.length(), aggregate_alignment.length())
         led_colour[led_decision] = 255
     
-    main_dir = Vec2.from_angle(main_boid.angle)
+    main_dir = Vec2.from_angle(pose_angle(main_boid))
     boundary = Vec2(0.0, 0.0)
     
     if ((main_pos.x < H_LOWER) or
