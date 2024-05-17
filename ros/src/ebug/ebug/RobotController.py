@@ -15,7 +15,7 @@ from ebug_base.msg import ControlCommand
 
 # https://www.cs.columbia.edu/~allen/F17/NOTES/icckinematics.pdf
 MULTIPLIER = float(os.getenv('WHEEL_MULT', "1.0862"))
-BASELINE = 0.142                                            # Distance between wheels in meters
+BASELINE = 0.138                                            # Distance between wheels in meters
 WHEEL_RAD = 0.0351 * MULTIPLIER                             # Wheel radius in meters
 GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
 ENC_CPR = 12.0                                              # Encoders Counts-per-revolution
@@ -129,7 +129,7 @@ class RobotController(Node):
         
         sencode_l, sencode_r = self.encoder_congruence(encoder_l, encoder_r)
 
-        # Filter out spikes, allow no more than 10 wheel rotations per update
+        # Filter out spikes, allow no more than one wheel rotation per update 
         if abs(sencode_l) > 1440 or abs(sencode_r) > 1440:
             return
 
