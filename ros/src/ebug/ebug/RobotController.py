@@ -26,8 +26,10 @@ class RobotController(Node):
 
     def __init__(self):
         super().__init__(self.__class__.__name__)
+        import time
 
         self.a_star = AStar()
+        time.sleep(500)
 
         self.frequency = float(os.getenv('ODOM_FREQUENCY', "25.0"))
         self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
@@ -46,6 +48,8 @@ class RobotController(Node):
         self.odom_v, self.odom_w = 0.0,  0.0
 
         self.pencode_l, self.pencode_r = self.read_encoders_gyro()
+        time.sleep(1500)
+
         self.wl, self.wr = 0.0, 0.0
         self.timestamp = 0
 
@@ -138,15 +142,11 @@ class RobotController(Node):
 
         self.wl = float(sencode_l) * ENC_CONST
         self.wr = float(sencode_r) * ENC_CONST
-
-        xdiff = self.odom_v * math.cos(self.odom_th)
-        ydiff = self.odom_v * math.sin(self.odom_th)
-        length = math.sqrt(xdiff**2 + ydiff**2)
         
         self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
         self.odom_th = self.odom_th + self.odom_w # TODO, this lesser than reality
-        self.odom_x = self.odom_x + xdiff
-        self.odom_y = self.odom_y + ydiff
+        self.odom_x = self.odom_x + self.odom_v * math.cos(self.odom_th)
+        self.odom_y = self.odom_y + self.odom_v * math.sin(self.odom_th)
 
         t = self.get_clock().now().to_msg()
         q = quat(0.0, 0.0, self.odom_th)
@@ -163,7 +163,7 @@ class RobotController(Node):
         odom.pose.pose.orientation.y = float(q.y)
         odom.pose.pose.orientation.z = float(q.z)
         odom.pose.pose.orientation.w = float(q.w)
-        odom.pose.covariance = mat6diag(1e-2 * (length * 10))   # The greater the change in position, the greater the covariance
+        odom.pose.covariance = mat6diag(1e-1)   # The greater the change in position, the greater the covariance
 
         odom.twist.twist.linear.x = float(self.odom_v) / dt
         odom.twist.twist.linear.y = 0.0
@@ -171,7 +171,7 @@ class RobotController(Node):
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
         odom.twist.twist.angular.z = float(self.odom_w) / dt
-        odom.twist.covariance = mat6diag(1e-2)
+        odom.twist.covariance = mat6diag(1e-1)
 
         self.odom_pub.publish(odom) 
         
