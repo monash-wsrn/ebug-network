@@ -31,7 +31,7 @@ class MovementController(Node):
         # Ideally we'd update our robots to interact directly with the BoidsService
         # as opposed to this roundabout way that allows the existing pub-sub
         # architecture to utilise a the service model
-        qos_profile = QoSProfile(depth=10)
+        qos_profile = QoSProfile(depth=1)
         self.pub_target = self.create_publisher(ControlCommand, "cmd_vel", qos_profile)
         
         self.sub_location = self.create_subscription(Odometry, "ekf_absolute", self.compute_target, qos_profile)

@@ -3,7 +3,6 @@ Handles the PID controller of the robot and i2c communication with Romi board
 """
 import os
 import math
-import time
 
 import rclpy
 from rclpy.node import Node
@@ -30,7 +29,8 @@ class RobotController(Node):
 
         self.a_star = AStar()
 
-        self.timer = self.create_timer(0.04, self.odom_pose_update)
+        self.frequency = float(os.getenv('ODOM_FREQUENCY', "30.0"))
+        self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
 
@@ -129,8 +129,8 @@ class RobotController(Node):
         
         sencode_l, sencode_r = self.encoder_congruence(encoder_l, encoder_r)
 
-        # Filter out spikes, allow no more than 10 wheel rotations per second
-        if abs(sencode_l / dt) > 14400 or abs(sencode_r / dt) > 14400:
+        # Filter out spikes, allow no more than 10 wheel rotations per update
+        if abs(sencode_l) > 1440 or abs(sencode_r) > 1440:
             return
 
         self.wl = float(sencode_l) * ENC_CONST
