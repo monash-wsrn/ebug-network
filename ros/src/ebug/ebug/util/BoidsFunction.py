@@ -87,7 +87,7 @@ def next(main_boid, other_boids):
         (main_pos.x > H_UPPER) or
         (main_pos.y < V_LOWER) or 
         (main_pos.y > V_UPPER)):
-        boundary = main_dir.sub(main_pos.inversed().normalised())
+        boundary = main_pos.inversed().normalised().sub(main_dir)
     
     
     direction = boundary.add(aggregate_cohesion).add(aggregate_alignment).add(aggregate_separation)
