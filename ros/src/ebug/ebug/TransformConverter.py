@@ -60,7 +60,7 @@ class TransformConverter(Node):
             msg.pose.pose.orientation.z = qz
             msg.pose.pose.orientation.w = qw
 
-            msg.pose.covariance = mat6diag(1e-3 / abs(distance * 10))       # Decrease covariance as the bot moves further away
+            msg.pose.covariance = mat6diag(1e-3 * abs(distance * 10))       # Decrease covariance as the bot moves further away
             self.publisher.publish(msg)
 
 
