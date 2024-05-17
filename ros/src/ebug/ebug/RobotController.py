@@ -133,6 +133,9 @@ class RobotController(Node):
         if abs(sencode_l) > 1440 or abs(sencode_r) > 1440:
             return
 
+        sencode_l = math.min(math.max(sencode_l, -180), 180)
+        sencode_r = math.min(math.max(sencode_r, -180), 180)
+
         self.wl = float(sencode_l) * ENC_CONST
         self.wr = float(sencode_r) * ENC_CONST
         
@@ -164,7 +167,7 @@ class RobotController(Node):
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
         odom.twist.twist.angular.z = float(self.odom_w) / dt
-        odom.twist.covariance = mat6diag(1e-3)
+        odom.twist.covariance = mat6diag(1e-5)
 
         self.odom_pub.publish(odom) 
         
