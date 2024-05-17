@@ -29,7 +29,7 @@ class RobotController(Node):
 
         self.a_star = AStar()
 
-        self.frequency = float(os.getenv('ODOM_FREQUENCY', "40.0"))
+        self.frequency = float(os.getenv('ODOM_FREQUENCY', "25.0"))
         self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
@@ -133,16 +133,20 @@ class RobotController(Node):
         if abs(sencode_l) > 1440 or abs(sencode_r) > 1440:
             return
 
-        sencode_l = min(max(sencode_l, -180), 180)
-        sencode_r = min(max(sencode_r, -180), 180)
+        # sencode_l = min(max(sencode_l, -90), 90)
+        # sencode_r = min(max(sencode_r, -90), 90)
 
         self.wl = float(sencode_l) * ENC_CONST
         self.wr = float(sencode_r) * ENC_CONST
+
+        xdiff = self.odom_v * math.cos(self.odom_th)
+        ydiff = self.odom_v * math.sin(self.odom_th)
+        length = math.sqrt(xdiff**2 + ydiff**2)
         
         self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
         self.odom_th = self.odom_th + self.odom_w # TODO, this lesser than reality
-        self.odom_x = self.odom_x + self.odom_v * math.cos(self.odom_th)
-        self.odom_y = self.odom_y + self.odom_v * math.sin(self.odom_th)
+        self.odom_x = self.odom_x + xdiff
+        self.odom_y = self.odom_y + ydiff
 
         t = self.get_clock().now().to_msg()
         q = quat(0.0, 0.0, self.odom_th)
@@ -159,7 +163,7 @@ class RobotController(Node):
         odom.pose.pose.orientation.y = float(q.y)
         odom.pose.pose.orientation.z = float(q.z)
         odom.pose.pose.orientation.w = float(q.w)
-        odom.pose.covariance = mat6diag(1e-3)
+        odom.pose.covariance = mat6diag(1e-3 * (length * 100))  # The greater the change in position, the greater the covariance
 
         odom.twist.twist.linear.x = float(self.odom_v) / dt
         odom.twist.twist.linear.y = 0.0
