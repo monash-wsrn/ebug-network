@@ -42,17 +42,19 @@ class TransformConverter(Node):
 
             distance = t.transform.translation.z + CAM_OFFSET
             roll, pitch, _ = quat2rpy(t.transform.rotation)
-            rotation = (math.pi * 2.0) - (CAM_ROTATION[cam_id] - roll)  
+
+            orienation = CAM_ROTATION[cam_id] - roll                    # Calculate the final orientation of the actual robot
+            rotation = (math.pi * 2.0) - pitch                          # Calculate the relative rotation of camera to apriltag
 
             msg = PoseWithCovarianceStamped()
             msg.header = t.header
             msg.header.frame_id = t.child_frame_id
             
-            msg.pose.pose.position.x = math.cos(-pitch) * distance      # Distance perpindicular to the normal
+            msg.pose.pose.position.x = math.cos(rotation) * distance    # Distance perpindicular to the normal
             msg.pose.pose.position.y = 0.0
-            msg.pose.pose.position.z = math.sin(-pitch) * distance      # Distance along the normal
+            msg.pose.pose.position.z = math.sin(rotation) * distance    # Distance along the normal
 
-            qx, qy, qz, qw = rpy2quat(0.0, rotation, 0.0)
+            qx, qy, qz, qw = rpy2quat(0.0, orienation, 0.0)
             msg.pose.pose.orientation.x = qx
             msg.pose.pose.orientation.y = qy
             msg.pose.pose.orientation.z = qz
