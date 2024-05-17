@@ -29,7 +29,7 @@ class RobotController(Node):
 
         self.a_star = AStar()
 
-        self.frequency = float(os.getenv('ODOM_FREQUENCY', "40.0"))
+        self.frequency = float(os.getenv('ODOM_FREQUENCY', "30.0"))
         self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
