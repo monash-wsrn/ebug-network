@@ -31,7 +31,7 @@ SEPARATION_FACTOR = float(os.getenv('SEPARATION_FACTOR', "1.0"))
 
 # Function to implement Boid rules
 def next(main_boid, other_boids):
-    led_colour = [255, 255, 255]
+    led_colour = [0, 0, 0]
 
     aggregate_cohesion = Vec2(0.0, 0.0)
     aggregate_alignment = Vec2(0.0, 0.0)
@@ -74,20 +74,20 @@ def next(main_boid, other_boids):
     aggregate_alignment = aggregate_alignment.scale(ALIGNMENT_FACTOR)
     aggregate_separation = aggregate_separation.scale(SEPARATION_FACTOR)
     
-    if (count_cohesion > 0):
-        led_colour = [0, 255, 0]
-    if (count_alignment > 0):
-        led_colour = [0, 0, 255]
-    if (count_separation > 0):
-        led_colour = [255, 0, 0]
+    if (count_cohesion == 0):
+        led_colour = [255, 255, 255]
+    else:
+        led_decision = argmax(aggregate_separation.length(), aggregate_cohesion.length(), aggregate_alignment.length())
+        led_colour[led_decision] = 255
     
+    main_dir = Vec2.from_angle(pose_angle(main_boid))
     boundary = Vec2(0.0, 0.0)
     
     if ((main_pos.x < H_LOWER) or
         (main_pos.x > H_UPPER) or
         (main_pos.y < V_LOWER) or 
         (main_pos.y > V_UPPER)):
-        boundary = main_pos.normalised().inversed()
+        boundary = main_dir.sub(main_pos.inversed().normalised())
     
     
     direction = boundary.add(aggregate_cohesion).add(aggregate_alignment).add(aggregate_separation)
@@ -136,6 +136,14 @@ class Vec2():
     def angle(self):
         return math.atan2(self.x, self.y)
 
+
+def argmax(a, b, c):
+    if (a > b and a > c):
+        return 0
+    elif (b > c):
+        return 1
+    else:
+        return 2
 
 # Function to get the Euler Z angle of a boid
 def pose_angle(pose):
