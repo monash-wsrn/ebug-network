@@ -60,8 +60,8 @@ class TransformConverter(Node):
             msg.pose.pose.orientation.z = qz
             msg.pose.pose.orientation.w = qw
 
-            cov_distance = 1.0 / abs(distance * 100.0)               # A greater distance between the camera and apriltag increases covariance
-            cov_angle = 1.0 / ((abs(pitch) - 180.0) / 1.8)           # A sharper angle between the camera and apriltag increases covariance
+            cov_distance = abs(distance * 100.0)                # A greater distance between the camera and apriltag increases covariance
+            cov_angle = ((abs(pitch) - 180.0) / 1.8)            # A sharper angle between the camera and apriltag increases covariance
 
             msg.pose.covariance = mat6diag(1e-3 * cov_distance * cov_angle)     # Increase covariance as the bot moves further away
             self.publisher.publish(msg)
