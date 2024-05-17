@@ -163,7 +163,7 @@ class RobotController(Node):
         odom.pose.pose.orientation.y = float(q.y)
         odom.pose.pose.orientation.z = float(q.z)
         odom.pose.pose.orientation.w = float(q.w)
-        odom.pose.covariance = mat6diag(1e-3 * (length * 100))  # The greater the change in position, the greater the covariance
+        odom.pose.covariance = mat6diag(1e-3 * (length * 10))   # The greater the change in position, the greater the covariance
 
         odom.twist.twist.linear.x = float(self.odom_v) / dt
         odom.twist.twist.linear.y = 0.0
@@ -171,7 +171,7 @@ class RobotController(Node):
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
         odom.twist.twist.angular.z = float(self.odom_w) / dt
-        odom.twist.covariance = mat6diag(1e-5)
+        odom.twist.covariance = mat6diag(1e-2)
 
         self.odom_pub.publish(odom) 
         
