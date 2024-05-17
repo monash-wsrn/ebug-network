@@ -16,10 +16,6 @@ class MovementController(Node):
         self.declare_parameter('service_name', 'ComputeTargetService')
         self.service_name = self.get_parameter('service_name').get_parameter_value().string_value
 
-        
-        self.declare_parameter('frequency', 30.0)
-        self.frequency = self.get_parameter('frequency').get_parameter_value().double_value
-
         self.robot_id = os.getenv('ROBOT_ID', "default")
 
         # TODO shouldn't be the service module but rather the DTO and the service name
