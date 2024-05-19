@@ -1,6 +1,3 @@
-#define DEBUG
-
-
 /* ========== I2C BRIDGE CONFIGURATION ========== */
 /* Ensure this exactly matches corresponding uses */
 
@@ -70,10 +67,6 @@ CRGB leds[NUM_LEDS];
 
 void setup()
 {
-#ifdef DEBUG
-  Serial.begin(9600);
-#endif
-
   // Set up the slave at I2C address 20.
   slave.init(I2C_ADDRESS);
 
@@ -145,10 +138,6 @@ void check_timeout(double dt)
   if (timeout > 0.0)
     return;
 
-#ifdef DEBUG
-  Serial.println("Timeout reached!");  
-#endif
-
   // If timed out, set all actionable values to 0
   slave.buffer.lm_desired = 0;
   slave.buffer.rm_desired = 0;
@@ -170,10 +159,6 @@ double delta(uint64_t now)
 void loop()
 {
   double dt = delta(micros());
-#ifdef DEBUG
-  Serial.print("Delta time (seconds): ");
-  Serial.println(dt);  
-#endif
   check_timeout(dt);
 
   // The actual encoder counts over the period
