@@ -44,8 +44,8 @@ struct Data
 #define COLOUR_ORDER GRB
 
 
-#define DEFAULT_MULTIPLIER 0.5            // Default Encoder-Counts to Motor-Speed conversion factor
-#define MAX_MULTIPLIER_DEVIATION 0.10     // How much each motor calibration can deviate from the default multiplier 
+#define DEFAULT_MULTIPLIER 0.2049180      // Default Encoder-Counts to Motor-Speed conversion factor
+#define MAX_MULTIPLIER_DEVIATION 0.20     // How much each motor calibration can deviate from the default multiplier 
 #define ENCODER_SMOTHING_DEPTH 16384      // Depth of exponential rolling mean for individual motor calibartion
 
 

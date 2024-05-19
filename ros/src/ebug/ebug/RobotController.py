@@ -12,7 +12,7 @@ from ebug.util.PololuHardwareInterface import PololuHardwareInterface
 from ebug_base.msg import ControlCommand
 
 # https://www.cs.columbia.edu/~allen/F17/NOTES/icckinematics.pdf
-WHEEL_MULT = float(os.getenv('WHEEL_RADIUS_MULTIPLIER', "1.075"))
+WHEEL_MULT = float(os.getenv('WHEEL_RADIUS_MULTIPLIER', "1.0714"))
 
 BASELINE = 0.1420                                           # Distance between wheels in meters
 WHEEL_RAD = 0.0350 * WHEEL_MULT                             # Wheel radius in meters
