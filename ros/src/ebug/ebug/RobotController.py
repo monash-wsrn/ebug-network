@@ -12,10 +12,8 @@ from ebug.util.PololuHardwareInterface import PololuHardwareInterface
 from ebug_base.msg import ControlCommand
 
 # https://www.cs.columbia.edu/~allen/F17/NOTES/icckinematics.pdf
-MULTIPLIER = float(os.getenv('WHEEL_MULT', "1.0862"))
-
-BASELINE = 0.1320                                           # Distance between wheels in meters
-WHEEL_RAD = 0.0350 * MULTIPLIER                             # Wheel radius in meters
+BASELINE = 0.1420                                           # Distance between wheels in meters
+WHEEL_RAD = 0.0350                                          # Wheel radius in meters
 GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
 ENC_CPR = 12.0                                              # Encoders Counts-per-revolution
 ENC_CONST = (2.0 * math.pi) / (ENC_CPR * GEAR_RATIO)        # Encoder constant

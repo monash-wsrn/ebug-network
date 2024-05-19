@@ -24,7 +24,7 @@ struct Data
 /* ========== I2C BRIDGE CONFIGURATION ========== */
 
 
-#include <math.h>
+
 #include <Servo.h>
 #include <Romi32U4.h>
 #include <PololuRPiSlave.h>
@@ -44,6 +44,11 @@ struct Data
 #define COLOUR_ORDER GRB
 
 
+#define DEFAULT_MULTIPLIER 0.5            // Default Encoder-Counts to Motor-Speed conversion factor
+#define MAX_MULTIPLIER_DEVIATION 0.10     // How much each motor calibration can deviate from the default multiplier 
+#define ENCODER_SMOTHING_DEPTH 16384      // Depth of exponential rolling mean for individual motor calibartion
+
+
 uint8_t alive;
 double timeout;
 uint64_t timestamp;
@@ -53,6 +58,9 @@ double rmultiplier;
 
 int64_t lencoder;
 int64_t rencoder;
+
+const double alpha = 1.0 / ENCODER_SMOTHING_DEPTH;
+const double nalpha = 1.0 - alpha; 
 
 
 PololuRPiSlave<struct Data,5> slave;
@@ -131,19 +139,21 @@ void loop()
   // Calculate target v. actual counts discrepancy (exponential moving average)
   // https://stackoverflow.com/a/10990656
   if (lm_enc_actual != 0 && lm_enc_target != 0)
-    lmultiplier = fabs(lm_enc_target / (double) lm_enc_actual);
+    lmultiplier = ((lm_enc_target / (double) lm_enc_actual) * alpha) + (nalpha * lmultiplier);
   
   if (rm_enc_actual != 0 && rm_enc_target != 0)
-    rmultiplier = fabs(lm_enc_target / (double) lm_enc_actual);
+    rmultiplier = ((rm_enc_target / (double) rm_enc_actual) * alpha) + (nalpha * rmultiplier);
   
+  double clmultiplier = (DEFAULT_MULTIPLIER * (1.0 - MAX_MULTIPLIER_DEVIATION)) + (lmultiplier * MAX_MULTIPLIER_DEVIATION);
+  double crmultiplier = (DEFAULT_MULTIPLIER * (1.0 - MAX_MULTIPLIER_DEVIATION)) + (rmultiplier * MAX_MULTIPLIER_DEVIATION);
 
   // Read latest Data struct from I2C connection
   slave.updateBuffer();
   check_timeout(dt);
   
   // Scale our new target values to match calculated discrepancy
-  int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * lmultiplier);
-  int16_t rm_value = (int16_t) ((double) slave.buffer.rm_desired * rmultiplier);
+  int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * clmultiplier);
+  int16_t rm_value = (int16_t) ((double) slave.buffer.rm_desired * crmultiplier);
   motors.setSpeeds(lm_value, rm_value);
 
   // Set and display colours for the LED ring
