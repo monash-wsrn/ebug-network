@@ -6,16 +6,16 @@ FROM ros:humble
 RUN sudo apt-get upgrade
 RUN sudo apt-get update
 
-# Qt5 low-level depedency
+# Qt5 & I2C low-level depedency
 RUN sudo apt-get install -y \
-    libqt5widgets5
+    libqt5widgets5 \
+    libi2c-dev
     
 # Python packages
 RUN sudo apt-get install -y \
     python3-colcon-common-extensions \
     python3-pip \
-    python3-smbus \
-    i2c-tools
+    python3-smbus
 
 # ROS Base Packages
 RUN sudo apt-get install -y \
