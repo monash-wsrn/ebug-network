@@ -28,8 +28,7 @@ class RobotController(Node):
         import time
 
         
-        self.robot_id = os.getenv('ROBOT_ID', "default")                    # TODO make into parameter instead      
-        self.iters_per_odom = int(os.getenv('ITERS_PER_ODOM', "2"))         # TODO make into parameter instead        
+        self.robot_id = os.getenv('ROBOT_ID', "default")                    # TODO make into parameter instead 
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
         self.control_sub =  self.create_subscription(ControlCommand, 'control', self.control_callback, 10)
@@ -37,7 +36,7 @@ class RobotController(Node):
         self.odom = (0.0, 0.0, 0.0) # (x, y, yaw)
 
         self.max_retry_i2c = int(os.getenv('I2C_RETRIES', "256"))           # TODO make into parameter instead
-        self.i2c_frequency = float(os.getenv('I2C_FREQUENCY', "100.0"))     # TODO make into parameter instead 
+        self.i2c_frequency = float(os.getenv('I2C_FREQUENCY', "50.0"))     # TODO make into parameter instead 
         
         self.bridge = PololuHardwareInterface(self.max_retry_i2c)       
         time.sleep(0.5)
@@ -68,9 +67,7 @@ class RobotController(Node):
         self.lenc_current, self.renc_current = self.encoders()
         self.gyro_x, self.gyro_y, self.gyro_z = self.gyroscope()
         
-        self.i2c_iters += 1
-        if (self.i2c_iters % self.iters_per_odom) == 0:
-            self.update_odom()
+        self.update_odom()
     
     def alive(self):
         on_error = lambda : self.get_logger().info("I/O error writing heartbeat")
