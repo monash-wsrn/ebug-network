@@ -27,12 +27,14 @@ class RobotController(Node):
         super().__init__(self.__class__.__name__)
         import time
 
-        self.max_retry_i2c = 10                                         # TODO make into parameter instead
+        self.max_retry_i2c = int(os.getenv('I2C_RETRIES', "10"))        # TODO make into parameter instead
+        self.robot_id = os.getenv('ROBOT_ID', "default")                # TODO make into parameter instead
+        self.frequency = float(os.getenv('I2C_FREQUENCY', "50.0"))      # TODO make into parameter instead
+        
+        
         self.bridge = PololuHardwareInterface(self.max_retry_i2c)       
         time.sleep(0.5)
         
-        self.robot_id = os.getenv('ROBOT_ID', "default")                # TODO make into parameter instead
-        self.frequency = float(os.getenv('I2C_FREQUENCY', "100.0"))     # TODO make into parameter instead
         self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
@@ -65,11 +67,19 @@ class RobotController(Node):
     
     def encoders(self):
         on_error = lambda : self.get_logger().info("I/O error reading from encoders")
-        return self.bridge.read_encoders(on_error)
+        
+        result  = None
+        while result is None:
+            result = self.bridge.read_encoders(on_error)
+        return result
 
     def gyroscope(self):
         on_error = lambda : self.get_logger().info("I/O error reading from encoders")
-        return self.bridge.read_gyroscope(on_error)
+        
+        result  = None
+        while result is None:
+            result = self.bridge.read_gyroscope(on_error)
+        return result
 
 
     
@@ -153,14 +163,14 @@ class RobotController(Node):
         # https://automaticaddison.com/calculating-wheel-velocities-for-a-differential-drive-robot/
         factor = float(w_desired * BASELINE) / 2.0
         
-        wl_desired = float(v_desired - factor) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
-        wr_desired = float(v_desired + factor) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
-        return (wl_desired, wr_desired)
+        lenc_desired = float(v_desired - factor) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
+        renc_desired = float(v_desired + factor) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
+        return (lenc_desired, renc_desired)
 
     def control_callback(self, msg:ControlCommand):
-        lduty, rduty = self.drive(msg.control.linear.x, msg.control.angular.z)
+        lenc_desired, renc_desired = self.drive(msg.control.linear.x, msg.control.angular.z)
 
-        self.motors(lduty, rduty)
+        self.motors(lenc_desired, renc_desired)
         self.lights(msg.color.x, msg.color.y, msg.color.z)
 
 
