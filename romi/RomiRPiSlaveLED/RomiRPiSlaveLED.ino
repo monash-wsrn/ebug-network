@@ -24,7 +24,7 @@ struct Data
 /* ========== I2C BRIDGE CONFIGURATION ========== */
 
 
-
+#include <math.h>
 #include <Servo.h>
 #include <Romi32U4.h>
 #include <PololuRPiSlave.h>
@@ -43,10 +43,8 @@ struct Data
 #define NUM_LEDS 16         // 5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
-
+#define ENCODER_CLAMP 1440
 #define DEFAULT_MULTIPLIER 0.2049180      // Default Encoder-Counts to Motor-Speed conversion factor
-#define MAX_MULTIPLIER_DEVIATION 0.20     // How much each motor calibration can deviate from the default multiplier 
-#define ENCODER_SMOTHING_DEPTH 16384      // Depth of exponential rolling mean for individual motor calibartion
 
 
 uint8_t alive;
@@ -58,9 +56,6 @@ double rmultiplier;
 
 int64_t lencoder;
 int64_t rencoder;
-
-const double alpha = 1.0 / ENCODER_SMOTHING_DEPTH;
-const double nalpha = 1.0 - alpha; 
 
 
 PololuRPiSlave<struct Data,5> slave;
@@ -83,8 +78,8 @@ void setup()
   lencoder = 0;
   rencoder = 0;
   
-  lmultiplier = 1.0;
-  rmultiplier = 1.0;
+  lmultiplier = DEFAULT_MULTIPLIER;
+  rmultiplier = DEFAULT_MULTIPLIER;
 
   // Ignore values
   int16_t ignored_left = encoders.getCountsAndResetLeft();
@@ -129,41 +124,48 @@ void loop()
   double dt = delta(micros());
 
   // The actual encoder counts over the period
-  int16_t lm_enc_actual = encoders.getCountsAndResetLeft();
-  int16_t rm_enc_actual = encoders.getCountsAndResetRight();
-
-  // The target encoder counts over the period
-  double lm_enc_target = (double) slave.buffer.lm_desired * dt;
-  double rm_enc_target = (double) slave.buffer.rm_desired * dt;
-
   // Calculate target v. actual counts discrepancy (exponential moving average)
   // https://stackoverflow.com/a/10990656
-  if (lm_enc_actual != 0 && lm_enc_target != 0)
-    lmultiplier = ((lm_enc_target / (double) lm_enc_actual) * alpha) + (nalpha * lmultiplier);
-  
-  if (rm_enc_actual != 0 && rm_enc_target != 0)
-    rmultiplier = ((rm_enc_target / (double) rm_enc_actual) * alpha) + (nalpha * rmultiplier);
-  
-  double clmultiplier = (DEFAULT_MULTIPLIER * (1.0 - MAX_MULTIPLIER_DEVIATION)) + (lmultiplier * MAX_MULTIPLIER_DEVIATION);
-  double crmultiplier = (DEFAULT_MULTIPLIER * (1.0 - MAX_MULTIPLIER_DEVIATION)) + (rmultiplier * MAX_MULTIPLIER_DEVIATION);
 
+  int16_t lm_enc_actual = encoders.getCountsAndResetLeft();
+  if (abs(lm_enc_actual) < ENCODER_CLAMP)
+  {
+    lencoder += (int64_t) lm_enc_actual;
+
+    // double lm_enc_target = (double) slave.buffer.lm_desired * dt;
+    // if (lm_enc_actual != 0 && lm_enc_target != 0)
+    //   lmultiplier *= fabs(lm_enc_target / (double) lm_enc_actual);
+    // else if (lm_enc_actual == 0 && lm_enc_target != 0)
+    //   lmultiplier *= 2.0;
+  }
+  
+
+  int16_t rm_enc_actual = encoders.getCountsAndResetRight();
+  if (abs(rm_enc_actual) < ENCODER_CLAMP)
+  {
+    rencoder += (int64_t) rm_enc_actual;
+
+    // double rm_enc_target = (double) slave.buffer.rm_desired * dt;
+    // if (rm_enc_actual != 0 && rm_enc_target != 0)
+    //   rmultiplier *= fabs(rm_enc_target / (double) rm_enc_actual);
+    // else if (rm_enc_actual == 0 && rm_enc_target != 0)
+    //   rmultiplier *= 2.0;
+  }
+
+  
   // Read latest Data struct from I2C connection
   slave.updateBuffer();
   check_timeout(dt);
   
   // Scale our new target values to match calculated discrepancy
-  int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * clmultiplier);
-  int16_t rm_value = (int16_t) ((double) slave.buffer.rm_desired * crmultiplier);
+  int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * lmultiplier);
+  int16_t rm_value = (int16_t) ((double) slave.buffer.rm_desired * rmultiplier);
   motors.setSpeeds(lm_value, rm_value);
 
   // Set and display colours for the LED ring
   for (int i = 0; i < NUM_LEDS; i++)
     leds[i] = CRGB(slave.buffer.rled, slave.buffer.gled, slave.buffer.bled);
   FastLED.show();
-
-  
-  lencoder += (int64_t) lm_enc_actual;
-  rencoder += (int64_t) rm_enc_actual;
 
   slave.buffer.lenc_total = lencoder;
   slave.buffer.renc_total = rencoder;
