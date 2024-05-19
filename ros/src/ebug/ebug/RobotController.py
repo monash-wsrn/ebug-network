@@ -69,8 +69,7 @@ class RobotController(Node):
         self.gyro_x, self.gyro_y, self.gyro_z = self.gyroscope()
         
         self.i2c_iters += 1
-        if self.i2c_iters == self.iters_per_odom:
-            self.i2c_iters = 0
+        if (self.i2c_iters % self.iters_per_odom) == 0:
             self.update_odom()
     
     def alive(self):
