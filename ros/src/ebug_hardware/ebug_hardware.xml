@@ -1,0 +1,9 @@
+<library path="ebug_hardware">
+  <class name="ebug_hardware/PololuDiffDrive"
+         type="PololuDiffDrive"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware Interface for Differential Drive Pololu Romi 32U4 Kit.
+    </description>
+  </class>
+</library>
