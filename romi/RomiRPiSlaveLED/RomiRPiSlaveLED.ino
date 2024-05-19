@@ -43,10 +43,12 @@ struct Data
 #define NUM_LEDS 16         // 5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
-#define ENCODER_CLAMP 144
-#define MULTIPLIER_DEVIATION 0.00         // Maximum deviation from the defualt multiplier
-#define DEFAULT_MULTIPLIER 0.2049180      // Default Encoder-Counts to Motor-Speed conversion factor
+#define ENCODER_CLAMP 144                 // Maximum encoder delta per loop, larger counts ignored
+#define ENCODER_SMOOTH_DEPTH 16           // Maximum smoothing depth for dynamic encoder calibration 
+#define ENCODER_DEFAULT_MULT 0.2          // Default encoder power multiplier, to calibrate from
 
+const double ALPHA = 1.0 / (double) ENCODER_SMOOTH_DEPTH;
+const double NALPHA = 1.0 - ALPHA;
 
 uint8_t alive;
 double timeout;
@@ -58,7 +60,6 @@ double rmultiplier;
 int64_t lencoder;
 int64_t rencoder;
 
-
 PololuRPiSlave<struct Data,5> slave;
 Romi32U4Motors motors;        /* https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_motors.html   */
 Romi32U4Encoders encoders;    /* https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_encoders.html */
@@ -68,6 +69,9 @@ void setup()
 {
   // Set up the slave at I2C address 20.
   slave.init(I2C_ADDRESS);
+
+  slave.buffer.lm_desired = 0;
+  slave.buffer.rm_desired = 0;
 
   // Setup fast LED
   FastLED.addLeds<WS2812, LED_PIN, COLOUR_ORDER>(leds, NUM_LEDS);
@@ -79,8 +83,8 @@ void setup()
   lencoder = 0;
   rencoder = 0;
   
-  lmultiplier = DEFAULT_MULTIPLIER;
-  rmultiplier = DEFAULT_MULTIPLIER;
+  lmultiplier = ENCODER_DEFAULT_MULT;
+  rmultiplier = ENCODER_DEFAULT_MULT;
 
   // Ignore values
   int16_t ignored_left = encoders.getCountsAndResetLeft();
@@ -134,8 +138,14 @@ void loop()
     lencoder += (int64_t) lm_enc_actual;
 
     double lm_enc_target = (double) slave.buffer.lm_desired * dt;
+    double lfactor = lmultiplier;
+
     if (lm_enc_actual != 0 && lm_enc_target != 0)
-      lmultiplier = (fabs(lm_enc_target / (double) lm_enc_actual) * MULTIPLIER_DEVIATION) + ((1.0 - MULTIPLIER_DEVIATION) * DEFAULT_MULTIPLIER);
+      lfactor = fabs(lm_enc_target / (double) lm_enc_actual);
+    else if (lm_enc_actual == 0 && lm_enc_target != 0) 
+      lfactor = 1.005 * lmultiplier;
+      
+    lmultiplier = (ALPHA * lfactor) + (NALPHA * lmultiplier);
   }
   
 
@@ -145,8 +155,14 @@ void loop()
     rencoder += (int64_t) rm_enc_actual;
 
     double rm_enc_target = (double) slave.buffer.rm_desired * dt;
+    double rfactor = rmultiplier;
+
     if (rm_enc_actual != 0 && rm_enc_target != 0)
-      rmultiplier = (fabs(rm_enc_target / (double) rm_enc_actual) * MULTIPLIER_DEVIATION) + ((1.0 - MULTIPLIER_DEVIATION) * DEFAULT_MULTIPLIER);
+      rfactor = fabs(rm_enc_target / (double) rm_enc_actual);
+    else if (rm_enc_actual == 0 && rm_enc_target != 0) 
+      rfactor = 1.005 * rmultiplier;
+      
+    rmultiplier = (ALPHA * rfactor) + (NALPHA * rmultiplier);
   }
 
   

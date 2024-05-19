@@ -29,18 +29,15 @@ class RobotController(Node):
 
         
         self.robot_id = os.getenv('ROBOT_ID', "default")                    # TODO make into parameter instead      
-        self.odom_frequency = float(os.getenv('ODOM_FREQUENCY', "30.0"))    # TODO make into parameter instead        
-        
-        self.odom_timer = self.create_timer(1.0 / self.odom_frequency, self.odom_pose_update)
+        self.iters_per_odom = int(os.getenv('ITERS_PER_ODOM', "2"))         # TODO make into parameter instead        
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
         self.control_sub =  self.create_subscription(ControlCommand, 'control', self.control_callback, 10)
         
         self.odom = (0.0, 0.0, 0.0) # (x, y, yaw)
 
-
         self.max_retry_i2c = int(os.getenv('I2C_RETRIES', "256"))           # TODO make into parameter instead
-        self.i2c_frequency = float(os.getenv('I2C_FREQUENCY', "100.0"))      # TODO make into parameter instead 
+        self.i2c_frequency = float(os.getenv('I2C_FREQUENCY', "100.0"))     # TODO make into parameter instead 
         
         self.bridge = PololuHardwareInterface(self.max_retry_i2c)       
         time.sleep(0.5)
@@ -55,8 +52,10 @@ class RobotController(Node):
         self.lenc_previous, self.renc_previous = self.encoders()
         self.lenc_current, self.renc_current = self.lenc_previous, self.renc_previous
         
-        self.i2c_update()
         self.i2c_timer = self.create_timer(1.0 / self.i2c_frequency, self.i2c_update)
+        
+        self.i2c_iters = 0
+        self.i2c_update()
     
     
 
@@ -68,6 +67,10 @@ class RobotController(Node):
         self.lights(self.lights_red, self.lights_green, self.lights_blue)
         self.lenc_current, self.renc_current = self.encoders()
         self.gyro_x, self.gyro_y, self.gyro_z = self.gyroscope()
+        
+        self.i2c_iters += 1
+        if self.i2c_iters == self.iters_per_odom:
+            self.update_odom()
     
     def alive(self):
         on_error = lambda : self.get_logger().info("I/O error writing heartbeat")
@@ -107,7 +110,7 @@ class RobotController(Node):
         
     
     # Kinematic motion model
-    def odom_pose_update(self):
+    def update_odom(self):
         dt = self.delta_time()
         
         encl = self.lenc_current - self.lenc_previous
@@ -193,8 +196,6 @@ class RobotController(Node):
     def control_callback(self, msg:ControlCommand):
         self.lenc_desired, self.renc_desired = self.drive(msg.control.linear.x, msg.control.angular.z)
         self.lights_red, self.lights_green, self.lights_blue = msg.color.x, msg.color.y, msg.color.z
-        
-        self.get_logger().info(f"Left {self.lenc_desired}, Right {self.renc_desired}")
 
 
 
