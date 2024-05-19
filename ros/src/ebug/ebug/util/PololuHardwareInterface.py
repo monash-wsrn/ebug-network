@@ -51,6 +51,8 @@ class PololuHardwareInterface:
     for _ in range(tries):
       try:
         return action()
+      except KeyboardInterrupt:
+        return
       except:
         time.sleep(0.0002)  # Sleep for 0.2 millis
         continue
