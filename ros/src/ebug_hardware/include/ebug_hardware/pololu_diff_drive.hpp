@@ -60,7 +60,7 @@ namespace ebug
         rclcpp::Logger m_Logger;
 
     public:
-        RCLCPP_SHARED_PTR_DEFINITIONS(DiffBotSystemHardware);
+        RCLCPP_SHARED_PTR_DEFINITIONS(PololuDiffDrive);
 
         PololuDiffDrive();
 

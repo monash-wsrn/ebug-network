@@ -90,7 +90,7 @@ namespace ebug
         if ( !m_Bridge.available() )
             return return_type::ERROR;
         
-        int16_t left = m_WheelLeft.cmd / m_WheelLeft.rads_per_count / m_Config.loop_rate;  
+        int16_t left = m_WheelLeft.target(m_Config.loop_rate) 
         int16_t right = m_WheelRight.cmd / m_WheelRight.rads_per_count / m_Config.loop_rate;
         m_Bridge.writeMotors(left, right);
 

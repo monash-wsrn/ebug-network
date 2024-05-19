@@ -10,12 +10,16 @@ namespace ebug
     {
     public:
         std::string name = "";
-        int enc = 0;
-        double cmd = 0;
-        double pos = 0;
-        double vel = 0;
-        double eff = 0;
-        double velSetPt = 0;
+
+        double pos = 0;     // State interface (position)
+        double vel = 0;     // State interface (velocity)
+
+        double cmd = 0;     // Command interface (target velocity)
+        
+        
+        int enc_prev = 0;   // 
+        int enc_curr = 0;   // Encoder ticks
+
         double rads_per_count = 0;
 
     public:
@@ -27,11 +31,17 @@ namespace ebug
 
         void recalculate(int16_t v, const double dt)
         {   
-            enc = (int) v;
+            enc_prev = enc;
+            enc_curr = (int) v;
 
             double prev = pos;
             pos = enc * rads_per_count;
             vel = (pos - prev) / dt;
+        }
+
+        int16_t target(const float loop_rate)
+        {
+            return (int16_t) ((float) cmd / (float) rads_per_count / loop_rate) 
         }
 
         PololuWheel() = default;
