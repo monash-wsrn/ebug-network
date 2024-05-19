@@ -44,6 +44,7 @@ struct Data
 #define COLOUR_ORDER GRB
 
 #define ENCODER_CLAMP 1440
+#define MULTIPLIER_DEVIATION 0.10         // Maximum deviation from the defualt multiplier
 #define DEFAULT_MULTIPLIER 0.2049180      // Default Encoder-Counts to Motor-Speed conversion factor
 
 
@@ -132,11 +133,9 @@ void loop()
   {
     lencoder += (int64_t) lm_enc_actual;
 
-    // double lm_enc_target = (double) slave.buffer.lm_desired * dt;
-    // if (lm_enc_actual != 0 && lm_enc_target != 0)
-    //   lmultiplier *= fabs(lm_enc_target / (double) lm_enc_actual);
-    // else if (lm_enc_actual == 0 && lm_enc_target != 0)
-    //   lmultiplier *= 2.0;
+    double lm_enc_target = (double) slave.buffer.lm_desired * dt;
+    if (lm_enc_actual != 0 && lm_enc_target != 0)
+      lmultiplier = (fabs(lm_enc_target / (double) lm_enc_actual) * MULTIPLIER_DEVIATION) + ((1.0 - MULTIPLIER_DEVIATION) * DEFAULT_MULTIPLIER);
   }
   
 
@@ -145,11 +144,9 @@ void loop()
   {
     rencoder += (int64_t) rm_enc_actual;
 
-    // double rm_enc_target = (double) slave.buffer.rm_desired * dt;
-    // if (rm_enc_actual != 0 && rm_enc_target != 0)
-    //   rmultiplier *= fabs(rm_enc_target / (double) rm_enc_actual);
-    // else if (rm_enc_actual == 0 && rm_enc_target != 0)
-    //   rmultiplier *= 2.0;
+    double rm_enc_target = (double) slave.buffer.rm_desired * dt;
+    if (rm_enc_actual != 0 && rm_enc_target != 0)
+      rmultiplier = (fabs(rm_enc_target / (double) rm_enc_actual) * MULTIPLIER_DEVIATION) + ((1.0 - MULTIPLIER_DEVIATION) * DEFAULT_MULTIPLIER);
   }
 
   
