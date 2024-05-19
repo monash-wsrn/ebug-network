@@ -129,6 +129,9 @@ class RobotController(Node):
         x, y, yaw = self.odom
         qx, qy, qz, qw = quat(0.0, 0.0, yaw)
         t = self.get_clock().now().to_msg()
+        
+        
+        self.get_logger().info(f"X {x}, Y {y}, YAW {yaw}")
 
         odom = Odometry()
         odom.header.frame_id = f'{self.robot_id}_odom'
@@ -169,6 +172,8 @@ class RobotController(Node):
 
     def control_callback(self, msg:ControlCommand):
         lenc_desired, renc_desired = self.drive(msg.control.linear.x, msg.control.angular.z)
+        
+        self.get_logger().info(f"Left {lenc_desired}, Right {renc_desired}")
         
         self.alive()
         self.motors(lenc_desired, renc_desired)
