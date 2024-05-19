@@ -45,7 +45,7 @@ struct Data
 
 #define ENCODER_CLAMP 576                 // Maximum encoder delta per loop, larger counts ignored
 #define ENCODER_SMOOTH_DEPTH 16           // Maximum smoothing depth for dynamic encoder calibration 
-#define ENCODER_DEFAULT_MULT 0.1600       // Default encoder power multiplier, to calibrate from
+#define ENCODER_DEFAULT_MULT 0.2000       // Default encoder power multiplier, to calibrate from
 
 const double ALPHA = 1.0 / (double) ENCODER_SMOOTH_DEPTH;
 const double NALPHA = 1.0 - ALPHA;
@@ -65,20 +65,15 @@ Romi32U4Motors motors;        /* https://pololu.github.io/romi-32u4-arduino-libr
 Romi32U4Encoders encoders;    /* https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_encoders.html */
 CRGB leds[NUM_LEDS]; 
 
-void setup()
-{
-  // Set up the slave at I2C address 20.
-  slave.init(I2C_ADDRESS);
 
+void reset()
+{
   slave.buffer.lm_desired = 0;
   slave.buffer.rm_desired = 0;
 
-  // Setup fast LED
-  FastLED.addLeds<WS2812, LED_PIN, COLOUR_ORDER>(leds, NUM_LEDS);
-  
-  alive = 0x00;
-  timeout = (double) TIMEOUT_MS;
-  timestamp = micros();
+  slave.buffer.rled = 0;
+  slave.buffer.gled = 0;
+  slave.buffer.bled = 0;
 
   lencoder = 0;
   rencoder = 0;
@@ -89,6 +84,22 @@ void setup()
   // Ignore values
   int16_t ignored_left = encoders.getCountsAndResetLeft();
   int16_t ignored_right = encoders.getCountsAndResetRight();
+}
+
+
+void setup()
+{
+  // Set up the slave at I2C address 20.
+  slave.init(I2C_ADDRESS);
+
+  // Setup fast LED
+  FastLED.addLeds<WS2812, LED_PIN, COLOUR_ORDER>(leds, NUM_LEDS);
+  
+  alive = 0x00;
+  timeout = (double) TIMEOUT_MS;
+  timestamp = micros();
+
+  reset();
 }
 
 
@@ -107,12 +118,7 @@ void check_timeout(double dt)
     return;
 
   // If timed out, set all actionable values to 0
-  slave.buffer.lm_desired = 0;
-  slave.buffer.rm_desired = 0;
-
-  slave.buffer.rled = 0;
-  slave.buffer.gled = 0;
-  slave.buffer.bled = 0;
+  reset();
 }
 
 
@@ -143,7 +149,7 @@ void loop()
     if (lm_enc_actual != 0 && lm_enc_target != 0)
       lfactor = fabs(lm_enc_target / (double) lm_enc_actual);
     else if (lm_enc_actual == 0 && lm_enc_target != 0) 
-      lfactor = 1.005 * lmultiplier;
+      lfactor = 1.01 * lmultiplier;
       
     lmultiplier = (ALPHA * lfactor) + (NALPHA * lmultiplier);
   }
@@ -160,7 +166,7 @@ void loop()
     if (rm_enc_actual != 0 && rm_enc_target != 0)
       rfactor = fabs(rm_enc_target / (double) rm_enc_actual);
     else if (rm_enc_actual == 0 && rm_enc_target != 0) 
-      rfactor = 1.005 * rmultiplier;
+      rfactor = 1.01 * rmultiplier;
       
     rmultiplier = (ALPHA * rfactor) + (NALPHA * rmultiplier);
   }
