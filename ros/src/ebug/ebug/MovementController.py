@@ -28,7 +28,7 @@ class MovementController(Node):
         # as opposed to this roundabout way that allows the existing pub-sub
         # architecture to utilise a the service model
         qos_profile = QoSProfile(depth=1)
-        self.pub_target = self.create_publisher(ControlCommand, "cmd_vel", qos_profile)
+        self.pub_target = self.create_publisher(ControlCommand, "control", qos_profile)
         
         self.sub_location = self.create_subscription(Odometry, "ekf_absolute", self.compute_target, qos_profile)
         self.get_logger().info(f"Created MovementController (ID: {self.get_namespace()}) using {self.service_name}")

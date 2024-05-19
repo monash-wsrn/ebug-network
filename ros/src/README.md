@@ -148,7 +148,7 @@ Doing so will enable the remaining three cameras on the robot, as well as the po
 
 ```sh
     # Run the client container, with a specified ROBOT_ID and passing through I2C-1
-    # ebug_client.util.AStar creates an SMBus on I2C-1
+    # ebug_client.util.PololuHardwareInterface creates an SMBus on I2C-1
     docker run --network ebug_macvlan -e ROBOT_ID='robot_0' --device /dev/i2c-1 --rm -it ebug
 
     # In the containers interactive terminal, start the Client

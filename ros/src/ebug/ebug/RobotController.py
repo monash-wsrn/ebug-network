@@ -6,11 +6,9 @@ import math
 
 import rclpy
 from rclpy.node import Node
-
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion, Vector3
 
-from ebug.util.AStar import AStar
+from ebug.util.PololuHardwareInterface import PololuHardwareInterface
 from ebug_base.msg import ControlCommand
 
 # https://www.cs.columbia.edu/~allen/F17/NOTES/icckinematics.pdf
@@ -28,67 +26,53 @@ class RobotController(Node):
         super().__init__(self.__class__.__name__)
         import time
 
-        self.a_star = AStar()
+        self.max_retry_i2c = 10                                         # TODO make into parameter instead
+        self.bridge = PololuHardwareInterface(self.max_retry_i2c)       
         time.sleep(0.5)
 
-        self.frequency = float(os.getenv('ODOM_FREQUENCY', "25.0"))
+        self.frequency = float(os.getenv('I2C_FREQUENCY', "100.0"))     # TODO make into parameter instead
         self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
-
-        self.cmd_vel_sub =  self.create_subscription(ControlCommand, 'cmd_vel', self.cmd_vel_callback, 10)
+        self.control_sub =  self.create_subscription(ControlCommand, 'control', self.control_callback, 10)
         
         self.robot_id = os.getenv('ROBOT_ID', "default")
         self.start = True
 
-        self.r = WHEEL_RAD
-        self.l = BASELINE
-
         self.odom_x, self.odom_y, self.odom_th = 0.0, 0.0, 0.0
-        self.odom_v, self.odom_w = 0.0,  0.0
 
+        self.motors(0, 0)
+        self.lights(0, 0, 0)
         self.pencode_l, self.pencode_r = self.read_encoders_gyro()
-        time.sleep(1.5)
-
-        self.wl, self.wr = 0.0, 0.0
-        self.timestamp = 0
-
-        self.duty_cycle_l, self.duty_cycle_r = 0, 0
         
-        
-    # Veclocity motion model
-    def base_velocity(self,wl,wr):
-
-        v = (wl + wr) * self.r / 2.0
-        w = (wr - wl) * self.r / self.l    # modified to adhre to REP103
-        
-        return v, w
     
-    def read_encoders_gyro(self):
-
-        while True:
-            try:
-                prev_enc_l, prev_enc_r = self.a_star.read_encoders()
-                self.wx, self.wy, self.wz = self.a_star.read_gyroscope() 
-                return prev_enc_l, prev_enc_r
-            except:
-                continue
     
 
-    def motors(self,left, right, led):
-        self.try_i2c(lambda : self.a_star.motors(int(left), int(right)), "I/O error moving motors")
-        self.try_i2c(lambda : self.a_star.led_ring(int(led.x), int(led.y), int(led.z)), "I/O error setting LEDs")
+    #### I2C Interaction ####
     
+    def alive(self):
+        on_error = lambda : self.get_logger().info("I/O error writing heartbeat")
+        return self.bridge.write_alive(on_error)
+                
+    def motors(self, left, right):        
+        on_error = lambda : self.get_logger().info("I/O error writing to motors")
+        return self.bridge.write_motors(int(left), int(right), on_error)
+    
+    def lights(self, r, g, b):
+        on_error = lambda : self.get_logger().info("I/O error writing to LED ring")
+        return self.bridge.write_led_ring(int(r), int(g), int(b), on_error)
+    
+    def encoders(self):
+        on_error = lambda : self.get_logger().info("I/O error reading from encoders")
+        return self.bridge.read_encoders(on_error)
 
-    def try_i2c(self, i2c_func, msg):
-        for _ in range(10):
-            try:
-                i2c_func()
-                return
-            except:
-                continue
-        self.get_logger().info(msg)
+    def gyroscope(self):
+        on_error = lambda : self.get_logger().info("I/O error reading from encoders")
+        return self.bridge.read_gyroscope(on_error)
 
+
+    
+    #### Differential Drive Odometry ####
 
     def delta_time(self):
         def ns():
@@ -123,6 +107,8 @@ class RobotController(Node):
     
     # Kinematic motion model
     def odom_pose_update(self):
+        self.alive()
+
         dt = self.delta_time()
         encoder_l, encoder_r = self.read_encoders_gyro()
 
@@ -137,19 +123,18 @@ class RobotController(Node):
         if abs(sencode_l) > 1440 or abs(sencode_r) > 1440:
             return
 
-        # sencode_l = min(max(sencode_l, -90), 90)
-        # sencode_r = min(max(sencode_r, -90), 90)
-
-        self.wl = float(sencode_l) * ENC_CONST
-        self.wr = float(sencode_r) * ENC_CONST
+        wl = float(sencode_l) * ENC_CONST
+        wr = float(sencode_r) * ENC_CONST
         
-        self.odom_v, self.odom_w = self.base_velocity(self.wl, self.wr)
-        self.odom_th = self.odom_th + self.odom_w # TODO, this lesser than reality
-        self.odom_x = self.odom_x + self.odom_v * math.cos(self.odom_th)
-        self.odom_y = self.odom_y + self.odom_v * math.sin(self.odom_th)
+        odom_v = (wl + wr) * WHEEL_RAD / 2.0
+        odom_w = (wr - wl) * WHEEL_RAD / BASELINE    # modified to adhre to REP103
+
+        self.odom_th = self.odom_th + odom_w                            # TODO, this lesser than reality
+        self.odom_x  = self.odom_x  + odom_v * math.cos(self.odom_th)
+        self.odom_y  = self.odom_y  + odom_v * math.sin(self.odom_th)
 
         t = self.get_clock().now().to_msg()
-        q = quat(0.0, 0.0, self.odom_th)
+        qx, qy, qz, qw = quat(0.0, 0.0, self.odom_th)
 
         odom = Odometry()
         odom.header.frame_id = f'{self.robot_id}_odom'
@@ -159,70 +144,66 @@ class RobotController(Node):
         odom.pose.pose.position.x = self.odom_x
         odom.pose.pose.position.y = self.odom_y
         odom.pose.pose.position.z = 0.0
-        odom.pose.pose.orientation.x = float(q.x)
-        odom.pose.pose.orientation.y = float(q.y)
-        odom.pose.pose.orientation.z = float(q.z)
-        odom.pose.pose.orientation.w = float(q.w)
+        odom.pose.pose.orientation.x = float(qx)
+        odom.pose.pose.orientation.y = float(qy)
+        odom.pose.pose.orientation.z = float(qz)
+        odom.pose.pose.orientation.w = float(qw)
         odom.pose.covariance = mat6diag(1e-1)   # The greater the change in position, the greater the covariance
 
-        odom.twist.twist.linear.x = float(self.odom_v) / dt
+        odom.twist.twist.linear.x = float(odom_v) / dt
         odom.twist.twist.linear.y = 0.0
         odom.twist.twist.linear.z = 0.0
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
-        odom.twist.twist.angular.z = float(self.odom_w) / dt
+        odom.twist.twist.angular.z = float(odom_w) / dt
         odom.twist.covariance = mat6diag(1e-1)
 
         self.odom_pub.publish(odom) 
         
+
+        
+    #### Differential Drive Control ####
     def drive(self,v_desired,w_desired):
         # https://automaticaddison.com/calculating-wheel-velocities-for-a-differential-drive-robot/
-        factor = float(w_desired * self.l) / 2.0
-        wl_desired = float(v_desired - factor) / self.r
-        wr_desired = float(v_desired + factor) / self.r
+        factor = float(w_desired * BASELINE) / 2.0
+        wl_desired = float(v_desired - factor) / WHEEL_RAD
+        wr_desired = float(v_desired + factor) / WHEEL_RAD
         
         # https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_motors.html#a1c19beaeeb5a86a9d1ab7e054c825c13
-        self.duty_cycle_l = wl_desired * 7  # -300 is full reverse, +300 is full forward
-        self.duty_cycle_r = wr_desired * 7  # -300 is full reverse, +300 is full forward
+        return (wl_desired * 7, wr_desired * 7)   # -300 is full reverse, +300 is full forward
 
-        return self.duty_cycle_l, self.duty_cycle_r
+    def control_callback(self, msg:ControlCommand):
+        lduty, rduty = self.drive(msg.control.linear.x, msg.control.angular.z)
 
-    def cmd_vel_callback(self, msg:ControlCommand):
+        self.motors(lduty, rduty)
+        self.lights(msg.color.x, msg.color.y, msg.color.z)
 
-        self.desired_v = msg.control.linear.x
-        self.desired_w = msg.control.angular.z
 
-        duty_cycle_l,duty_cycle_r = self.drive(self.desired_v, self.desired_w)
-        self.motors(duty_cycle_l, duty_cycle_r, msg.color)
 
 
 def quat(roll, pitch, yaw):
-    q = Quaternion()
-    q.x = math.sin(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) - math.cos(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
-    q.y = math.cos(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0)
-    q.z = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0) - math.sin(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0)
-    q.w = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
-    return q
+    qx = math.sin(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) - math.cos(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
+    qy = math.cos(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0)
+    qz = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.sin(yaw/2.0) - math.sin(roll/2.0) * math.sin(pitch/2.0) * math.cos(yaw/2.0)
+    qw = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
+    return qx, qy, qz, qw
+
 
 def mat6diag(v):
     return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
 
+
 def main():
     rclpy.init()
     node = RobotController()
-    
-
-    zero = Vector3()
-    zero.x, zero.y, zero.z = 0.0, 0.0, 0.0
-    
-    node.motors(0, 0, zero)
     
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
         return
     finally:
-        node.motors(0, 0, zero)
+        node.motors(0, 0)
+        node.lights(0, 0, 0)
         node.destroy_node()
 
     rclpy.shutdown()
