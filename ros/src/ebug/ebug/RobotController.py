@@ -149,14 +149,13 @@ class RobotController(Node):
 
         
     #### Differential Drive Control ####
-    def drive(self,v_desired,w_desired):
+    def drive(self, v_desired, w_desired):
         # https://automaticaddison.com/calculating-wheel-velocities-for-a-differential-drive-robot/
         factor = float(w_desired * BASELINE) / 2.0
-        wl_desired = float(v_desired - factor) / WHEEL_RAD
-        wr_desired = float(v_desired + factor) / WHEEL_RAD
         
-        # https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_motors.html#a1c19beaeeb5a86a9d1ab7e054c825c13
-        return (wl_desired * 7, wr_desired * 7)   # -300 is full reverse, +300 is full forward
+        wl_desired = float(v_desired - factor) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
+        wr_desired = float(v_desired + factor) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
+        return (wl_desired, wr_desired)
 
     def control_callback(self, msg:ControlCommand):
         lduty, rduty = self.drive(msg.control.linear.x, msg.control.angular.z)
