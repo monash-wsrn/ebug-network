@@ -2,7 +2,7 @@
 
 echo "Updating Git"
 git fetch
-git reset --hard origin/main
+git reset --hard origin/hardware
 git pull
 
 chmod 755 update
