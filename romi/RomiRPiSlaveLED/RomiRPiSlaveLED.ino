@@ -43,22 +43,21 @@ struct Data
 #define NUM_LEDS 16         // 5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
-#define ENCODER_SMOTHING_DEPTH 16
+#define ENCODER_SMOTHING_DEPTH 16384
 
 uint8_t alive;
 double timeout;
 uint64_t timestamp;
-
-uint8_t multindex;
-
-double lmultvals[ENCODER_SMOTHING_DEPTH];
-double rmultvals[ENCODER_SMOTHING_DEPTH];
 
 double lmultiplier;
 double rmultiplier;
 
 int64_t lencoder;
 int64_t rencoder;
+
+const double alpha = 1.0 / ENCODER_SMOTHING_DEPTH;
+const double nalpha = 1.0 - alpha; 
+
 
 PololuRPiSlave<struct Data,5> slave;
 Romi32U4Motors motors;        /* https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_motors.html   */
@@ -79,52 +78,13 @@ void setup()
 
   lencoder = 0;
   rencoder = 0;
+  
+  lmultiplier = 1.0;
+  rmultiplier = 1.0;
 
   // Ignore values
   int16_t ignored_left = encoders.getCountsAndResetLeft();
   int16_t ignored_right = encoders.getCountsAndResetRight();
-
-  multindex = 0;
-  for (int i = 0; i < ENCODER_SMOTHING_DEPTH; i++)
-  {
-    lmultvals[i] = 1.0;
-    rmultvals[i] = 1.0;
-  }
-
-  lmultiplier = 1.0;
-  rmultiplier = 1.0;
-}
-
-
-void aggregate_encoder_multiplier(const double lm_enc_actual, const double rm_enc_actual, const double dt)
-{
-  lmultvals[multindex] = lmultiplier;
-  rmultvals[multindex] = rmultiplier;
-
-  // The target encoder counts over the period
-  double lm_enc_target = (double) slave.buffer.lm_desired * dt;
-  double rm_enc_target = (double) slave.buffer.rm_desired * dt;
-
-  // Calculate target v. actual counts discrepancy
-  if (lm_enc_actual != 0 && lm_enc_target != 0)
-    lmultvals[multindex] = lm_enc_target / (double) lm_enc_actual;
-  
-  if (rm_enc_actual != 0 && rm_enc_target != 0)
-    rmultvals[multindex] = rm_enc_target / (double) rm_enc_actual;
-
-
-  double lagg = 0.0;
-  double ragg = 0.0;
-  for (int i = 0; i < ENCODER_SMOTHING_DEPTH; i++)
-  {
-    lagg += lmultvals[i];
-    ragg += rmultvals[i];
-  }
-  
-  lmultiplier = lagg / (double) ENCODER_SMOTHING_DEPTH;
-  rmultiplier = ragg / (double) ENCODER_SMOTHING_DEPTH;
-
-  multindex = (multindex + 1) % ENCODER_SMOTHING_DEPTH;
 }
 
 
@@ -168,8 +128,18 @@ void loop()
   int16_t lm_enc_actual = encoders.getCountsAndResetLeft();
   int16_t rm_enc_actual = encoders.getCountsAndResetRight();
 
-  // Smooth over the encoder multipliers
-  aggregate_encoder_multiplier(lm_enc_actual, rm_enc_actual, dt);
+  // The target encoder counts over the period
+  double lm_enc_target = (double) slave.buffer.lm_desired * dt;
+  double rm_enc_target = (double) slave.buffer.rm_desired * dt;
+
+  // Calculate target v. actual counts discrepancy (exponential moving average)
+  // https://stackoverflow.com/a/10990656
+  if (lm_enc_actual != 0 && lm_enc_target != 0)
+    lmultiplier = ((lm_enc_target / (double) lm_enc_actual) * alpha) + (nalpha * lmultiplier);
+  
+  if (rm_enc_actual != 0 && rm_enc_target != 0)
+    rmultiplier = ((rm_enc_target / (double) rm_enc_actual) * alpha) + (nalpha * rmultiplier);
+  
 
   // Read latest Data struct from I2C connection
   slave.updateBuffer();

@@ -29,7 +29,7 @@ class PololuHardwareInterface:
 
   def read_unpack(self, address, size, format):
     self.bus.write_byte(20, address)
-    time.sleep(0.0002)
+    time.sleep(0.0002)  # Sleep for 0.2 millis
 
     byte_list = [self.bus.read_byte(20) for _ in range(size)]
     return struct.unpack(format, bytes(byte_list))
@@ -38,7 +38,7 @@ class PololuHardwareInterface:
     data_array = list(struct.pack(format, *data))
 
     self.bus.write_i2c_block_data(20, address, data_array)
-    time.sleep(0.0002)
+    time.sleep(0.0002)  # Sleep for 0.2 millis
 
   def read_gryo_internal(self):
     gx = self.byteToNumber(self.bus.read_byte_data(0x6b, 0x22), self.bus.read_byte_data(0x6b, 0x23))
@@ -52,8 +52,8 @@ class PololuHardwareInterface:
       try:
         return action()
       except:
+        time.sleep(0.0002)  # Sleep for 0.2 millis
         continue
-    
     on_error()
     return None
 

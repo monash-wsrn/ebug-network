@@ -27,7 +27,7 @@ class RobotController(Node):
         super().__init__(self.__class__.__name__)
         import time
 
-        self.max_retry_i2c = int(os.getenv('I2C_RETRIES', "10"))        # TODO make into parameter instead
+        self.max_retry_i2c = int(os.getenv('I2C_RETRIES', "256"))       # TODO make into parameter instead
         self.robot_id = os.getenv('ROBOT_ID', "default")                # TODO make into parameter instead
         self.frequency = float(os.getenv('I2C_FREQUENCY', "50.0"))      # TODO make into parameter instead
         
