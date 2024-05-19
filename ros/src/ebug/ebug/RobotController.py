@@ -101,6 +101,10 @@ class RobotController(Node):
         dl = float(encl - self.lencoder) * ENC_CONST * WHEEL_RAD        # Distance travelled by left wheel
         dr = float(encr - self.rencoder) * ENC_CONST * WHEEL_RAD        # Distance travelled by right wheel
         
+        # Filter out spikes from I2C damage
+        if (abs(dl) > 1.0 or abs(dr) > 1.0):
+            self.odom_pose_update()
+        
         self.lencoder = encl
         self.rencoder = encr
         
