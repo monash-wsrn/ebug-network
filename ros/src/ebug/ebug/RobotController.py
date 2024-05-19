@@ -169,7 +169,8 @@ class RobotController(Node):
 
     def control_callback(self, msg:ControlCommand):
         lenc_desired, renc_desired = self.drive(msg.control.linear.x, msg.control.angular.z)
-
+        
+        self.alive()
         self.motors(lenc_desired, renc_desired)
         self.lights(msg.color.x, msg.color.y, msg.color.z)
 

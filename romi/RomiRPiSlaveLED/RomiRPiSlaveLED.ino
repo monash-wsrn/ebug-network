@@ -1,7 +1,7 @@
 /* ========== I2C BRIDGE CONFIGURATION ========== */
 /* Ensure this exactly matches corresponding uses */
 
-#define TIMEOUT_MS 500.0
+#define TIMEOUT_MS 5000.0
 #define I2C_ADDRESS 0x14
 struct Data
 {
@@ -43,7 +43,7 @@ struct Data
 #define NUM_LEDS 16         // 5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
-#define ENCODER_SMOTHING_DEPTH 10
+#define ENCODER_SMOTHING_DEPTH 16
 
 uint8_t alive;
 double timeout;
@@ -163,7 +163,6 @@ double delta(uint64_t now)
 void loop()
 {
   double dt = delta(micros());
-  check_timeout(dt);
 
   // The actual encoder counts over the period
   int16_t lm_enc_actual = encoders.getCountsAndResetLeft();
@@ -174,6 +173,7 @@ void loop()
 
   // Read latest Data struct from I2C connection
   slave.updateBuffer();
+  check_timeout(dt);
   
   // Scale our new target values to match calculated discrepancy
   int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * lmultiplier);
