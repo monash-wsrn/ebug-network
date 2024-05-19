@@ -44,7 +44,7 @@ struct Data
 #define COLOUR_ORDER GRB
 
 #define ENCODER_CLAMP 1440
-#define MULTIPLIER_DEVIATION 0.10         // Maximum deviation from the defualt multiplier
+#define MULTIPLIER_DEVIATION 0.00         // Maximum deviation from the defualt multiplier
 #define DEFAULT_MULTIPLIER 0.2049180      // Default Encoder-Counts to Motor-Speed conversion factor
 
 
