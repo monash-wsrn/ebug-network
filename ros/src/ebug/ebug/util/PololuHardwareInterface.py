@@ -83,8 +83,12 @@ class PololuHardwareInterface:
     
     # read back the gyro values
     func = lambda : self.read_gryo_internal()
-    gx, gy, gz = self.safe_smbus(func, self.retry_max, on_error)
+    result = self.safe_smbus(func, self.retry_max, on_error)
     
+    if result is None:
+      return None
+    
+    gx, gy, gz = result
     ## uses some constant offset to correct the error when measured statically
     wx = math.radians(gx  * self.G_GAIN - 4)
     wy = math.radians(gy  * self.G_GAIN + 8)
