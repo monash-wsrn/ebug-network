@@ -10,7 +10,7 @@ ARENA_BOTTOM = float(os.getenv('ARENA_BOTTOM', "-0.70"))        # m
 
 BUFFER_SPACE = float(os.getenv('BORDER_BUFFER', "0.20"))        # m
 
-MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.100000"))   # m /s 
+MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.050000"))   # m /s 
 MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "0.785398"))   # rads /s
 
 def party(main_boid, other_boids):

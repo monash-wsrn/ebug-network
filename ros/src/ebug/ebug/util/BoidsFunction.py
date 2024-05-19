@@ -19,7 +19,7 @@ H_LOWER = ARENA_LEFT + BUFFER_SPACE
 
 
 # Boid parameters
-MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.100000"))   # m /s 
+MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.050000"))   # m /s 
 MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "0.785398"))   # rads /s
 SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "0.20"))   # m
 VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "0.40"))               # m
