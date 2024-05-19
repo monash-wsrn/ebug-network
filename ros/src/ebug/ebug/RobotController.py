@@ -64,8 +64,8 @@ class RobotController(Node):
         self.alive()
         self.motors(self.lenc_desired, self.renc_desired)
         self.lights(self.lights_red, self.lights_green, self.lights_blue)
-        self.lenc_current, self.renc_current = self.encoders()
         self.gyro_x, self.gyro_y, self.gyro_z = self.gyroscope()
+        self.lenc_current, self.renc_current = self.encoders()
         
         self.update_odom()
     
@@ -80,19 +80,19 @@ class RobotController(Node):
     def lights(self, r, g, b):
         on_error = lambda : self.get_logger().info("I/O error writing to LED ring")
         return self.bridge.write_led_ring(int(r), int(g), int(b), on_error)
-    
-    def encoders(self):
-        on_error = lambda : self.get_logger().info("I/O error reading from encoders")
-        result  = None
-        while result is None:
-            result = self.bridge.read_encoders(on_error)
-        return result
 
     def gyroscope(self):
         on_error = lambda : self.get_logger().info("I/O error reading from encoders")
         result  = None
         while result is None:
             result = self.bridge.read_gyroscope(on_error)
+        return result
+    
+    def encoders(self):
+        on_error = lambda : self.get_logger().info("I/O error reading from encoders")
+        result  = None
+        while result is None:
+            result = self.bridge.read_encoders(on_error)
         return result
 
 
@@ -113,7 +113,7 @@ class RobotController(Node):
         encl = self.lenc_current - self.lenc_previous
         encr = self.renc_current - self.renc_previous
         
-        if abs(encl) > 144 or abs(encr) > 144:
+        if abs(encl) > 576 or abs(encr) > 576:
             return
         
         self.lenc_previous = self.lenc_current
@@ -148,9 +148,6 @@ class RobotController(Node):
         qx, qy, qz, qw = quat(0.0, 0.0, yaw)
         t = self.get_clock().now().to_msg()
         
-        
-        # self.get_logger().info(f"Encoder  => Left {encl}, Right {encr}")
-        # self.get_logger().info(f"Distance => Left {dl}, Right {dr}")
         self.get_logger().info(f"X {x}, Y {y}, YAW {yaw}")
 
         odom = Odometry()

@@ -43,9 +43,9 @@ struct Data
 #define NUM_LEDS 16         // 5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
-#define ENCODER_CLAMP 144                 // Maximum encoder delta per loop, larger counts ignored
+#define ENCODER_CLAMP 576                 // Maximum encoder delta per loop, larger counts ignored
 #define ENCODER_SMOOTH_DEPTH 16           // Maximum smoothing depth for dynamic encoder calibration 
-#define ENCODER_DEFAULT_MULT 0.2          // Default encoder power multiplier, to calibrate from
+#define ENCODER_DEFAULT_MULT 0.1600       // Default encoder power multiplier, to calibrate from
 
 const double ALPHA = 1.0 / (double) ENCODER_SMOOTH_DEPTH;
 const double NALPHA = 1.0 - ALPHA;
