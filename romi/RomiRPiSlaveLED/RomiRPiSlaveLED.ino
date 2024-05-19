@@ -54,8 +54,8 @@ uint8_t multindex;
 double lmultvals[ENCODER_SMOTHING_DEPTH];
 double rmultvals[ENCODER_SMOTHING_DEPTH];
 
-double lmultagg;
-double rmultagg;
+double lmultiplier;
+double rmultiplier;
 
 int64_t lencoder;
 int64_t rencoder;
@@ -88,38 +88,42 @@ void setup()
   for (int i = 0; i < ENCODER_SMOTHING_DEPTH; i++)
   {
     lmultvals[i] = 1.0;
-    lmultagg += 1.0;
-
     rmultvals[i] = 1.0;
-    rmultagg += 1.0;
   }
+
+  lmultiplier = 1.0;
+  rmultiplier = 1.0;
 }
 
 
 void aggregate_encoder_multiplier(const double lm_enc_actual, const double rm_enc_actual, const double dt)
 {
-  lmultagg -= lmultvals[multindex];
-  rmultagg -= rmultvals[multindex];
+  lmultvals[multindex] = lmultiplier;
+  rmultvals[multindex] = rmultiplier;
 
   // The target encoder counts over the period
   double lm_enc_target = (double) slave.buffer.lm_desired * dt;
   double rm_enc_target = (double) slave.buffer.rm_desired * dt;
 
   // Calculate target v. actual counts discrepancy
-  if (lm_enc_actual != 0)
+  if (lm_enc_actual != 0 && lm_enc_target != 0)
     lmultvals[multindex] = lm_enc_target / (double) lm_enc_actual;
-  else
-    lmultvals[multindex] = lmultagg / ENCODER_SMOTHING_DEPTH;
   
-  if (rm_enc_actual != 0)
+  if (rm_enc_actual != 0 && rm_enc_target != 0)
     rmultvals[multindex] = rm_enc_target / (double) rm_enc_actual;
-  else
-    rmultvals[multindex] = rmultagg / ENCODER_SMOTHING_DEPTH;
 
 
-  lmultagg += lmultvals[multindex];
-  rmultagg += rmultvals[multindex];
+  double lagg = 0.0;
+  double ragg = 0.0;
+  for (int i = 0; i < ENCODER_SMOTHING_DEPTH; i++)
+  {
+    lagg += lmultvals[i];
+    ragg += rmultvals[i];
+  }
   
+  lmultiplier = lagg / (double) ENCODER_SMOTHING_DEPTH;
+  rmultiplier = ragg / (double) ENCODER_SMOTHING_DEPTH;
+
   multindex = (multindex + 1) % ENCODER_SMOTHING_DEPTH;
 }
 
@@ -172,8 +176,8 @@ void loop()
   slave.updateBuffer();
   
   // Scale our new target values to match calculated discrepancy
-  int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * (lmultagg / ENCODER_SMOTHING_DEPTH));
-  int16_t rm_value = (int16_t) ((double) slave.buffer.rm_desired * (rmultagg / ENCODER_SMOTHING_DEPTH));
+  int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * lmultiplier);
+  int16_t rm_value = (int16_t) ((double) slave.buffer.rm_desired * rmultiplier);
   motors.setSpeeds(lm_value, rm_value);
 
   // Set and display colours for the LED ring
