@@ -98,7 +98,7 @@ class RobotController(Node):
         dt = self.delta_time()
         encl, encr = self.encoders()
         
-        if (encl - self.lencoder > 1440) or (encr - self.rencoder > 1440):
+        if abs(encl - self.lencoder) > 144 or abs(encr - self.rencoder) > 144:
             return
         
         dl = float(encl - self.lencoder) * ENC_CONST * WHEEL_RAD        # Distance travelled by left wheel

@@ -43,7 +43,7 @@ struct Data
 #define NUM_LEDS 16         // 5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
-#define ENCODER_CLAMP 1440
+#define ENCODER_CLAMP 144
 #define MULTIPLIER_DEVIATION 0.00         // Maximum deviation from the defualt multiplier
 #define DEFAULT_MULTIPLIER 0.2049180      // Default Encoder-Counts to Motor-Speed conversion factor
 
