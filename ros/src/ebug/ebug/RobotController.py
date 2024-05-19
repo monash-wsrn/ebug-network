@@ -75,7 +75,7 @@ class RobotController(Node):
 
     def gyroscope(self):
         on_error = lambda : self.get_logger().info("I/O error reading from encoders")
-        
+
         result  = None
         while result is None:
             result = self.bridge.read_gyroscope(on_error)
@@ -161,10 +161,10 @@ class RobotController(Node):
     #### Differential Drive Control ####
     def drive(self, v_desired, w_desired):
         # https://automaticaddison.com/calculating-wheel-velocities-for-a-differential-drive-robot/
-        factor = float(w_desired * BASELINE) / 2.0
+        rotation = float(w_desired * BASELINE) / 2.0
         
-        lenc_desired = float(v_desired - factor) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
-        renc_desired = float(v_desired + factor) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
+        lenc_desired = float(v_desired - rotation) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
+        renc_desired = float(v_desired + rotation) / WHEEL_RAD / ENC_CONST  # Calculate desired encoder counts per second
         return (lenc_desired, renc_desired)
 
     def control_callback(self, msg:ControlCommand):
