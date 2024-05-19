@@ -24,7 +24,7 @@ struct Data
 /* ========== I2C BRIDGE CONFIGURATION ========== */
 
 
-
+#include <math.h>
 #include <Servo.h>
 #include <Romi32U4.h>
 #include <PololuRPiSlave.h>
@@ -43,8 +43,6 @@ struct Data
 #define NUM_LEDS 16         // 5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
-#define MAX_ENCODER_DEVIATION 0.10
-#define ENCODER_SMOTHING_DEPTH 16384
 
 uint8_t alive;
 double timeout;
@@ -55,9 +53,6 @@ double rmultiplier;
 
 int64_t lencoder;
 int64_t rencoder;
-
-const double alpha = 1.0 / ENCODER_SMOTHING_DEPTH;
-const double nalpha = 1.0 - alpha; 
 
 
 PololuRPiSlave<struct Data,5> slave;
@@ -136,23 +131,19 @@ void loop()
   // Calculate target v. actual counts discrepancy (exponential moving average)
   // https://stackoverflow.com/a/10990656
   if (lm_enc_actual != 0 && lm_enc_target != 0)
-    lmultiplier = ((lm_enc_target / (double) lm_enc_actual) * alpha) + (nalpha * lmultiplier);
+    lmultiplier = fabs(lm_enc_target / (double) lm_enc_actual);
   
   if (rm_enc_actual != 0 && rm_enc_target != 0)
-    rmultiplier = ((rm_enc_target / (double) rm_enc_actual) * alpha) + (nalpha * rmultiplier);
+    rmultiplier = fabs(lm_enc_target / (double) lm_enc_actual);
   
-
-  double average = (lmultiplier + rmultiplier) / 2.0;
-  double clmultiplier = (average * (1.0 - MAX_ENCODER_DEVIATION)) + (lmultiplier * MAX_ENCODER_DEVIATION);
-  double crmultiplier = (average * (1.0 - MAX_ENCODER_DEVIATION)) + (rmultiplier * MAX_ENCODER_DEVIATION);
 
   // Read latest Data struct from I2C connection
   slave.updateBuffer();
   check_timeout(dt);
   
   // Scale our new target values to match calculated discrepancy
-  int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * clmultiplier);
-  int16_t rm_value = (int16_t) ((double) slave.buffer.rm_desired * crmultiplier);
+  int16_t lm_value = (int16_t) ((double) slave.buffer.lm_desired * lmultiplier);
+  int16_t rm_value = (int16_t) ((double) slave.buffer.rm_desired * rmultiplier);
   motors.setSpeeds(lm_value, rm_value);
 
   // Set and display colours for the LED ring

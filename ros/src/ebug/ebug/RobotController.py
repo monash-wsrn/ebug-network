@@ -31,11 +31,8 @@ class RobotController(Node):
         self.robot_id = os.getenv('ROBOT_ID', "default")                # TODO make into parameter instead
         self.frequency = float(os.getenv('I2C_FREQUENCY', "50.0"))      # TODO make into parameter instead
         
-        
         self.bridge = PololuHardwareInterface(self.max_retry_i2c)       
         time.sleep(0.5)
-        
-        self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
         self.control_sub =  self.create_subscription(ControlCommand, 'control', self.control_callback, 10)
@@ -47,6 +44,8 @@ class RobotController(Node):
         
         self.timestamp = self.get_clock().now().nanoseconds
         self.lencoder, self.rencoder = self.encoders()
+        
+        self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
         
     
     
