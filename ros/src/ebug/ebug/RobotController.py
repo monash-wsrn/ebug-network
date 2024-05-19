@@ -27,30 +27,47 @@ class RobotController(Node):
         super().__init__(self.__class__.__name__)
         import time
 
-        self.max_retry_i2c = int(os.getenv('I2C_RETRIES', "256"))       # TODO make into parameter instead
-        self.robot_id = os.getenv('ROBOT_ID', "default")                # TODO make into parameter instead
-        self.frequency = float(os.getenv('I2C_FREQUENCY', "50.0"))      # TODO make into parameter instead
         
-        self.bridge = PololuHardwareInterface(self.max_retry_i2c)       
-        time.sleep(0.5)
+        self.robot_id = os.getenv('ROBOT_ID', "default")                    # TODO make into parameter instead      
+        self.odom_frequency = float(os.getenv('ODOM_FREQUENCY', "30.0"))    # TODO make into parameter instead        
+        
+        self.odom_timer = self.create_timer(1.0 / self.odom_frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
         self.control_sub =  self.create_subscription(ControlCommand, 'control', self.control_callback, 10)
         
         self.odom = (0.0, 0.0, 0.0) # (x, y, yaw)
 
-        self.motors(0, 0)
-        self.lights(0, 0, 0)
+
+        self.max_retry_i2c = int(os.getenv('I2C_RETRIES', "256"))           # TODO make into parameter instead
+        self.i2c_frequency = float(os.getenv('I2C_FREQUENCY', "100.0"))      # TODO make into parameter instead 
         
+        self.bridge = PololuHardwareInterface(self.max_retry_i2c)       
+        time.sleep(0.5)
+                
         self.timestamp = self.get_clock().now().nanoseconds
-        self.lencoder, self.rencoder = self.encoders()
         
-        self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
+        self.lenc_desired, self.renc_desired = 0.0, 0.0
+        self.lights_red, self.lights_green, self.lights_blue = 0, 0, 0
         
+        self.gyro_x, self.gyro_y, self.gyro_z = 0.0, 0.0, 0.0
+        
+        self.lenc_previous, self.renc_previous = self.encoders()
+        self.lenc_current, self.renc_current = self.lenc_previous, self.renc_previous
+        
+        self.i2c_update()
+        self.i2c_timer = self.create_timer(1.0 / self.i2c_frequency, self.i2c_update)
     
     
 
     #### I2C Interaction ####
+    
+    def i2c_update(self):
+        self.alive()
+        self.motors(self.lenc_desired, self.renc_desired)
+        self.lights(self.lights_red, self.lights_green, self.lights_blue)
+        self.lenc_current, self.renc_current = self.encoders()
+        self.gyro_x, self.gyro_y, self.gyro_z = self.gyroscope()
     
     def alive(self):
         on_error = lambda : self.get_logger().info("I/O error writing heartbeat")
@@ -66,7 +83,6 @@ class RobotController(Node):
     
     def encoders(self):
         on_error = lambda : self.get_logger().info("I/O error reading from encoders")
-        
         result  = None
         while result is None:
             result = self.bridge.read_encoders(on_error)
@@ -74,7 +90,6 @@ class RobotController(Node):
 
     def gyroscope(self):
         on_error = lambda : self.get_logger().info("I/O error reading from encoders")
-
         result  = None
         while result is None:
             result = self.bridge.read_gyroscope(on_error)
@@ -93,19 +108,20 @@ class RobotController(Node):
     
     # Kinematic motion model
     def odom_pose_update(self):
-        self.alive()
-
         dt = self.delta_time()
-        encl, encr = self.encoders()
         
-        if abs(encl - self.lencoder) > 144 or abs(encr - self.rencoder) > 144:
+        encl = self.lenc_current - self.lenc_previous
+        encr = self.renc_current - self.renc_previous
+        
+        if abs(encl) > 144 or abs(encr) > 144:
             return
         
-        dl = float(encl - self.lencoder) * ENC_CONST * WHEEL_RAD        # Distance travelled by left wheel
-        dr = float(encr - self.rencoder) * ENC_CONST * WHEEL_RAD        # Distance travelled by right wheel
+        self.lenc_previous = self.lenc_current
+        self.renc_previous = self.renc_current
         
-        self.lencoder = encl
-        self.rencoder = encr
+        
+        dl = float(encl) * ENC_CONST * WHEEL_RAD        # Distance travelled by left wheel
+        dr = float(encr) * ENC_CONST * WHEEL_RAD        # Distance travelled by right wheel
         
         # https://robotics.stackexchange.com/a/1679
         # Update odometry
@@ -133,9 +149,8 @@ class RobotController(Node):
         t = self.get_clock().now().to_msg()
         
         
-        
-        self.get_logger().info(f"Encoder  => Left {encl}, Right {encr}")
-        self.get_logger().info(f"Distance => Left {dl}, Right {dr}")
+        # self.get_logger().info(f"Encoder  => Left {encl}, Right {encr}")
+        # self.get_logger().info(f"Distance => Left {dl}, Right {dr}")
         self.get_logger().info(f"X {x}, Y {y}, YAW {yaw}")
 
         odom = Odometry()
@@ -176,11 +191,10 @@ class RobotController(Node):
         return (lenc_desired, renc_desired)
 
     def control_callback(self, msg:ControlCommand):
-        lenc_desired, renc_desired = self.drive(msg.control.linear.x, msg.control.angular.z)
+        self.lenc_desired, self.renc_desired = self.drive(msg.control.linear.x, msg.control.angular.z)
+        self.lights_red, self.lights_green, self.lights_blue = msg.color.x, msg.color.y, msg.color.z
         
-        self.alive()
-        self.motors(lenc_desired, renc_desired)
-        self.lights(msg.color.x, msg.color.y, msg.color.z)
+        self.get_logger().info(f"Left {self.lenc_desired}, Right {self.renc_desired}")
 
 
 
