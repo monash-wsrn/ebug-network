@@ -13,8 +13,9 @@ from ebug_base.msg import ControlCommand
 
 # https://www.cs.columbia.edu/~allen/F17/NOTES/icckinematics.pdf
 MULTIPLIER = float(os.getenv('WHEEL_MULT', "1.0862"))
-BASELINE = 0.138                                            # Distance between wheels in meters
-WHEEL_RAD = 0.0351 * MULTIPLIER                             # Wheel radius in meters
+
+BASELINE = 0.1320                                           # Distance between wheels in meters
+WHEEL_RAD = 0.0350 * MULTIPLIER                             # Wheel radius in meters
 GEAR_RATIO = 3952.0 / 33.0                                  # Gear Ratio X:1
 ENC_CPR = 12.0                                              # Encoders Counts-per-revolution
 ENC_CONST = (2.0 * math.pi) / (ENC_CPR * GEAR_RATIO)        # Encoder constant
@@ -29,21 +30,21 @@ class RobotController(Node):
         self.max_retry_i2c = 10                                         # TODO make into parameter instead
         self.bridge = PololuHardwareInterface(self.max_retry_i2c)       
         time.sleep(0.5)
-
+        
+        self.robot_id = os.getenv('ROBOT_ID', "default")                # TODO make into parameter instead
         self.frequency = float(os.getenv('I2C_FREQUENCY', "100.0"))     # TODO make into parameter instead
         self.timer = self.create_timer(1.0 / self.frequency, self.odom_pose_update)
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
         self.control_sub =  self.create_subscription(ControlCommand, 'control', self.control_callback, 10)
         
-        self.robot_id = os.getenv('ROBOT_ID', "default")
-        self.start = True
-
-        self.odom_x, self.odom_y, self.odom_th = 0.0, 0.0, 0.0
+        self.odom = (0.0, 0.0, 0.0) # (x, y, yaw)
 
         self.motors(0, 0)
         self.lights(0, 0, 0)
-        self.pencode_l, self.pencode_r = self.read_encoders_gyro()
+        
+        self.timestamp = self.get_clock().now().nanoseconds
+        self.lencoder, self.rencoder = self.encoders()
         
     
     
@@ -75,87 +76,72 @@ class RobotController(Node):
     #### Differential Drive Odometry ####
 
     def delta_time(self):
-        def ns():
-            return self.get_clock().now().nanoseconds
-
-        if self.timestamp == 0:
-            self.timestamp = ns()
-        
-        delta = float(ns() - self.timestamp) / 1_000_000_000.0
-        self.timestamp = ns()
-
+        now = self.get_clock().now().nanoseconds
+        delta = float(now - self.timestamp) / 1_000_000_000.0
+        self.timestamp = now
         return delta
-    
-    def encoder_congruence(self, encoder_l, encoder_r):
-        ldiff = int(encoder_l) - int(self.pencode_l)
-        rdiff = int(encoder_r) - int(self.pencode_r)
-
-        if (ldiff > 32767):
-            ldiff -= 65535
-        elif (ldiff < -32768):
-            ldiff += 65536
-
-        if (rdiff > 32767):
-            rdiff -= 65535
-        elif (rdiff < -32768):
-            rdiff += 65536
-
-        self.pencode_l = int(encoder_l)
-        self.pencode_r = int(encoder_r)
-        return ldiff, rdiff
-
+        
     
     # Kinematic motion model
     def odom_pose_update(self):
         self.alive()
 
         dt = self.delta_time()
-        encoder_l, encoder_r = self.read_encoders_gyro()
-
-        if (self.start):
-            self.start = False
-            self.pencode_l, self.pencode_r = int(encoder_l), int(encoder_r)
-            return
+        encl, encr = self.encoders()
         
-        sencode_l, sencode_r = self.encoder_congruence(encoder_l, encoder_r)
-
-        # Filter out spikes, allow no more than one wheel rotation per update 
-        if abs(sencode_l) > 1440 or abs(sencode_r) > 1440:
-            return
-
-        wl = float(sencode_l) * ENC_CONST
-        wr = float(sencode_r) * ENC_CONST
+        dl = float(encl - self.lencoder) * ENC_CONST * WHEEL_RAD        # Distance travelled by left wheel
+        dr = float(encr - self.rencoder) * ENC_CONST * WHEEL_RAD        # Distance travelled by right wheel
         
-        odom_v = (wl + wr) * WHEEL_RAD / 2.0
-        odom_w = (wr - wl) * WHEEL_RAD / BASELINE    # modified to adhre to REP103
-
-        self.odom_th = self.odom_th + odom_w                            # TODO, this lesser than reality
-        self.odom_x  = self.odom_x  + odom_v * math.cos(self.odom_th)
-        self.odom_y  = self.odom_y  + odom_v * math.sin(self.odom_th)
-
+        self.lencoder = encl
+        self.rencoder = encr
+        
+        # https://robotics.stackexchange.com/a/1679
+        # Update odometry
+        x, y, yaw = self.odom
+        dw = 0.0
+        if (abs(dl - dr) < 1e-6):
+            nx = x + dl * math.cos(yaw)
+            ny = y + dr * math.sin(yaw)
+            nyaw = yaw
+            
+            self.odom = (nx, ny, nyaw)
+        else:
+            R = (BASELINE * (dl + dr)) / (2.0 * (dr - dl))
+            dw = (dr - dl) / BASELINE
+            
+            nx = x + R * math.sin(dw + yaw) - R * math.sin(yaw)
+            ny = y - R * math.cos(dw + yaw) + R * math.cos(yaw)
+            nyaw = math.remainder(yaw + dw, math.tau)           # Bound angle to [-pi, pi] -> https://stackoverflow.com/a/61485110
+            
+            self.odom = (nx, ny, nyaw)
+        
+        # Send out latest odometry
+        x, y, yaw = self.odom
+        qx, qy, qz, qw = quat(0.0, 0.0, yaw)
         t = self.get_clock().now().to_msg()
-        qx, qy, qz, qw = quat(0.0, 0.0, self.odom_th)
 
         odom = Odometry()
         odom.header.frame_id = f'{self.robot_id}_odom'
         odom.header.stamp = t
         odom.child_frame_id = f'{self.robot_id}'
 
-        odom.pose.pose.position.x = self.odom_x
-        odom.pose.pose.position.y = self.odom_y
+        odom.pose.pose.position.x = float(x)
+        odom.pose.pose.position.y = float(y)
         odom.pose.pose.position.z = 0.0
         odom.pose.pose.orientation.x = float(qx)
         odom.pose.pose.orientation.y = float(qy)
         odom.pose.pose.orientation.z = float(qz)
         odom.pose.pose.orientation.w = float(qw)
-        odom.pose.covariance = mat6diag(1e-1)   # The greater the change in position, the greater the covariance
+        odom.pose.covariance = mat6diag(1e-2)
 
-        odom.twist.twist.linear.x = float(odom_v) / dt
+        vx = (dl - dr) / 2.0 / dt
+        vyaw = dw / dt
+        odom.twist.twist.linear.x = float(vx)
         odom.twist.twist.linear.y = 0.0
         odom.twist.twist.linear.z = 0.0
         odom.twist.twist.angular.x = 0.0
         odom.twist.twist.angular.y = 0.0
-        odom.twist.twist.angular.z = float(odom_w) / dt
+        odom.twist.twist.angular.z = float(vyaw)
         odom.twist.covariance = mat6diag(1e-1)
 
         self.odom_pub.publish(odom) 

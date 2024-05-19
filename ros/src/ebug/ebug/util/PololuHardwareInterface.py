@@ -59,12 +59,12 @@ class PololuHardwareInterface:
 
 
   #### HIGH-LEVEL INTERFACE FUNCTIONS ####
-  def write_led_ring(self, red, green, blue, on_error = lambda : print("Error writing to led ring")):
-    func = lambda : self.write_pack(4, 'BBB', red, green, blue)     # Position 4, Length 3
-    return self.safe_smbus(func, self.retry_max, on_error)
-
   def write_motors(self, left, right, on_error = lambda : print("Error writing to morots")):
     func = lambda : self.write_pack(0, 'hh', left, right)           # Position 0, Length 4
+    return self.safe_smbus(func, self.retry_max, on_error)
+  
+  def write_led_ring(self, red, green, blue, on_error = lambda : print("Error writing to led ring")):
+    func = lambda : self.write_pack(4, 'BBB', red, green, blue)     # Position 4, Length 3
     return self.safe_smbus(func, self.retry_max, on_error)
 
   def write_alive(self, on_error = lambda : print("Error writing heartbeat")):
@@ -73,10 +73,8 @@ class PololuHardwareInterface:
     return self.safe_smbus(func, self.retry_max, on_error)
 
   def read_encoders(self, on_error = lambda : print("Error reading from encoders")):
-    func = lambda : self.read_unpack(7, 4, 'hh')                    # Position 8, Length 4
+    func = lambda : self.read_unpack(8, 16, 'qq')                   # Position 8, Length 16
     return self.safe_smbus(func, self.retry_max, on_error)
-
-
 
 
   def read_gyroscope(self, on_error = lambda : print("Error reading from gyroscope")):

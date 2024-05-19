@@ -2,23 +2,23 @@
 /* ========== I2C BRIDGE CONFIGURATION ========== */
 /* Ensure this exactly matches corresponding uses */
 
-#define CONN_TIMEOUT 1000
+#define TIMEOUT_MS 1000
 #define I2C_ADDRESS 0x14
 struct Data
 {
-  int16_t lm_desired;   // Position 0, Length 2
-  int16_t rm_desired;   // Position 2, Length 2
+  int16_t lm_desired;   // Position  0, Length 2
+  int16_t rm_desired;   // Position  2, Length 2 
 
-  uint8_t rled;         // Position 4, Length 1
-  uint8_t gled;         // Position 5, Length 1
-  uint8_t bled;         // Position 6, Length 1
+  uint8_t rled;         // Position  4, Length 1
+  uint8_t gled;         // Position  5, Length 1
+  uint8_t bled;         // Position  6, Length 1
 
-  uint8_t alive;        // Position 7, Length 1
+  uint8_t alive;        // Position  7, Length 1
 
-  int16_t lm_encoder;   // Position 8, Length 2
-  int16_t rm_encoder;   // Position 10, Length 2
+  int64_t lenc_total;   // Position  8, Length 8
+  int64_t renc_total;   // Position 16, Length 8
 
-  /* Total Length of 11 bytes */
+  /* Total Length of 24 bytes */
 };
 
 
@@ -31,41 +31,63 @@ struct Data
 #include <PololuRPiSlave.h>
 #include <FastLED.h>
 
+
+/* Board    https://www.pololu.com/product/3544 */
+/* Chasis   https://www.pololu.com/product/3500 */
+/* Wheel    https://www.pololu.com/product/1429 */
+/* Motor    https://www.pololu.com/product/1520 */
+/* Encoder  https://www.pololu.com/product/3542 */
+
+
 // Variables for LED connection
 #define LED_PIN 22          // PF1 pin
 #define NUM_LEDS 16         // 5 LEDs in total but count from 0
 #define COLOUR_ORDER GRB
 
-
-uint64_t time;
 uint8_t alive;
+int32_t timeout;
+uint64_t timestamp;
+
+int64_t lencoder;
+int64_t rencoder;
 
 PololuRPiSlave<struct Data,5> slave;
-Romi32U4Motors motors;
-Romi32U4Encoders encoders;
+Romi32U4Motors motors;        /* https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_motors.html   */
+Romi32U4Encoders encoders;    /* https://pololu.github.io/romi-32u4-arduino-library/class_romi32_u4_encoders.html */
 CRGB leds[NUM_LEDS]; 
 
 void setup()
 {
   // Set up the slave at I2C address 20.
   slave.init(I2C_ADDRESS);
-  alive = 0x00;
 
   // Setup fast LED
   FastLED.addLeds<WS2812, LED_PIN, COLOUR_ORDER>(leds, NUM_LEDS);
+  
+  alive = 0x00;
+  timeout = TIMEOUT_MS;
+  timestamp = micros();
+
+  lencoder = 0;
+  rencoder = 0;
+
+  // Ignore values
+  int16_t ignored_left = encoders.getCountsAndResetLeft();
+  int16_t ignored_right = encoders.getCountsAndResetRight();
 }
 
-void check_timeout()
+void check_timeout(double dt)
 {
   // If the alive buffer value has been changed, reset timeout 
   if (alive != slave.buffer.alive) {
-    time = millis();
+    timeout = TIMEOUT_MS;
     alive = slave.buffer.alive;
     return;
   }
 
-  // Alive buffer value remains unchanged, check timer
-  if (millis() - time < CONN_TIMEOUT)
+  // Alive buffer value remains unchanged, check timeout
+  timeout -= (uint32_t) (dt * 1000.0);
+  if (timeout > 0)
     return;
 
   // If timed out, set all actionable values to 0
@@ -77,21 +99,58 @@ void check_timeout()
   slave.buffer.bled = 0;
 }
 
+double delta(uint64_t now)
+{
+  uint64_t delta_us = now - timestamp;
+  timestamp = now;
+  return (double) delta_us / 1000.0 / 1000.0;
+}
+
 void loop()
 {
+  double dt = delta(micros());
+  check_timeout(dt);
+
+  // The target encoder counts over the period
+  double lm_enc_target = (double) slave.buffer.lm_desired * dt;
+  double rm_enc_target = (double) slave.buffer.rm_desired * dt;
+  
+  // The actual encoder counts over the period
+  int16_t lm_enc_actual = encoders.getCountsAndResetLeft();
+  int16_t rm_enc_actual = encoders.getCountsAndResetRight();
+
+  // Calculate target v. actual counts discrepancy
+  double lm_multiplier = 1.0;
+  double rm_multiplier = 1.0;
+  
+
+  if (lm_enc_actual != 0)
+    lm_multiplier = lm_enc_target / (double) lm_enc_actual;
+  
+  if (rm_enc_actual != 0)
+    rm_multiplier = rm_enc_target / (double) rm_enc_actual;
+
+
+  // Read latest Data struct from I2C connection
   slave.updateBuffer();
-  check_timeout();
+  
+  // Scale our new target values to match calculated discrepancy
+  int16_t lm_value = (int16_t) (lm_multiplier * (double) slave.buffer.lm_desired);
+  int16_t rm_value = (int16_t) (rm_multiplier * (double) slave.buffer.rm_desired);
+  motors.setSpeeds(lm_value, rm_value);
 
-  motors.setSpeeds(slave.buffer.lm_desired, slave.buffer.rm_desired);
-
-  // Set and display LED colours
+  // Set and display colours for the LED ring
   for (int i = 0; i < NUM_LEDS; i++)
     leds[i] = CRGB(slave.buffer.rled, slave.buffer.gled, slave.buffer.bled);
   FastLED.show();
 
+  
+  lencoder += (int64_t) lm_enc_actual;
+  rencoder += (int64_t) rm_enc_actual;
 
-  slave.buffer.lm_encoder = encoders.getCountsLeft();
-  slave.buffer.rm_encoder = encoders.getCountsRight();
+  slave.buffer.lenc_total = lencoder;
+  slave.buffer.renc_total = rencoder;
 
+  // Write latest Data struct to I2C connection
   slave.finalizeWrites();
 }
