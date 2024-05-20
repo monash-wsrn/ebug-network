@@ -44,7 +44,7 @@ struct Data
 #define COLOUR_ORDER GRB
 
 #define ENCODER_CLAMP 576                 // Maximum encoder delta per loop, larger counts ignored
-#define ENCODER_SMOOTH_DEPTH 512          // Maximum smoothing depth for dynamic encoder calibration 
+#define ENCODER_SMOOTH_DEPTH 128          // Maximum smoothing depth for dynamic encoder calibration 
 #define ENCODER_DEFAULT_MULT 0.2500       // Default encoder power multiplier, to calibrate from
 #define ENCODER_MINIMUM_MULT 0.1250       // Minimum encoder power multiplier, to calibrate from
 
