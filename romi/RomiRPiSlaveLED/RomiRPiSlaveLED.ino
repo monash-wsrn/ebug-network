@@ -139,11 +139,12 @@ void loop()
   // https://stackoverflow.com/a/10990656
 
   int16_t lm_enc_actual = encoders.getCountsAndResetLeft();
+  double lm_enc_scaled = floor((double) lm_enc_actual / dt);
   if (abs(lm_enc_actual) < ENCODER_CLAMP)
   {
     lencoder += (int64_t) lm_enc_actual;
 
-    double lm_enc_target = (double) slave.buffer.lm_desired * dt;
+    double lm_enc_target = (double) slave.buffer.lm_desired;
     double lfactor = lmultiplier;
 
     if (lm_enc_actual != 0 && lm_enc_target != 0)
@@ -156,11 +157,12 @@ void loop()
   
 
   int16_t rm_enc_actual = encoders.getCountsAndResetRight();
+  double rm_enc_scaled = floor((double) rm_enc_actual / dt);
   if (abs(rm_enc_actual) < ENCODER_CLAMP)
   {
     rencoder += (int64_t) rm_enc_actual;
 
-    double rm_enc_target = (double) slave.buffer.rm_desired * dt;
+    double rm_enc_target = (double) slave.buffer.rm_desired;
     double rfactor = rmultiplier;
 
     if (rm_enc_actual != 0 && rm_enc_target != 0)
