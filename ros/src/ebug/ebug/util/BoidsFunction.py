@@ -112,6 +112,8 @@ class Vec2():
         return Vec2( math.cos(radians), math.sin(radians) )
     
     def angle_between(self, other):
+        if (self.length() * other.length()) < 1e-6:
+            return 0.0
         return math.acos(self.dot(other) / (self.length() * other.length()))
 
     def dot(self, other):
