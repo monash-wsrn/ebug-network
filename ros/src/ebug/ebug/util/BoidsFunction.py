@@ -22,7 +22,7 @@ H_LOWER = ARENA_LEFT + BUFFER_SPACE
 MAX_FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.100000"))   # m /s 
 MAX_ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "0.785398"))   # rads /s
 SEPARATION_DISTANCE = float(os.getenv('SEPARATION_DISTANCE', "0.20"))   # m
-VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "0.40"))               # m
+VIEW_DISTANCE = float(os.getenv('VIEW_DISTANCE', "1.00"))               # m
 
 ALIGNMENT_FACTOR = float(os.getenv('ALIGNMENT_FACTOR', "0.01"))
 COHESION_FACTOR = float(os.getenv('COHESION_FACTOR', "0.01"))
