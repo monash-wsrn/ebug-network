@@ -87,14 +87,16 @@ def next(main_boid, other_boids):
         (main_pos.x > H_UPPER) or
         (main_pos.y < V_LOWER) or 
         (main_pos.y > V_UPPER)):
-        boundary = main_pos.inversed().normalised().sub(main_dir)
+        boundary = main_pos.inversed().normalised()
+        delta = boundary.angle_between(main_dir)
+    else:
+        direction = aggregate_cohesion.add(aggregate_alignment).add(aggregate_separation)
+        delta = direction.angle() * min(direction.length(), MAX_ANGULAR_SPEED)
     
-    
-    direction = boundary.add(aggregate_cohesion).add(aggregate_alignment).add(aggregate_separation)
-    angular_delta  = direction.angle() * min(direction.length(), 1.0) * MAX_ANGULAR_SPEED
+    delta = min(max(delta, -MAX_ANGULAR_SPEED), MAX_ANGULAR_SPEED)
 
     # Return (Linear Velocity Forward, Angular Velocity Yaw)
-    return (MAX_FORWARD_SPEED, angular_delta, led_colour)
+    return (MAX_FORWARD_SPEED, delta, led_colour)
 
 
     
@@ -109,7 +111,12 @@ class Vec2():
     def from_angle(radians):
         return Vec2( math.cos(radians), math.sin(radians) )
     
-    
+    def angle_between(self, other):
+        return math.acos(self.dot(other) / (self.length() * other.length()))
+
+    def dot(self, other):
+        return self.x * other.x + self.y * other.y
+
     def sub(self, other):
         return Vec2(self.x - other.x, self.y - other.y)
     
