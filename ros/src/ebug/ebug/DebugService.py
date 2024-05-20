@@ -11,7 +11,7 @@ from ebug_base.srv import ComputeTarget
 from ebug_base.msg import RobotPose
 
 import os
-FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.050000"))       # m /s 
+FORWARD_SPEED = float(os.getenv('MAX_FORWARD_SPEED', "0.100000"))       # m /s 
 ANGULAR_SPEED = float(os.getenv('MAX_ANGULAR_SPEED', "0.785398"))       # rads /s
 
 class DebugService(Node):

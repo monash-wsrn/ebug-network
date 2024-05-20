@@ -1,7 +1,7 @@
 /* ========== I2C BRIDGE CONFIGURATION ========== */
 /* Ensure this exactly matches corresponding uses */
 
-#define TIMEOUT_MS 5000.0
+#define TIMEOUT_MS 500.0
 #define I2C_ADDRESS 0x14
 struct Data
 {
@@ -44,8 +44,9 @@ struct Data
 #define COLOUR_ORDER GRB
 
 #define ENCODER_CLAMP 576                 // Maximum encoder delta per loop, larger counts ignored
-#define ENCODER_SMOOTH_DEPTH 16           // Maximum smoothing depth for dynamic encoder calibration 
-#define ENCODER_DEFAULT_MULT 0.2000       // Default encoder power multiplier, to calibrate from
+#define ENCODER_SMOOTH_DEPTH 512          // Maximum smoothing depth for dynamic encoder calibration 
+#define ENCODER_DEFAULT_MULT 0.2500       // Default encoder power multiplier, to calibrate from
+#define ENCODER_MINIMUM_MULT 0.1250       // Minimum encoder power multiplier, to calibrate from
 
 const double ALPHA = 1.0 / (double) ENCODER_SMOOTH_DEPTH;
 const double NALPHA = 1.0 - ALPHA;
@@ -54,8 +55,11 @@ uint8_t alive;
 double timeout;
 uint64_t timestamp;
 
-double lmultiplier;
-double rmultiplier;
+double lencoder_actual_smooth;
+double rencoder_actual_smooth;
+
+double lencoder_target_smooth;
+double rencoder_target_smooth;
 
 int64_t lencoder;
 int64_t rencoder;
@@ -77,9 +81,12 @@ void reset()
 
   lencoder = 0;
   rencoder = 0;
-  
-  lmultiplier = ENCODER_DEFAULT_MULT;
-  rmultiplier = ENCODER_DEFAULT_MULT;
+
+  lencoder_target_smooth = ENCODER_DEFAULT_MULT;
+  rencoder_target_smooth = ENCODER_DEFAULT_MULT;
+
+  lencoder_actual_smooth = 1.0;
+  rencoder_actual_smooth = 1.0;
 
   // Ignore values
   int16_t ignored_left = encoders.getCountsAndResetLeft();
@@ -138,38 +145,27 @@ void loop()
   // Calculate target v. actual counts discrepancy (exponential moving average)
   // https://stackoverflow.com/a/10990656
 
+  // Calibrate left motor
   int16_t lm_enc_actual = encoders.getCountsAndResetLeft();
-  if (abs(lm_enc_actual) < ENCODER_CLAMP)
-  {
-    lencoder += (int64_t) lm_enc_actual;
+  double lm_enc_scaled = fabs((double) lm_enc_actual / dt);
+  lencoder_actual_smooth = (ALPHA * lm_enc_scaled) + (NALPHA * lencoder_actual_smooth);
 
-    double lm_enc_target = (double) slave.buffer.lm_desired * dt;
-    double lfactor = lmultiplier;
-
-    if (lm_enc_actual != 0 && lm_enc_target != 0)
-      lfactor = fabs(lm_enc_target / (double) lm_enc_actual);
-    else if (lm_enc_actual == 0 && lm_enc_target != 0) 
-      lfactor = 1.01 * lmultiplier;
-      
-    lmultiplier = (ALPHA * lfactor) + (NALPHA * lmultiplier);
-  }
+  double lm_enc_target = fabs((double) slave.buffer.lm_desired);
+  lencoder_target_smooth = (ALPHA * lm_enc_target) + (NALPHA * lencoder_target_smooth);
   
+  double lmultiplier = max(lencoder_target_smooth / lencoder_actual_smooth, ENCODER_MINIMUM_MULT);
+  lencoder += lm_enc_actual;
 
+  // Calibrate right motor
   int16_t rm_enc_actual = encoders.getCountsAndResetRight();
-  if (abs(rm_enc_actual) < ENCODER_CLAMP)
-  {
-    rencoder += (int64_t) rm_enc_actual;
+  double rm_enc_scaled = fabs((double) rm_enc_actual / dt);
+  rencoder_actual_smooth = (ALPHA * rm_enc_scaled) + (NALPHA * rencoder_actual_smooth);
 
-    double rm_enc_target = (double) slave.buffer.rm_desired * dt;
-    double rfactor = rmultiplier;
-
-    if (rm_enc_actual != 0 && rm_enc_target != 0)
-      rfactor = fabs(rm_enc_target / (double) rm_enc_actual);
-    else if (rm_enc_actual == 0 && rm_enc_target != 0) 
-      rfactor = 1.01 * rmultiplier;
-      
-    rmultiplier = (ALPHA * rfactor) + (NALPHA * rmultiplier);
-  }
+  double rm_enc_target = fabs((double) slave.buffer.rm_desired);
+  rencoder_target_smooth = (ALPHA * rm_enc_target) + (NALPHA * rencoder_target_smooth);
+  
+  double rmultiplier = max(rencoder_target_smooth / rencoder_actual_smooth, ENCODER_MINIMUM_MULT);
+  rencoder += rm_enc_actual;
 
   
   // Read latest Data struct from I2C connection
