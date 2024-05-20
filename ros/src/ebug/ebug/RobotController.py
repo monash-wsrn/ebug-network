@@ -162,7 +162,7 @@ class RobotController(Node):
         odom.pose.pose.orientation.y = float(qy)
         odom.pose.pose.orientation.z = float(qz)
         odom.pose.pose.orientation.w = float(qw)
-        odom.pose.covariance = mat6diag(1e-3)
+        odom.pose.covariance = mat6diag(1e-2)
 
         vx = (dl - dr) / 2.0 / dt
         vyaw = dw / dt
