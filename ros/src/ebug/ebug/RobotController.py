@@ -148,7 +148,7 @@ class RobotController(Node):
         qx, qy, qz, qw = quat(0.0, 0.0, yaw)
         t = self.get_clock().now().to_msg()
         
-        self.get_logger().info(f"X {x}, Y {y}, YAW {yaw}")
+        # self.get_logger().info(f"X {x}, Y {y}, YAW {yaw}")
 
         odom = Odometry()
         odom.header.frame_id = f'{self.robot_id}_odom'
