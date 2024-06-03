@@ -69,13 +69,14 @@ namespace ebug
             const auto& pose = pose_cov.first;
             const auto& cov = pose_cov.second;
 
-            // Robot Pose conversion 
+            //Robot Pose conversion from Real Robot Pose to RVIZ 
             double real_x = pose.position.x * scale_x; 
             double real_y = pose.position.y * scale_y;
 
             double cov_x = cov.first;
             double cov_y = cov.second;
-
+            
+            //Applying the min-max filter to the gaussian variances 
             double adjusted_sigma_x = sigma_x * std::sqrt(std::abs(cov_x));
             adjusted_sigma_x = std::max(sigma_x, adjusted_sigma_x);
             adjusted_sigma_x = std::min(adjusted_sigma_x, max_uncertainty);
@@ -94,8 +95,8 @@ namespace ebug
                 // Set elevation for the robot's position
                 if (map.isInside(position)) {
                     double elevation = amplitude * std::exp(-(distx * distx) / (2 * adjusted_sigma_x * adjusted_sigma_x) -
-                                                        (disty * disty) / (2 * adjusted_sigma_y * adjusted_sigma_y));
-                    map.at("elevation", *it) += elevation;
+                                                        (disty * disty) / (2 * adjusted_sigma_y * adjusted_sigma_y)); //Gaussian Formula 
+                    map.at("elevation", *it) += elevation; //Additive symbol to account for all robots that are present in the arena. 
                 }
             }
         }

@@ -250,7 +250,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/TopDownOrtho
-      Scale: 99
+      Scale: 496
       Name: Current View
       Near Clip Distance: 0.009999999776482582
       Angle: 0
