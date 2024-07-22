@@ -38,6 +38,7 @@ setup(
             'DebugService = ebug.DebugService:main',
 
             'PseudoMovementController = ebug.PseudoMovementController:main',
+            'TeleopController = ebug.TeleopController:main',
 
             'PyGameDisplay = ebug.PyGameDisplay:main'
 

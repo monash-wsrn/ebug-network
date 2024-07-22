@@ -3,13 +3,12 @@ Handles the PID controller of the robot and i2c communication with Romi board
 """
 import os
 import math
-
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
-
-from ebug.util.PololuHardwareInterface import PololuHardwareInterface
+from geometry_msgs.msg import Twist
 from ebug_base.msg import ControlCommand
+from ebug.util.PololuHardwareInterface import PololuHardwareInterface
 
 # https://www.cs.columbia.edu/~allen/F17/NOTES/icckinematics.pdf
 WHEEL_MULT = float(os.getenv('WHEEL_RADIUS_MULTIPLIER', "1.020"))
@@ -26,12 +25,12 @@ class RobotController(Node):
     def __init__(self):
         super().__init__(self.__class__.__name__)
         import time
-
         
         self.robot_id = os.getenv('ROBOT_ID', "default")                    # TODO make into parameter instead 
 
         self.odom_pub = self.create_publisher(Odometry, 'odometry', 10)
-        self.control_sub =  self.create_subscription(ControlCommand, 'control', self.control_callback, 10)
+        self.control_sub = self.create_subscription(ControlCommand, 'control', self.control_callback, 10)
+        self.cmd_vel_sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 10)
         
         self.odom = (0.0, 0.0, 0.0) # (x, y, yaw)
 
@@ -191,7 +190,11 @@ class RobotController(Node):
         self.lenc_desired, self.renc_desired = self.drive(msg.control.linear.x, msg.control.angular.z)
         self.lights_red, self.lights_green, self.lights_blue = msg.color.x, msg.color.y, msg.color.z
 
-
+    #### Teleoperation Control ####
+    def cmd_vel_callback(self, msg: Twist):
+        v_desired = msg.linear.x
+        w_desired = msg.angular.z
+        self.lenc_desired, self.renc_desired = self.drive(v_desired, w_desired)
 
 
 def quat(roll, pitch, yaw):
