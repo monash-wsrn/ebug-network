@@ -15,14 +15,13 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Launch the teleop_twist_keyboard node
-        Node(
-            package='teleop_twist_keyboard',
-            executable='teleop_twist_keyboard',
-            name='teleop_twist_keyboard',
-            output='screen',
-            remappings=[
-                ('/cmd_vel', f'/{ROBOT_ID}/cmd_vel')
-            ]
-        )
+        # Add other nodes here as necessary
+        # Example: Launch another node if needed
+        # Node(
+        #     package='another_package',
+        #     executable='another_node',
+        #     name='another_node',
+        #     namespace=ROBOT_ID,
+        #     output='screen'
+        # )
     ])
