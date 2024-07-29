@@ -1,0 +1,739 @@
+[0.000000] (-) TimerEvent: {}
+[0.000175] (ebug_base) JobQueued: {'identifier': 'ebug_base', 'dependencies': OrderedDict()}
+[0.000570] (ebug) JobQueued: {'identifier': 'ebug', 'dependencies': OrderedDict([('ebug_base', '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base')])}
+[0.000627] (ebug_base) JobStarted: {'identifier': 'ebug_base'}
+[0.006495] (ebug_base) JobProgress: {'identifier': 'ebug_base', 'progress': 'cmake'}
+[0.006674] (ebug_base) Command: {'cmd': ['/usr/bin/cmake', '/home/laprp/Documents/ebug-network/ros/src/ebug_base', '-DCMAKE_INSTALL_PREFIX=/home/laprp/Documents/ebug-network/ros/src/install/ebug_base'], 'cwd': '/home/laprp/Documents/ebug-network/ros/src/build/ebug_base', 'env': OrderedDict([('SUDO_GID', '1000'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_AU:en'), ('USER', 'root'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/home/laprp/Documents/ebug-network/ros'), ('ROS_PYTHON_VERSION', '3'), ('COLORTERM', 'truecolor'), ('SUDO_UID', '1000'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/local/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin'), ('DISPLAY', ':0'), ('LANG', 'en_AU.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.KB5WQ2'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SUDO_COMMAND', '/usr/bin/bash'), ('ROS_DOMAIN_ID', '13'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'laprp'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/laprp/Documents/ebug-network/ros/src/build/ebug_base'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.069194] (ebug_base) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.100008] (-) TimerEvent: {}
+[0.127978] (ebug_base) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.135022] (ebug_base) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.177340] (ebug_base) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.181533] (ebug_base) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.181778] (ebug_base) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.182380] (ebug_base) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.184416] (ebug_base) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.200128] (-) TimerEvent: {}
+[0.232288] (ebug_base) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.236721] (ebug_base) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.237071] (ebug_base) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.237161] (ebug_base) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.256520] (ebug_base) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.8 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.300238] (-) TimerEvent: {}
+[0.344735] (ebug_base) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.400318] (ebug_base) StdoutLine: {'line': b'-- Found rclcpp: 16.0.8 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.400481] (-) TimerEvent: {}
+[0.427581] (ebug_base) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.430936] (ebug_base) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.436990] (ebug_base) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.446680] (ebug_base) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.458874] (ebug_base) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.500570] (-) TimerEvent: {}
+[0.502836] (ebug_base) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.1 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.504533] (ebug_base) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.6 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.566627] (ebug_base) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.582092] (ebug_base) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.600681] (-) TimerEvent: {}
+[0.608577] (ebug_base) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.615890] (ebug_base) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[0.663772] (ebug_base) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[0.663898] (ebug_base) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[0.700807] (-) TimerEvent: {}
+[0.705870] (ebug_base) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[0.706582] (ebug_base) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[0.800940] (-) TimerEvent: {}
+[0.805318] (ebug_base) StdoutLine: {'line': b'-- Found rclcpp_components: 16.0.8 (/opt/ros/humble/share/rclcpp_components/cmake)\n'}
+[0.848807] (ebug_base) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[0.855069] (ebug_base) StdoutLine: {'line': b'-- Found nav_msgs: 4.2.3 (/opt/ros/humble/share/nav_msgs/cmake)\n'}
+[0.901045] (-) TimerEvent: {}
+[0.938545] (ebug_base) StdoutLine: {'line': b'-- Found sensor_msgs: 4.2.3 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[0.991132] (ebug_base) StdoutLine: {'line': b'-- Found tf2: 0.25.6 (/opt/ros/humble/share/tf2/cmake)\n'}
+[0.996679] (ebug_base) StdoutLine: {'line': b'-- Found tf2_msgs: 0.25.6 (/opt/ros/humble/share/tf2_msgs/cmake)\n'}
+[1.001128] (-) TimerEvent: {}
+[1.090767] (ebug_base) StdoutLine: {'line': b'-- Found message_filters: 4.3.3 (/opt/ros/humble/share/message_filters/cmake)\n'}
+[1.095039] (ebug_base) StdoutLine: {'line': b'-- Found image_transport: 3.1.8 (/opt/ros/humble/share/image_transport/cmake)\n'}
+[1.101236] (-) TimerEvent: {}
+[1.112439] (ebug_base) StdoutLine: {'line': b'-- Found compressed_image_transport: 2.5.1 (/opt/ros/humble/share/compressed_image_transport/cmake)\n'}
+[1.113589] (ebug_base) StdoutLine: {'line': b'-- Found image_proc: 3.0.4 (/opt/ros/humble/share/image_proc/cmake)\n'}
+[1.172630] (ebug_base) StdoutLine: {'line': b'-- Found grid_map_cmake_helpers: 2.0.0 (/opt/ros/humble/share/grid_map_cmake_helpers/cmake)\n'}
+[1.175244] (ebug_base) StdoutLine: {'line': b'-- Found grid_map: 2.0.0 (/opt/ros/humble/share/grid_map/cmake)\n'}
+[1.176176] (ebug_base) StdoutLine: {'line': b'-- Found grid_map_core: 2.0.0 (/opt/ros/humble/share/grid_map_core/cmake)\n'}
+[1.177916] (ebug_base) StdoutLine: {'line': b'-- Found grid_map_ros: 2.0.0 (/opt/ros/humble/share/grid_map_ros/cmake)\n'}
+[1.201332] (-) TimerEvent: {}
+[1.301611] (-) TimerEvent: {}
+[1.401875] (-) TimerEvent: {}
+[1.502200] (-) TimerEvent: {}
+[1.511843] (ebug_base) StdoutLine: {'line': b'-- Found grid_map_rviz_plugin: 2.0.0 (/opt/ros/humble/share/grid_map_rviz_plugin/cmake)\n'}
+[1.523662] (ebug_base) StdoutLine: {'line': b"-- Setting OGRE_DIR to: '/opt/ros/humble/share/rviz_ogre_vendor/cmake/../../../opt/rviz_ogre_vendor/lib/OGRE/cmake'\n"}
+[1.524798] (ebug_base) StdoutLine: {'line': b'-- Found OGRE\n'}
+[1.524840] (ebug_base) StdoutLine: {'line': b'--   static     : OFF\n'}
+[1.524874] (ebug_base) StdoutLine: {'line': b'--   components : HLMS;MeshLodGenerator;Overlay;Paging;Property;RTShaderSystem;Terrain;Volume\n'}
+[1.524908] (ebug_base) StdoutLine: {'line': b'--   plugins    : Plugin_BSPSceneManager;Plugin_OctreeSceneManager;Plugin_PCZSceneManager;Plugin_ParticleFX;RenderSystem_GL;RenderSystem_GL3Plus;Codec_STBI\n'}
+[1.524941] (ebug_base) StdoutLine: {'line': b'--   media      : /opt/ros/humble/opt/rviz_ogre_vendor/share/OGRE/Media\n'}
+[1.525007] (ebug_base) StdoutLine: {'line': b'-- OGRE_LIBRARIES: OgreHLMS;OgreMeshLodGenerator;OgreOverlay;OgrePaging;OgreProperty;OgreRTShaderSystem;OgreTerrain;OgreVolume;OgreMain\n'}
+[1.525038] (ebug_base) StdoutLine: {'line': b'-- OGRE_LIBRARY_DIRS: /opt/ros/humble/opt/rviz_ogre_vendor/lib\n'}
+[1.525067] (ebug_base) StdoutLine: {'line': b'-- OGRE_PLUGINS: Plugin_BSPSceneManager;Plugin_OctreeSceneManager;Plugin_PCZSceneManager;Plugin_ParticleFX;RenderSystem_GL;RenderSystem_GL3Plus;Codec_STBI\n'}
+[1.525097] (ebug_base) StdoutLine: {'line': b'-- OGRE_PLUGIN_DIR: /opt/ros/humble/opt/rviz_ogre_vendor/lib/OGRE\n'}
+[1.525128] (ebug_base) StdoutLine: {'line': b'-- rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_RELEASE: /opt/ros/humble/opt/rviz_ogre_vendor/lib/libOgreOverlay.so\n'}
+[1.525159] (ebug_base) StdoutLine: {'line': b'-- rviz_ogre_vendor::OgreOverlay for IMPORTED_LOCATION_DEBUG: /opt/ros/humble/opt/rviz_ogre_vendor/lib/libOgreOverlay.so\n'}
+[1.525214] (ebug_base) StdoutLine: {'line': b'-- rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_RELEASE: /opt/ros/humble/opt/rviz_ogre_vendor/lib/libOgreMain.so\n'}
+[1.525249] (ebug_base) StdoutLine: {'line': b'-- rviz_ogre_vendor::OgreMain for IMPORTED_LOCATION_DEBUG: /opt/ros/humble/opt/rviz_ogre_vendor/lib/libOgreMain.so\n'}
+[1.536533] (ebug_base) StdoutLine: {'line': b'-- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.2.11") \n'}
+[1.539345] (ebug_base) StdoutLine: {'line': b'-- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so   \n'}
+[1.591173] (ebug_base) StdoutLine: {'line': b'-- Found X11: /usr/include   \n'}
+[1.591322] (ebug_base) StdoutLine: {'line': b'-- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so\n'}
+[1.602312] (-) TimerEvent: {}
+[1.633948] (ebug_base) StdoutLine: {'line': b'-- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so - found\n'}
+[1.634151] (ebug_base) StdoutLine: {'line': b'-- Looking for gethostbyname\n'}
+[1.674230] (ebug_base) StdoutLine: {'line': b'-- Looking for gethostbyname - found\n'}
+[1.674356] (ebug_base) StdoutLine: {'line': b'-- Looking for connect\n'}
+[1.702438] (-) TimerEvent: {}
+[1.713285] (ebug_base) StdoutLine: {'line': b'-- Looking for connect - found\n'}
+[1.713524] (ebug_base) StdoutLine: {'line': b'-- Looking for remove\n'}
+[1.752315] (ebug_base) StdoutLine: {'line': b'-- Looking for remove - found\n'}
+[1.752454] (ebug_base) StdoutLine: {'line': b'-- Looking for shmat\n'}
+[1.791581] (ebug_base) StdoutLine: {'line': b'-- Looking for shmat - found\n'}
+[1.791710] (ebug_base) StdoutLine: {'line': b'-- Looking for IceConnectionNumber in ICE\n'}
+[1.802527] (-) TimerEvent: {}
+[1.832331] (ebug_base) StdoutLine: {'line': b'-- Looking for IceConnectionNumber in ICE - found\n'}
+[1.833818] (ebug_base) StdoutLine: {'line': b'-- rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_RELEASE: _render_system_gl_static_library_abs-NOTFOUND\n'}
+[1.833905] (ebug_base) StdoutLine: {'line': b'-- rviz_ogre_vendor::RenderSystem_GL for IMPORTED_LOCATION_DEBUG: _render_system_gl_static_library_abs-NOTFOUND\n'}
+[1.883338] (ebug_base) StdoutLine: {'line': b'-- library: /usr/lib/x86_64-linux-gnu/libcurl.so\n'}
+[1.902700] (-) TimerEvent: {}
+[1.911751] (ebug_base) StdoutLine: {'line': b'-- Found Eigen3: TRUE (found version "3.4.0") \n'}
+[1.911858] (ebug_base) StdoutLine: {'line': b'-- Ensuring Eigen3 include directory is part of orocos-kdl CMake target\n'}
+[2.002805] (-) TimerEvent: {}
+[2.074819] (ebug_base) StdoutLine: {'line': b'-- Found grid_map_visualization: 2.0.0 (/opt/ros/humble/share/grid_map_visualization/cmake)\n'}
+[2.102896] (-) TimerEvent: {}
+[2.203153] (-) TimerEvent: {}
+[2.303455] (-) TimerEvent: {}
+[2.359982] (ebug_base) StdoutLine: {'line': b'-- Setting build type to Release as none was specified.\n'}
+[2.403542] (-) TimerEvent: {}
+[2.503810] (-) TimerEvent: {}
+[2.572026] (ebug_base) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[2.603934] (-) TimerEvent: {}
+[2.704305] (-) TimerEvent: {}
+[2.804565] (-) TimerEvent: {}
+[2.847996] (ebug_base) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[2.904655] (-) TimerEvent: {}
+[2.944517] (ebug_base) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[2.959548] (ebug_base) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") \n'}
+[2.960977] (ebug_base) StdoutLine: {'line': b'-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)\n'}
+[2.978286] (ebug_base) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") \n'}
+[2.978414] (ebug_base) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[2.978449] (ebug_base) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10\n'}
+[2.978481] (ebug_base) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.10.so\n'}
+[2.991438] (ebug_base) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[3.004752] (-) TimerEvent: {}
+[3.105007] (-) TimerEvent: {}
+[3.205284] (-) TimerEvent: {}
+[3.305571] (-) TimerEvent: {}
+[3.405829] (-) TimerEvent: {}
+[3.506104] (-) TimerEvent: {}
+[3.606439] (-) TimerEvent: {}
+[3.706800] (-) TimerEvent: {}
+[3.773847] (ebug_base) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.10 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[3.789979] (ebug_base) StdoutLine: {'line': b"-- Added test 'cppcheck' to perform static code analysis on C / C++ code\n"}
+[3.790788] (ebug_base) StdoutLine: {'line': b'-- Configured cppcheck include dirs: /home/laprp/Documents/ebug-network/ros/src/ebug_base/include\n'}
+[3.790929] (ebug_base) StdoutLine: {'line': b'-- Configured cppcheck exclude dirs and/or files: \n'}
+[3.791564] (ebug_base) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[3.792424] (ebug_base) StdoutLine: {'line': b"-- Added test 'uncrustify' to check C / C++ code style\n"}
+[3.792509] (ebug_base) StdoutLine: {'line': b'-- Configured uncrustify additional arguments: \n'}
+[3.792887] (ebug_base) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[3.794433] (ebug_base) StdoutLine: {'line': b'-- Configuring done\n'}
+[3.806887] (-) TimerEvent: {}
+[3.882807] (ebug_base) StdoutLine: {'line': b'-- Generating done\n'}
+[3.885138] (ebug_base) StdoutLine: {'line': b'-- Build files have been written to: /home/laprp/Documents/ebug-network/ros/src/build/ebug_base\n'}
+[3.896731] (ebug_base) CommandEnded: {'returncode': 0}
+[3.897168] (ebug_base) JobProgress: {'identifier': 'ebug_base', 'progress': 'build'}
+[3.897761] (ebug_base) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/laprp/Documents/ebug-network/ros/src/build/ebug_base', '--', '-j8', '-l8'], 'cwd': '/home/laprp/Documents/ebug-network/ros/src/build/ebug_base', 'env': OrderedDict([('SUDO_GID', '1000'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_AU:en'), ('USER', 'root'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/home/laprp/Documents/ebug-network/ros'), ('ROS_PYTHON_VERSION', '3'), ('COLORTERM', 'truecolor'), ('SUDO_UID', '1000'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/local/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin'), ('DISPLAY', ':0'), ('LANG', 'en_AU.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.KB5WQ2'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SUDO_COMMAND', '/usr/bin/bash'), ('ROS_DOMAIN_ID', '13'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'laprp'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/laprp/Documents/ebug-network/ros/src/build/ebug_base'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[3.906987] (-) TimerEvent: {}
+[3.926894] (ebug_base) StdoutLine: {'line': b'[  1%] \x1b[34m\x1b[1mGenerating C code for ROS interfaces\x1b[0m\n'}
+[3.935504] (ebug_base) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding CXX object CMakeFiles/jpeg_republisher.dir/rclcpp_components/node_main_jpeg_republisher.cpp.o\x1b[0m\n'}
+[3.935761] (ebug_base) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding CXX object CMakeFiles/jpeg_republisher_component.dir/src/jpeg_republisher.cpp.o\x1b[0m\n'}
+[3.935875] (ebug_base) StdoutLine: {'line': b'[ 10%] \x1b[34m\x1b[1mGenerating C++ code for ROS interfaces\x1b[0m\n'}
+[3.935955] (ebug_base) StdoutLine: {'line': b'[ 11%] \x1b[32mBuilding CXX object CMakeFiles/byte_rectifier_component.dir/src/byte_rectifier.cpp.o\x1b[0m\n'}
+[3.936092] (ebug_base) StdoutLine: {'line': b'[ 11%] \x1b[32mBuilding CXX object CMakeFiles/gridmap_controller.dir/rclcpp_components/node_main_gridmap_controller.cpp.o\x1b[0m\n'}
+[3.936466] (ebug_base) StdoutLine: {'line': b'[ 11%] \x1b[32mBuilding CXX object CMakeFiles/byte_rectifier.dir/rclcpp_components/node_main_byte_rectifier.cpp.o\x1b[0m\n'}
+[3.944126] (ebug_base) StdoutLine: {'line': b'[ 11%] Built target ament_cmake_python_copy_ebug_base\n'}
+[4.007087] (-) TimerEvent: {}
+[4.107586] (-) TimerEvent: {}
+[4.174459] (ebug_base) StdoutLine: {'line': b'running egg_info\n'}
+[4.175195] (ebug_base) StdoutLine: {'line': b'creating ebug_base.egg-info\n'}
+[4.175372] (ebug_base) StdoutLine: {'line': b'writing ebug_base.egg-info/PKG-INFO\n'}
+[4.175518] (ebug_base) StdoutLine: {'line': b'writing dependency_links to ebug_base.egg-info/dependency_links.txt\n'}
+[4.175648] (ebug_base) StdoutLine: {'line': b'writing top-level names to ebug_base.egg-info/top_level.txt\n'}
+[4.175810] (ebug_base) StdoutLine: {'line': b"writing manifest file 'ebug_base.egg-info/SOURCES.txt'\n"}
+[4.177669] (ebug_base) StdoutLine: {'line': b"reading manifest file 'ebug_base.egg-info/SOURCES.txt'\n"}
+[4.178081] (ebug_base) StdoutLine: {'line': b"writing manifest file 'ebug_base.egg-info/SOURCES.txt'\n"}
+[4.202235] (ebug_base) StdoutLine: {'line': b'[ 11%] Built target ament_cmake_python_build_ebug_base_egg\n'}
+[4.207678] (-) TimerEvent: {}
+[4.308119] (-) TimerEvent: {}
+[4.361456] (ebug_base) StdoutLine: {'line': b'[ 11%] Built target ebug_base__cpp\n'}
+[4.378054] (ebug_base) StdoutLine: {'line': b'[ 13%] \x1b[34m\x1b[1mGenerating C++ type support dispatch for ROS interfaces\x1b[0m\n'}
+[4.394119] (ebug_base) StdoutLine: {'line': b'[ 15%] \x1b[34m\x1b[1mGenerating C++ type support for eProsima Fast-RTPS\x1b[0m\n'}
+[4.408218] (-) TimerEvent: {}
+[4.444204] (ebug_base) StdoutLine: {'line': b'[ 16%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_generator_c.dir/rosidl_generator_c/ebug_base/srv/detail/compute_target__functions.c.o\x1b[0m\n'}
+[4.508320] (-) TimerEvent: {}
+[4.608756] (-) TimerEvent: {}
+[4.636579] (ebug_base) StdoutLine: {'line': b'[ 18%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_generator_c.dir/rosidl_generator_c/ebug_base/msg/detail/robot_pose__functions.c.o\x1b[0m\n'}
+[4.708861] (-) TimerEvent: {}
+[4.739497] (ebug_base) StdoutLine: {'line': b'[ 20%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_generator_c.dir/rosidl_generator_c/ebug_base/msg/detail/control_command__functions.c.o\x1b[0m\n'}
+[4.764682] (ebug_base) StdoutLine: {'line': b'[ 22%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ebug_base/srv/compute_target__type_support.cpp.o\x1b[0m\n'}
+[4.808965] (-) TimerEvent: {}
+[4.840177] (ebug_base) StdoutLine: {'line': b'[ 23%] \x1b[32m\x1b[1mLinking C shared library libebug_base__rosidl_generator_c.so\x1b[0m\n'}
+[4.881706] (ebug_base) StdoutLine: {'line': b'[ 23%] Built target ebug_base__rosidl_generator_c\n'}
+[4.891814] (ebug_base) StdoutLine: {'line': b'[ 25%] \x1b[34m\x1b[1mGenerating C++ introspection for ROS interfaces\x1b[0m\n'}
+[4.892999] (ebug_base) StdoutLine: {'line': b'[ 27%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ebug_base/srv/detail/dds_fastrtps/compute_target__type_support.cpp.o\x1b[0m\n'}
+[4.909073] (-) TimerEvent: {}
+[5.009436] (-) TimerEvent: {}
+[5.106696] (ebug_base) StdoutLine: {'line': b'[ 28%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ebug_base/msg/robot_pose__type_support.cpp.o\x1b[0m\n'}
+[5.109537] (-) TimerEvent: {}
+[5.209893] (-) TimerEvent: {}
+[5.310289] (-) TimerEvent: {}
+[5.409118] (ebug_base) StdoutLine: {'line': b'[ 30%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ebug_base/srv/detail/compute_target__type_support.cpp.o\x1b[0m\n'}
+[5.411126] (-) TimerEvent: {}
+[5.511517] (-) TimerEvent: {}
+[5.515702] (ebug_base) StdoutLine: {'line': b'[ 32%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ebug_base/msg/control_command__type_support.cpp.o\x1b[0m\n'}
+[5.520748] (ebug_base) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ebug_base/msg/detail/dds_fastrtps/robot_pose__type_support.cpp.o\x1b[0m\n'}
+[5.611634] (-) TimerEvent: {}
+[5.712052] (-) TimerEvent: {}
+[5.812457] (-) TimerEvent: {}
+[5.912895] (-) TimerEvent: {}
+[5.936704] (ebug_base) StdoutLine: {'line': b'[ 35%] \x1b[32m\x1b[1mLinking CXX shared library libebug_base__rosidl_typesupport_cpp.so\x1b[0m\n'}
+[6.007614] (ebug_base) StdoutLine: {'line': b'[ 35%] Built target ebug_base__rosidl_typesupport_cpp\n'}
+[6.013012] (-) TimerEvent: {}
+[6.022051] (ebug_base) StdoutLine: {'line': b'[ 37%] \x1b[34m\x1b[1mGenerating C type support for eProsima Fast-RTPS\x1b[0m\n'}
+[6.037922] (ebug_base) StdoutLine: {'line': b'[ 38%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ebug_base/msg/detail/robot_pose__type_support.cpp.o\x1b[0m\n'}
+[6.113115] (-) TimerEvent: {}
+[6.162996] (ebug_base) StdoutLine: {'line': b'[ 40%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ebug_base/msg/detail/dds_fastrtps/control_command__type_support.cpp.o\x1b[0m\n'}
+[6.213221] (-) TimerEvent: {}
+[6.313572] (-) TimerEvent: {}
+[6.413898] (-) TimerEvent: {}
+[6.514240] (-) TimerEvent: {}
+[6.614582] (-) TimerEvent: {}
+[6.632386] (ebug_base) StdoutLine: {'line': b'[ 42%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ebug_base/msg/detail/control_command__type_support.cpp.o\x1b[0m\n'}
+[6.714620] (ebug_base) StdoutLine: {'line': b'[ 44%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ebug_base/srv/detail/compute_target__type_support_c.cpp.o\x1b[0m\n'}
+[6.714867] (-) TimerEvent: {}
+[6.769372] (ebug_base) StdoutLine: {'line': b'[ 45%] \x1b[32m\x1b[1mLinking CXX shared library libebug_base__rosidl_typesupport_fastrtps_cpp.so\x1b[0m\n'}
+[6.815004] (-) TimerEvent: {}
+[6.891783] (ebug_base) StdoutLine: {'line': b'[ 45%] Built target ebug_base__rosidl_typesupport_fastrtps_cpp\n'}
+[6.904812] (ebug_base) StdoutLine: {'line': b'[ 47%] \x1b[34m\x1b[1mGenerating C introspection for ROS interfaces\x1b[0m\n'}
+[6.915111] (-) TimerEvent: {}
+[7.015616] (-) TimerEvent: {}
+[7.116121] (-) TimerEvent: {}
+[7.201208] (ebug_base) StdoutLine: {'line': b'[ 49%] \x1b[32m\x1b[1mLinking CXX shared library libebug_base__rosidl_typesupport_introspection_cpp.so\x1b[0m\n'}
+[7.216232] (-) TimerEvent: {}
+[7.301244] (ebug_base) StdoutLine: {'line': b'[ 49%] Built target ebug_base__rosidl_typesupport_introspection_cpp\n'}
+[7.315707] (ebug_base) StdoutLine: {'line': b'[ 50%] \x1b[34m\x1b[1mGenerating C type support dispatch for ROS interfaces\x1b[0m\n'}
+[7.317234] (-) TimerEvent: {}
+[7.335438] (ebug_base) StdoutLine: {'line': b'[ 52%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ebug_base/msg/detail/robot_pose__type_support_c.cpp.o\x1b[0m\n'}
+[7.417347] (-) TimerEvent: {}
+[7.506356] (ebug_base) StdoutLine: {'line': b'[ 54%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ebug_base/srv/detail/compute_target__type_support.c.o\x1b[0m\n'}
+[7.517454] (-) TimerEvent: {}
+[7.617843] (-) TimerEvent: {}
+[7.633767] (ebug_base) StdoutLine: {'line': b'[ 55%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ebug_base/msg/detail/robot_pose__type_support.c.o\x1b[0m\n'}
+[7.717953] (-) TimerEvent: {}
+[7.772693] (ebug_base) StdoutLine: {'line': b'[ 57%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ebug_base/msg/detail/control_command__type_support.c.o\x1b[0m\n'}
+[7.818078] (-) TimerEvent: {}
+[7.864398] (ebug_base) StdoutLine: {'line': b'[ 59%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_c.dir/rosidl_typesupport_c/ebug_base/srv/compute_target__type_support.cpp.o\x1b[0m\n'}
+[7.868480] (ebug_base) StdoutLine: {'line': b'[ 61%] \x1b[32m\x1b[1mLinking C shared library libebug_base__rosidl_typesupport_introspection_c.so\x1b[0m\n'}
+[7.918197] (-) TimerEvent: {}
+[7.927649] (ebug_base) StdoutLine: {'line': b'[ 61%] Built target ebug_base__rosidl_typesupport_introspection_c\n'}
+[7.933444] (ebug_base) StdoutLine: {'line': b'[ 62%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ebug_base/msg/detail/control_command__type_support_c.cpp.o\x1b[0m\n'}
+[7.943734] (ebug_base) StdoutLine: {'line': b'[ 64%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_c.dir/rosidl_typesupport_c/ebug_base/msg/robot_pose__type_support.cpp.o\x1b[0m\n'}
+[7.993993] (ebug_base) StdoutLine: {'line': b'[ 66%] \x1b[32mBuilding CXX object CMakeFiles/gridmap_controller_component.dir/src/gridmap_controller.cpp.o\x1b[0m\n'}
+[7.998430] (ebug_base) StdoutLine: {'line': b'[ 67%] \x1b[32mBuilding CXX object CMakeFiles/ebug_base__rosidl_typesupport_c.dir/rosidl_typesupport_c/ebug_base/msg/control_command__type_support.cpp.o\x1b[0m\n'}
+[8.018314] (-) TimerEvent: {}
+[8.061829] (ebug_base) StdoutLine: {'line': b'[ 69%] \x1b[32m\x1b[1mLinking CXX shared library libebug_base__rosidl_typesupport_c.so\x1b[0m\n'}
+[8.118431] (-) TimerEvent: {}
+[8.118697] (ebug_base) StdoutLine: {'line': b'[ 69%] Built target ebug_base__rosidl_typesupport_c\n'}
+[8.218546] (-) TimerEvent: {}
+[8.319052] (-) TimerEvent: {}
+[8.419553] (-) TimerEvent: {}
+[8.503545] (ebug_base) StdoutLine: {'line': b'[ 71%] \x1b[32m\x1b[1mLinking CXX shared library libebug_base__rosidl_typesupport_fastrtps_c.so\x1b[0m\n'}
+[8.519671] (-) TimerEvent: {}
+[8.620168] (-) TimerEvent: {}
+[8.626348] (ebug_base) StdoutLine: {'line': b'[ 71%] Built target ebug_base__rosidl_typesupport_fastrtps_c\n'}
+[8.653302] (ebug_base) StdoutLine: {'line': b'[ 71%] Built target ebug_base\n'}
+[8.682322] (ebug_base) StdoutLine: {'line': b'[ 72%] \x1b[34m\x1b[1mGenerating Python code for ROS interfaces\x1b[0m\n'}
+[8.720274] (-) TimerEvent: {}
+[8.820623] (-) TimerEvent: {}
+[8.921102] (-) TimerEvent: {}
+[8.972131] (ebug_base) StdoutLine: {'line': b'[ 76%] \x1b[32m\x1b[1mLinking CXX executable gridmap_controller\x1b[0m\n'}
+[8.972378] (ebug_base) StdoutLine: {'line': b'[ 76%] \x1b[32m\x1b[1mLinking CXX executable byte_rectifier\x1b[0m\n'}
+[9.021218] (-) TimerEvent: {}
+[9.121718] (-) TimerEvent: {}
+[9.150490] (ebug_base) StdoutLine: {'line': b'[ 76%] Built target byte_rectifier\n'}
+[9.150800] (ebug_base) StdoutLine: {'line': b'[ 77%] \x1b[32m\x1b[1mLinking CXX executable jpeg_republisher\x1b[0m\n'}
+[9.154184] (ebug_base) StdoutLine: {'line': b'[ 77%] Built target gridmap_controller\n'}
+[9.221827] (-) TimerEvent: {}
+[9.255839] (ebug_base) StdoutLine: {'line': b'[ 77%] Built target jpeg_republisher\n'}
+[9.321941] (-) TimerEvent: {}
+[9.422289] (-) TimerEvent: {}
+[9.461369] (ebug_base) StdoutLine: {'line': b'[ 77%] Built target ebug_base__py\n'}
+[9.482273] (ebug_base) StdoutLine: {'line': b'[ 81%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_generator_py.dir/rosidl_generator_py/ebug_base/srv/_compute_target_s.c.o\x1b[0m\n'}
+[9.482532] (ebug_base) StdoutLine: {'line': b'[ 81%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_generator_py.dir/rosidl_generator_py/ebug_base/msg/_robot_pose_s.c.o\x1b[0m\n'}
+[9.482699] (ebug_base) StdoutLine: {'line': b'[ 83%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_generator_py.dir/rosidl_generator_py/ebug_base/msg/_control_command_s.c.o\x1b[0m\n'}
+[9.522403] (-) TimerEvent: {}
+[9.622764] (-) TimerEvent: {}
+[9.692952] (ebug_base) StdoutLine: {'line': b'[ 84%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/ebug_base/libebug_base__rosidl_generator_py.so\x1b[0m\n'}
+[9.722874] (-) TimerEvent: {}
+[9.731434] (ebug_base) StdoutLine: {'line': b'[ 84%] Built target ebug_base__rosidl_generator_py\n'}
+[9.756066] (ebug_base) StdoutLine: {'line': b'[ 86%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/ebug_base/_ebug_base_s.ep.rosidl_typesupport_fastrtps_c.c.o\x1b[0m\n'}
+[9.756797] (ebug_base) StdoutLine: {'line': b'[ 88%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/ebug_base/_ebug_base_s.ep.rosidl_typesupport_introspection_c.c.o\x1b[0m\n'}
+[9.757862] (ebug_base) StdoutLine: {'line': b'[ 89%] \x1b[32mBuilding C object CMakeFiles/ebug_base__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/ebug_base/_ebug_base_s.ep.rosidl_typesupport_c.c.o\x1b[0m\n'}
+[9.822990] (-) TimerEvent: {}
+[9.923343] (-) TimerEvent: {}
+[10.004413] (ebug_base) StdoutLine: {'line': b'[ 93%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/ebug_base/ebug_base_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\x1b[0m\n'}
+[10.004659] (ebug_base) StdoutLine: {'line': b'[ 94%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/ebug_base/ebug_base_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\x1b[0m\n'}
+[10.004751] (ebug_base) StdoutLine: {'line': b'[ 94%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/ebug_base/ebug_base_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\x1b[0m\n'}
+[10.023463] (-) TimerEvent: {}
+[10.049159] (ebug_base) StdoutLine: {'line': b'[ 94%] Built target ebug_base__rosidl_typesupport_introspection_c__pyext\n'}
+[10.053200] (ebug_base) StdoutLine: {'line': b'[ 94%] Built target ebug_base__rosidl_typesupport_fastrtps_c__pyext\n'}
+[10.056602] (ebug_base) StdoutLine: {'line': b'[ 94%] Built target ebug_base__rosidl_typesupport_c__pyext\n'}
+[10.123580] (-) TimerEvent: {}
+[10.224075] (-) TimerEvent: {}
+[10.324470] (-) TimerEvent: {}
+[10.424754] (-) TimerEvent: {}
+[10.525055] (-) TimerEvent: {}
+[10.625371] (-) TimerEvent: {}
+[10.725733] (-) TimerEvent: {}
+[10.826102] (-) TimerEvent: {}
+[10.926468] (-) TimerEvent: {}
+[11.026775] (-) TimerEvent: {}
+[11.127135] (-) TimerEvent: {}
+[11.227511] (-) TimerEvent: {}
+[11.327881] (-) TimerEvent: {}
+[11.428184] (-) TimerEvent: {}
+[11.528607] (-) TimerEvent: {}
+[11.628910] (-) TimerEvent: {}
+[11.729204] (-) TimerEvent: {}
+[11.829499] (-) TimerEvent: {}
+[11.929785] (-) TimerEvent: {}
+[12.030196] (-) TimerEvent: {}
+[12.130590] (-) TimerEvent: {}
+[12.230965] (-) TimerEvent: {}
+[12.331334] (-) TimerEvent: {}
+[12.431641] (-) TimerEvent: {}
+[12.531939] (-) TimerEvent: {}
+[12.632249] (-) TimerEvent: {}
+[12.732555] (-) TimerEvent: {}
+[12.832857] (-) TimerEvent: {}
+[12.933142] (-) TimerEvent: {}
+[13.033534] (-) TimerEvent: {}
+[13.133837] (-) TimerEvent: {}
+[13.234266] (-) TimerEvent: {}
+[13.334635] (-) TimerEvent: {}
+[13.434953] (-) TimerEvent: {}
+[13.535377] (-) TimerEvent: {}
+[13.635684] (-) TimerEvent: {}
+[13.736109] (-) TimerEvent: {}
+[13.836439] (-) TimerEvent: {}
+[13.936747] (-) TimerEvent: {}
+[14.037017] (-) TimerEvent: {}
+[14.137327] (-) TimerEvent: {}
+[14.163898] (ebug_base) StdoutLine: {'line': b'[ 96%] \x1b[32m\x1b[1mLinking CXX shared library libjpeg_republisher_component.so\x1b[0m\n'}
+[14.237422] (-) TimerEvent: {}
+[14.279187] (ebug_base) StdoutLine: {'line': b'[ 96%] Built target jpeg_republisher_component\n'}
+[14.337546] (-) TimerEvent: {}
+[14.437848] (-) TimerEvent: {}
+[14.538149] (-) TimerEvent: {}
+[14.638519] (-) TimerEvent: {}
+[14.738828] (-) TimerEvent: {}
+[14.839178] (-) TimerEvent: {}
+[14.939468] (-) TimerEvent: {}
+[15.039839] (-) TimerEvent: {}
+[15.140140] (-) TimerEvent: {}
+[15.240519] (-) TimerEvent: {}
+[15.340821] (-) TimerEvent: {}
+[15.441117] (-) TimerEvent: {}
+[15.541485] (-) TimerEvent: {}
+[15.641797] (-) TimerEvent: {}
+[15.742091] (-) TimerEvent: {}
+[15.842379] (-) TimerEvent: {}
+[15.942742] (-) TimerEvent: {}
+[16.043059] (-) TimerEvent: {}
+[16.106688] (ebug_base) StdoutLine: {'line': b'[ 98%] \x1b[32m\x1b[1mLinking CXX shared library libbyte_rectifier_component.so\x1b[0m\n'}
+[16.143180] (-) TimerEvent: {}
+[16.243621] (-) TimerEvent: {}
+[16.245062] (ebug_base) StdoutLine: {'line': b'[ 98%] Built target byte_rectifier_component\n'}
+[16.343813] (-) TimerEvent: {}
+[16.444192] (-) TimerEvent: {}
+[16.544562] (-) TimerEvent: {}
+[16.644865] (-) TimerEvent: {}
+[16.745169] (-) TimerEvent: {}
+[16.845440] (-) TimerEvent: {}
+[16.945729] (-) TimerEvent: {}
+[17.046014] (-) TimerEvent: {}
+[17.146302] (-) TimerEvent: {}
+[17.246574] (-) TimerEvent: {}
+[17.346922] (-) TimerEvent: {}
+[17.447214] (-) TimerEvent: {}
+[17.547683] (-) TimerEvent: {}
+[17.648098] (-) TimerEvent: {}
+[17.748487] (-) TimerEvent: {}
+[17.848816] (-) TimerEvent: {}
+[17.949113] (-) TimerEvent: {}
+[18.049533] (-) TimerEvent: {}
+[18.149841] (-) TimerEvent: {}
+[18.250254] (-) TimerEvent: {}
+[18.350698] (-) TimerEvent: {}
+[18.451081] (-) TimerEvent: {}
+[18.551454] (-) TimerEvent: {}
+[18.651845] (-) TimerEvent: {}
+[18.752164] (-) TimerEvent: {}
+[18.852430] (-) TimerEvent: {}
+[18.952694] (-) TimerEvent: {}
+[19.052968] (-) TimerEvent: {}
+[19.153278] (-) TimerEvent: {}
+[19.253666] (-) TimerEvent: {}
+[19.354075] (-) TimerEvent: {}
+[19.454424] (-) TimerEvent: {}
+[19.554805] (-) TimerEvent: {}
+[19.655164] (-) TimerEvent: {}
+[19.755547] (-) TimerEvent: {}
+[19.855960] (-) TimerEvent: {}
+[19.956347] (-) TimerEvent: {}
+[20.056692] (-) TimerEvent: {}
+[20.156996] (-) TimerEvent: {}
+[20.257331] (-) TimerEvent: {}
+[20.357774] (-) TimerEvent: {}
+[20.458189] (-) TimerEvent: {}
+[20.558691] (-) TimerEvent: {}
+[20.659178] (-) TimerEvent: {}
+[20.759567] (-) TimerEvent: {}
+[20.859961] (-) TimerEvent: {}
+[20.960265] (-) TimerEvent: {}
+[20.992215] (ebug_base) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX shared library libgridmap_controller_component.so\x1b[0m\n'}
+[21.060390] (-) TimerEvent: {}
+[21.160689] (-) TimerEvent: {}
+[21.261074] (-) TimerEvent: {}
+[21.361478] (-) TimerEvent: {}
+[21.391074] (ebug_base) StdoutLine: {'line': b'[100%] Built target gridmap_controller_component\n'}
+[21.404111] (ebug_base) CommandEnded: {'returncode': 0}
+[21.461561] (-) TimerEvent: {}
+[21.498240] (ebug_base) JobProgress: {'identifier': 'ebug_base', 'progress': 'install'}
+[21.508052] (ebug_base) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/laprp/Documents/ebug-network/ros/src/build/ebug_base'], 'cwd': '/home/laprp/Documents/ebug-network/ros/src/build/ebug_base', 'env': OrderedDict([('SUDO_GID', '1000'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_AU:en'), ('USER', 'root'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/home/laprp/Documents/ebug-network/ros'), ('ROS_PYTHON_VERSION', '3'), ('COLORTERM', 'truecolor'), ('SUDO_UID', '1000'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/local/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin'), ('DISPLAY', ':0'), ('LANG', 'en_AU.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.KB5WQ2'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SUDO_COMMAND', '/usr/bin/bash'), ('ROS_DOMAIN_ID', '13'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'laprp'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/laprp/Documents/ebug-network/ros/src/build/ebug_base'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[21.515546] (ebug_base) StdoutLine: {'line': b'-- Install configuration: "Release"\n'}
+[21.515754] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ament_index/resource_index/rosidl_interfaces/ebug_base\n'}
+[21.516012] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base\n'}
+[21.516135] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv\n'}
+[21.516221] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail\n'}
+[21.516304] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__functions.h\n'}
+[21.516512] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__type_support.h\n'}
+[21.516575] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__functions.c\n'}
+[21.516661] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__struct.h\n'}
+[21.516741] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/compute_target.h\n'}
+[21.516825] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg\n'}
+[21.516903] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/control_command.h\n'}
+[21.516980] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/robot_pose.h\n'}
+[21.517067] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/rosidl_generator_c__visibility_control.h\n'}
+[21.517149] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail\n'}
+[21.517229] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__functions.c\n'}
+[21.517314] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__functions.h\n'}
+[21.517418] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__struct.h\n'}
+[21.517572] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__type_support.h\n'}
+[21.517664] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__struct.h\n'}
+[21.517762] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__functions.c\n'}
+[21.517849] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__functions.h\n'}
+[21.517933] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__type_support.h\n'}
+[21.518078] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/environment/library_path.sh\n'}
+[21.518208] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/environment/library_path.dsv\n'}
+[21.518362] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_generator_c.so\n'}
+[21.518658] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_generator_c.so" to ""\n'}
+[21.518761] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base\n'}
+[21.518816] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv\n'}
+[21.518871] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail\n'}
+[21.518951] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__rosidl_typesupport_fastrtps_c.h\n'}
+[21.519052] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg\n'}
+[21.519107] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail\n'}
+[21.519160] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__rosidl_typesupport_fastrtps_c.h\n'}
+[21.519240] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__rosidl_typesupport_fastrtps_c.h\n'}
+[21.519325] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[21.519411] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_fastrtps_c.so\n'}
+[21.519668] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[21.519755] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base\n'}
+[21.519856] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv\n'}
+[21.519908] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail\n'}
+[21.519961] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__traits.hpp\n'}
+[21.520051] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__builder.hpp\n'}
+[21.520101] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__struct.hpp\n'}
+[21.520185] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/compute_target.hpp\n'}
+[21.520265] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg\n'}
+[21.520361] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/robot_pose.hpp\n'}
+[21.520493] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail\n'}
+[21.520548] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__struct.hpp\n'}
+[21.520627] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__struct.hpp\n'}
+[21.520709] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__builder.hpp\n'}
+[21.520789] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__traits.hpp\n'}
+[21.520869] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__builder.hpp\n'}
+[21.520948] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__traits.hpp\n'}
+[21.521026] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/control_command.hpp\n'}
+[21.521115] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base\n'}
+[21.521190] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv\n'}
+[21.521269] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail\n'}
+[21.521349] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[21.521443] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/dds_fastrtps\n'}
+[21.521500] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg\n'}
+[21.521553] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail\n'}
+[21.521630] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[21.521721] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[21.521775] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/dds_fastrtps\n'}
+[21.521855] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[21.521938] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_fastrtps_cpp.so\n'}
+[21.522208] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[21.522288] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base\n'}
+[21.522366] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv\n'}
+[21.522462] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail\n'}
+[21.522517] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__rosidl_typesupport_introspection_c.h\n'}
+[21.522570] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__type_support.c\n'}
+[21.522647] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg\n'}
+[21.522742] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail\n'}
+[21.522795] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__rosidl_typesupport_introspection_c.h\n'}
+[21.522847] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__type_support.c\n'}
+[21.522936] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__type_support.c\n'}
+[21.522989] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__rosidl_typesupport_introspection_c.h\n'}
+[21.523066] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[21.523175] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_introspection_c.so\n'}
+[21.523429] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_introspection_c.so" to ""\n'}
+[21.523514] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_c.so\n'}
+[21.523729] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_c.so" to ""\n'}
+[21.523801] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base\n'}
+[21.523882] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv\n'}
+[21.523976] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail\n'}
+[21.524031] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__type_support.cpp\n'}
+[21.524123] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/srv/detail/compute_target__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.524179] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg\n'}
+[21.524257] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail\n'}
+[21.524338] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__type_support.cpp\n'}
+[21.524466] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.524607] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/control_command__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.524746] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/msg/detail/robot_pose__type_support.cpp\n'}
+[21.524881] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_introspection_cpp.so\n'}
+[21.525023] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[21.525087] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_cpp.so\n'}
+[21.525363] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_typesupport_cpp.so" to ""\n'}
+[21.525435] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/environment/pythonpath.sh\n'}
+[21.525507] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/environment/pythonpath.dsv\n'}
+[21.525597] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base-0.0.0-py3.10.egg-info\n'}
+[21.525731] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base-0.0.0-py3.10.egg-info/dependency_links.txt\n'}
+[21.525809] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base-0.0.0-py3.10.egg-info/PKG-INFO\n'}
+[21.525885] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base-0.0.0-py3.10.egg-info/top_level.txt\n'}
+[21.525956] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base-0.0.0-py3.10.egg-info/SOURCES.txt\n'}
+[21.526046] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base\n'}
+[21.526117] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/__init__.py\n'}
+[21.526185] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[21.526275] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/_ebug_base_s.ep.rosidl_typesupport_c.c\n'}
+[21.526424] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[21.526517] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[21.526603] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/_ebug_base_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[21.526688] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/libebug_base__rosidl_generator_py.so\n'}
+[21.526783] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/_ebug_base_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[21.526867] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/srv\n'}
+[21.526939] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/srv/__init__.py\n'}
+[21.527011] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/srv/_compute_target_s.c\n'}
+[21.527082] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/srv/_compute_target.py\n'}
+[21.527157] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg\n'}
+[21.527227] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg/__init__.py\n'}
+[21.527291] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg/_robot_pose_s.c\n'}
+[21.527363] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg/_control_command.py\n'}
+[21.527436] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg/_control_command_s.c\n'}
+[21.527517] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg/_robot_pose.py\n'}
+[21.561678] (-) TimerEvent: {}
+[21.563820] (ebug_base) StdoutLine: {'line': b"Listing '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base'...\n"}
+[21.563952] (ebug_base) StdoutLine: {'line': b"Compiling '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/__init__.py'...\n"}
+[21.564012] (ebug_base) StdoutLine: {'line': b"Listing '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg'...\n"}
+[21.564064] (ebug_base) StdoutLine: {'line': b"Compiling '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg/__init__.py'...\n"}
+[21.564115] (ebug_base) StdoutLine: {'line': b"Compiling '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg/_control_command.py'...\n"}
+[21.564165] (ebug_base) StdoutLine: {'line': b"Compiling '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/msg/_robot_pose.py'...\n"}
+[21.564214] (ebug_base) StdoutLine: {'line': b"Listing '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/srv'...\n"}
+[21.564263] (ebug_base) StdoutLine: {'line': b"Compiling '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/srv/__init__.py'...\n"}
+[21.564312] (ebug_base) StdoutLine: {'line': b"Compiling '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/srv/_compute_target.py'...\n"}
+[21.567924] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[21.568060] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so" to ""\n'}
+[21.568162] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[21.568404] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so" to ""\n'}
+[21.568622] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[21.568850] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages/ebug_base/ebug_base_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so" to ""\n'}
+[21.568950] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_generator_py.so\n'}
+[21.569157] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libebug_base__rosidl_generator_py.so" to ""\n'}
+[21.569353] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/srv/ComputeTarget.idl\n'}
+[21.569454] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/msg/RobotPose.idl\n'}
+[21.569554] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/msg/ControlCommand.idl\n'}
+[21.569609] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/srv/ComputeTarget.srv\n'}
+[21.569748] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/srv/ComputeTarget_Request.msg\n'}
+[21.569851] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/srv/ComputeTarget_Response.msg\n'}
+[21.569913] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/msg/RobotPose.msg\n'}
+[21.569994] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/msg/ControlCommand.msg\n'}
+[21.570049] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/ebug_base/byte_rectifier\n'}
+[21.570230] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/ebug_base/byte_rectifier" to ""\n'}
+[21.570300] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/ebug_base/jpeg_republisher\n'}
+[21.570571] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/ebug_base/jpeg_republisher" to ""\n'}
+[21.570654] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/ebug_base/gridmap_controller\n'}
+[21.570893] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/ebug_base/gridmap_controller" to ""\n'}
+[21.571001] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base\n'}
+[21.571053] (ebug_base) StdoutLine: {'line': b'-- Up-to-date: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base\n'}
+[21.571105] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/gridmap_controller.hpp\n'}
+[21.571175] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/jpeg_republisher.hpp\n'}
+[21.571253] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/include/ebug_base/ebug_base/byte_rectifier.hpp\n'}
+[21.571305] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libbyte_rectifier_component.so\n'}
+[21.572513] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libbyte_rectifier_component.so" to ""\n'}
+[21.572591] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libjpeg_republisher_component.so\n'}
+[21.573318] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libjpeg_republisher_component.so" to ""\n'}
+[21.573391] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libgridmap_controller_component.so\n'}
+[21.574715] (ebug_base) StdoutLine: {'line': b'-- Set runtime path of "/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib/libgridmap_controller_component.so" to ""\n'}
+[21.574787] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ament_index/resource_index/package_run_dependencies/ebug_base\n'}
+[21.574899] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ament_index/resource_index/parent_prefix_path/ebug_base\n'}
+[21.575003] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/environment/ament_prefix_path.sh\n'}
+[21.575103] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/environment/ament_prefix_path.dsv\n'}
+[21.575199] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/environment/path.sh\n'}
+[21.575294] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/environment/path.dsv\n'}
+[21.575391] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/local_setup.bash\n'}
+[21.575501] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/local_setup.sh\n'}
+[21.575598] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/local_setup.zsh\n'}
+[21.575690] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/local_setup.dsv\n'}
+[21.575781] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/package.dsv\n'}
+[21.575916] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ament_index/resource_index/packages/ebug_base\n'}
+[21.576046] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_generator_cExport.cmake\n'}
+[21.576162] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_generator_cExport-release.cmake\n'}
+[21.576275] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[21.576387] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_typesupport_fastrtps_cExport-release.cmake\n'}
+[21.576590] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_generator_cppExport.cmake\n'}
+[21.576708] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[21.576816] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_typesupport_fastrtps_cppExport-release.cmake\n'}
+[21.576930] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_base__rosidl_typesupport_introspection_cExport.cmake\n'}
+[21.577032] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_base__rosidl_typesupport_introspection_cExport-release.cmake\n'}
+[21.577797] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_base__rosidl_typesupport_cExport.cmake\n'}
+[21.577867] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_base__rosidl_typesupport_cExport-release.cmake\n'}
+[21.577954] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_base__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[21.578053] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_base__rosidl_typesupport_introspection_cppExport-release.cmake\n'}
+[21.578154] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_base__rosidl_typesupport_cppExport.cmake\n'}
+[21.578252] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_base__rosidl_typesupport_cppExport-release.cmake\n'}
+[21.578353] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_generator_pyExport.cmake\n'}
+[21.578451] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/export_ebug_base__rosidl_generator_pyExport-release.cmake\n'}
+[21.578595] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ament_index/resource_index/rclcpp_components/ebug_base\n'}
+[21.578703] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/rosidl_cmake-extras.cmake\n'}
+[21.578812] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[21.578916] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[21.579010] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[21.579105] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[21.579196] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[21.579286] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[21.579389] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_baseConfig.cmake\n'}
+[21.579458] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/cmake/ebug_baseConfig-version.cmake\n'}
+[21.579541] (ebug_base) StdoutLine: {'line': b'-- Installing: /home/laprp/Documents/ebug-network/ros/src/install/ebug_base/share/ebug_base/package.xml\n'}
+[21.581763] (ebug_base) CommandEnded: {'returncode': 0}
+[21.661796] (-) TimerEvent: {}
+[21.695047] (ebug_base) JobEnded: {'identifier': 'ebug_base', 'rc': 0}
+[21.695900] (ebug) JobStarted: {'identifier': 'ebug'}
+[21.761908] (-) TimerEvent: {}
+[21.862254] (-) TimerEvent: {}
+[21.962734] (-) TimerEvent: {}
+[22.063156] (-) TimerEvent: {}
+[22.163543] (-) TimerEvent: {}
+[22.240872] (ebug) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'egg_info', '--egg-base', '../build/ebug', 'build', '--build-base', '/home/laprp/Documents/ebug-network/ros/src/build/ebug/build', 'install', '--record', '/home/laprp/Documents/ebug-network/ros/src/build/ebug/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/laprp/Documents/ebug-network/ros/src/ebug', 'env': {'SUDO_GID': '1000', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_AU:en', 'USER': 'root', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib', 'HOME': '/root', 'OLDPWD': '/home/laprp/Documents/ebug-network/ros', 'ROS_PYTHON_VERSION': '3', 'COLORTERM': 'truecolor', 'SUDO_UID': '1000', 'ROS_DISTRO': 'humble', 'LOGNAME': 'root', '_': '/usr/local/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_AU.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.KB5WQ2', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SUDO_COMMAND': '/usr/bin/bash', 'ROS_DOMAIN_ID': '13', 'AMENT_PREFIX_PATH': '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base:/opt/ros/humble', 'SHELL': '/bin/bash', 'SUDO_USER': 'laprp', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/laprp/Documents/ebug-network/ros/src/build/ebug', 'PYTHONPATH': '/home/laprp/Documents/ebug-network/ros/src/build/ebug/prefix_override:/home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages:/home/laprp/Documents/ebug-network/ros/src/install/ebug_base/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/laprp/Documents/ebug-network/ros/src/install/ebug_base'}, 'shell': False}
+[22.263643] (-) TimerEvent: {}
+[22.363962] (-) TimerEvent: {}
+[22.456387] (ebug) StdoutLine: {'line': b'running egg_info\n'}
+[22.456709] (ebug) StdoutLine: {'line': b'creating ../build/ebug/ebug.egg-info\n'}
+[22.456838] (ebug) StdoutLine: {'line': b'writing ../build/ebug/ebug.egg-info/PKG-INFO\n'}
+[22.457052] (ebug) StdoutLine: {'line': b'writing dependency_links to ../build/ebug/ebug.egg-info/dependency_links.txt\n'}
+[22.457180] (ebug) StdoutLine: {'line': b'writing entry points to ../build/ebug/ebug.egg-info/entry_points.txt\n'}
+[22.457283] (ebug) StdoutLine: {'line': b'writing requirements to ../build/ebug/ebug.egg-info/requires.txt\n'}
+[22.457375] (ebug) StdoutLine: {'line': b'writing top-level names to ../build/ebug/ebug.egg-info/top_level.txt\n'}
+[22.457465] (ebug) StdoutLine: {'line': b"writing manifest file '../build/ebug/ebug.egg-info/SOURCES.txt'\n"}
+[22.459161] (ebug) StdoutLine: {'line': b"reading manifest file '../build/ebug/ebug.egg-info/SOURCES.txt'\n"}
+[22.459247] (ebug) StdoutLine: {'line': b"adding license file 'LICENSE'\n"}
+[22.459879] (ebug) StdoutLine: {'line': b"writing manifest file '../build/ebug/ebug.egg-info/SOURCES.txt'\n"}
+[22.459933] (ebug) StdoutLine: {'line': b'running build\n'}
+[22.459981] (ebug) StdoutLine: {'line': b'running build_py\n'}
+[22.460053] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/build/ebug/build\n'}
+[22.460138] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib\n'}
+[22.460239] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.460293] (ebug) StdoutLine: {'line': b'copying ebug/BoidsService.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.460359] (ebug) StdoutLine: {'line': b'copying ebug/PyGameDisplay.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.460450] (ebug) StdoutLine: {'line': b'copying ebug/__init__.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.460543] (ebug) StdoutLine: {'line': b'copying ebug/TransformConverter.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.460648] (ebug) StdoutLine: {'line': b'copying ebug/DebugService.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.460759] (ebug) StdoutLine: {'line': b'copying ebug/RobotController.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.460872] (ebug) StdoutLine: {'line': b'copying ebug/MovementController.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.460927] (ebug) StdoutLine: {'line': b'copying ebug/DiscoService.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.461000] (ebug) StdoutLine: {'line': b'copying ebug/PseudoMovementController.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug\n'}
+[22.461079] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util\n'}
+[22.461130] (ebug) StdoutLine: {'line': b'copying ebug/util/__init__.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util\n'}
+[22.461192] (ebug) StdoutLine: {'line': b'copying ebug/util/DiscoMode.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util\n'}
+[22.461267] (ebug) StdoutLine: {'line': b'copying ebug/util/BoidsFunction.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util\n'}
+[22.461318] (ebug) StdoutLine: {'line': b'copying ebug/util/PololuHardwareInterface.py -> /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util\n'}
+[22.461594] (ebug) StdoutLine: {'line': b'running install\n'}
+[22.461849] (ebug) StdoutLine: {'line': b'running install_lib\n'}
+[22.462666] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.462734] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/BoidsService.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.462787] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/PyGameDisplay.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.462840] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/__init__.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.462917] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/TransformConverter.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.462972] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/DebugService.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.463024] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/RobotController.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.463077] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/MovementController.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.463156] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/DiscoService.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.463212] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/PseudoMovementController.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug\n'}
+[22.463297] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util\n'}
+[22.463347] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util/__init__.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util\n'}
+[22.463398] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util/DiscoMode.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util\n'}
+[22.463487] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util/BoidsFunction.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util\n'}
+[22.463540] (ebug) StdoutLine: {'line': b'copying /home/laprp/Documents/ebug-network/ros/src/build/ebug/build/lib/ebug/util/PololuHardwareInterface.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util\n'}
+[22.463916] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/BoidsService.py to BoidsService.cpython-310.pyc\n'}
+[22.463967] (-) TimerEvent: {}
+[22.464546] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/PyGameDisplay.py to PyGameDisplay.cpython-310.pyc\n'}
+[22.465553] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/__init__.py to __init__.cpython-310.pyc\n'}
+[22.465624] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/TransformConverter.py to TransformConverter.cpython-310.pyc\n'}
+[22.466422] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/DebugService.py to DebugService.cpython-310.pyc\n'}
+[22.466903] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/RobotController.py to RobotController.cpython-310.pyc\n'}
+[22.468410] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/MovementController.py to MovementController.cpython-310.pyc\n'}
+[22.468993] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/DiscoService.py to DiscoService.cpython-310.pyc\n'}
+[22.469507] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/PseudoMovementController.py to PseudoMovementController.cpython-310.pyc\n'}
+[22.470300] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util/__init__.py to __init__.cpython-310.pyc\n'}
+[22.470401] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util/DiscoMode.py to DiscoMode.cpython-310.pyc\n'}
+[22.471073] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util/BoidsFunction.py to BoidsFunction.cpython-310.pyc\n'}
+[22.472087] (ebug) StdoutLine: {'line': b'byte-compiling /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug/util/PololuHardwareInterface.py to PololuHardwareInterface.cpython-310.pyc\n'}
+[22.472902] (ebug) StdoutLine: {'line': b'running install_data\n'}
+[22.472984] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ament_index\n'}
+[22.473039] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ament_index/resource_index\n'}
+[22.473116] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ament_index/resource_index/packages\n'}
+[22.473172] (ebug) StdoutLine: {'line': b'copying resource/ebug -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ament_index/resource_index/packages\n'}
+[22.473253] (ebug) StdoutLine: {'line': b'copying package.xml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug\n'}
+[22.473306] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/rviz\n'}
+[22.473354] (ebug) StdoutLine: {'line': b'copying rviz/gridmap.rviz -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/rviz\n'}
+[22.473736] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/config\n'}
+[22.473809] (ebug) StdoutLine: {'line': b'copying config/ekfAbsolute.yaml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/config\n'}
+[22.473974] (ebug) StdoutLine: {'line': b'copying config/aprilTag.yaml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/config\n'}
+[22.474139] (ebug) StdoutLine: {'line': b'copying config/gridmap.yaml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/config\n'}
+[22.474323] (ebug) StdoutLine: {'line': b'copying config/ekfRelative.yaml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/config\n'}
+[22.474532] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/calibration\n'}
+[22.474606] (ebug) StdoutLine: {'line': b'copying calibration/cam_2.yaml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/calibration\n'}
+[22.474759] (ebug) StdoutLine: {'line': b'copying calibration/cam_3.yaml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/calibration\n'}
+[22.474875] (ebug) StdoutLine: {'line': b'copying calibration/cam_1.yaml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/calibration\n'}
+[22.475026] (ebug) StdoutLine: {'line': b'copying calibration/cam_0.yaml -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/calibration\n'}
+[22.475208] (ebug) StdoutLine: {'line': b'creating /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/launch\n'}
+[22.475278] (ebug) StdoutLine: {'line': b'copying launch/agent.launch.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/launch\n'}
+[22.475350] (ebug) StdoutLine: {'line': b'copying launch/visualiser.launch.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/launch\n'}
+[22.475420] (ebug) StdoutLine: {'line': b'copying launch/pseudo.launch.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/launch\n'}
+[22.475488] (ebug) StdoutLine: {'line': b'copying launch/gridmap.launch.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/launch\n'}
+[22.475566] (ebug) StdoutLine: {'line': b'copying launch/teleop.launch.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/launch\n'}
+[22.475619] (ebug) StdoutLine: {'line': b'copying launch/principal.launch.py -> /home/laprp/Documents/ebug-network/ros/src/install/ebug/share/ebug/launch\n'}
+[22.475690] (ebug) StdoutLine: {'line': b'running install_egg_info\n'}
+[22.477201] (ebug) StdoutLine: {'line': b'Copying ../build/ebug/ebug.egg-info to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/python3.10/site-packages/ebug-0.0.0-py3.10.egg-info\n'}
+[22.477755] (ebug) StdoutLine: {'line': b'running install_scripts\n'}
+[22.497194] (ebug) StdoutLine: {'line': b'Installing BoidsService script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.497339] (ebug) StdoutLine: {'line': b'Installing DebugService script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.497407] (ebug) StdoutLine: {'line': b'Installing DiscoService script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.497494] (ebug) StdoutLine: {'line': b'Installing MovementController script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.497598] (ebug) StdoutLine: {'line': b'Installing PseudoMovementController script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.497664] (ebug) StdoutLine: {'line': b'Installing PyGameDisplay script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.497729] (ebug) StdoutLine: {'line': b'Installing RobotController script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.497808] (ebug) StdoutLine: {'line': b'Installing TeleopController script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.497860] (ebug) StdoutLine: {'line': b'Installing TransformConverter script to /home/laprp/Documents/ebug-network/ros/src/install/ebug/lib/ebug\n'}
+[22.498102] (ebug) StdoutLine: {'line': b"writing list of installed files to '/home/laprp/Documents/ebug-network/ros/src/build/ebug/install.log'\n"}
+[22.518646] (ebug) CommandEnded: {'returncode': 0}
+[22.523417] (ebug) JobEnded: {'identifier': 'ebug', 'rc': 0}
+[22.523953] (-) EventReactorShutdown: {}

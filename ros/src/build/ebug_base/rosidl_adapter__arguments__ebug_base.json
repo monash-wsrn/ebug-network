@@ -1,0 +1,8 @@
+{
+  "package_name": "ebug_base",
+  "non_idl_tuples": [
+    "/home/laprp/Documents/ebug-network/ros/src/ebug_base:srv/ComputeTarget.srv",
+    "/home/laprp/Documents/ebug-network/ros/src/ebug_base:msg/RobotPose.msg",
+    "/home/laprp/Documents/ebug-network/ros/src/ebug_base:msg/ControlCommand.msg"
+  ]
+}
