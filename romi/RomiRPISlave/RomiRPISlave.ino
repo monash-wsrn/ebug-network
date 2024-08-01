@@ -1,20 +1,54 @@
+/* ========== I2C BRIDGE CONFIGURATION ========== */
+/* Ensure this exactly matches corresponding uses */
+
+#define TIMEOUT_MS 500.0
+#define I2C_ADDRESS 0x14
+
+struct Data {
+  int16_t lm_desired;   // Position  0, Length 2
+  int16_t rm_desired;   // Position  2, Length 2 
+
+  uint8_t rled;         // Position  4, Length 1
+  uint8_t gled;         // Position  5, Length 1
+  uint8_t bled;         // Position  6, Length 1
+
+  uint8_t alive;        // Position  7, Length 1
+
+  int64_t lenc_total;   // Position  8, Length 8
+  int64_t renc_total;   // Position 16, Length 8
+
+  /* Total Length of 24 bytes */
+};
+
+/* ========== I2C BRIDGE CONFIGURATION ========== */
+
+#define LED_PIN 22          // PF1 pin
+#define NUM_LEDS 16         // 16 LEDs in total
+#define COLOUR_ORDER GRB
+
+#define ENCODER_CLAMP 576                 // Maximum encoder delta per loop, larger counts ignored
+#define ENCODER_SMOOTH_DEPTH 128          // Maximum smoothing depth for dynamic encoder calibration 
+#define ENCODER_DEFAULT_MULT 0.2500       // Default encoder power multiplier, to calibrate from
+#define ENCODER_MINIMUM_MULT 0.1250       // Minimum encoder power multiplier, to calibrate from
+
+#include <math.h>
+#include <Servo.h>
 #include <Romi32U4.h>
 #include <PololuRPiSlave.h>
 #include <FastLED.h>
 
-// Variables for LED connection
-#define LED_PIN 22
-#define NUM_LEDS 16
-#define COLOUR_ORDER GRB
+// Constants for robot configuration
+const float wheel_diameter = 0.08; // 8 cm in meters
+const float encoder_resolution = 1440; // 1440 counts per revolution
+const float distance_per_count = (PI * wheel_diameter) / encoder_resolution; // Distance per count in meters
+const float max_velocity_left = 0.86; // Maximum velocity in m/s for the left motor
+const float max_velocity_right = 0.82; // Maximum velocity in m/s for the right motor
 
-#define ENCODER_CLAMP 576
-#define ENCODER_SMOOTH_DEPTH 128
-#define ENCODER_DEFAULT_MULT 0.2500
-#define ENCODER_MINIMUM_MULT 0.1250
-
-const double ALPHA = 1.0 / (double)ENCODER_SMOOTH_DEPTH;
+// Exponential smoothing constants
+const double ALPHA = 1.0 / (double) ENCODER_SMOOTH_DEPTH;
 const double NALPHA = 1.0 - ALPHA;
 
+// Global variables
 uint8_t alive;
 double timeout;
 uint64_t timestamp;
@@ -25,34 +59,15 @@ double rencoder_actual_smooth;
 double lencoder_target_smooth;
 double rencoder_target_smooth;
 
-int16_t lm_enc_actual = 0;
-int16_t rm_enc_actual = 0;
-
 int64_t lencoder;
 int64_t rencoder;
 
-#define TIMEOUT_MS 500.0
-#define I2C_ADDRESS 0x14
-
-struct Data {
-    int16_t lm_desired;
-    int16_t rm_desired;
-
-    uint8_t rled;
-    uint8_t gled;
-    uint8_t bled;
-
-    uint8_t alive;
-
-    int64_t lenc_total;
-    int64_t renc_total;
-};
-
 PololuRPiSlave<struct Data, 5> slave;
-Romi32U4Motors motors;
-Romi32U4Encoders encoders;
-CRGB leds[NUM_LEDS];
+Romi32U4Motors motors;        
+Romi32U4Encoders encoders;    
+CRGB leds[NUM_LEDS]; 
 
+// PID Controller class
 class PIDController {
 public:
     PIDController(float Kp, float Ki, float Kd)
@@ -62,14 +77,8 @@ public:
         float error = setpoint - measured_value;
         integral += error * dt;
         float derivative = (error - previous_error) / dt;
-
         float output = Kp * error + Ki * integral + Kd * derivative;
         previous_error = error;
-
-        // Clamp output to a reasonable range
-        if (output > 255) output = 255;
-        if (output < -255) output = -255;
-
         return output;
     }
 
@@ -79,120 +88,149 @@ private:
     float previous_error;
 };
 
-// Initialize PID controllers with lower gains
-PIDController left_pid(0.1, 0.0, 0.01);
-PIDController right_pid(0.1, 0.0, 0.01);
+PIDController left_pid(0.69, 0.105, 0.06);
+PIDController right_pid(0.69, 0.105, 0.06);
 
+// Function to reset the system state
 void reset() {
-    slave.buffer.lm_desired = 0;
-    slave.buffer.rm_desired = 0;
+  slave.buffer.lm_desired = 0;
+  slave.buffer.rm_desired = 0;
 
-    lencoder = 0;
-    rencoder = 0;
+  slave.buffer.rled = 0;
+  slave.buffer.gled = 0;
+  slave.buffer.bled = 0;
 
-    lencoder_target_smooth = ENCODER_DEFAULT_MULT;
-    rencoder_target_smooth = ENCODER_DEFAULT_MULT;
+  lencoder = 0;
+  rencoder = 0;
 
-    lencoder_actual_smooth = 1.0;
-    rencoder_actual_smooth = 1.0;
+  lencoder_target_smooth = ENCODER_DEFAULT_MULT;
+  rencoder_target_smooth = ENCODER_DEFAULT_MULT;
 
-    int16_t ignored_left = encoders.getCountsAndResetLeft();
-    int16_t ignored_right = encoders.getCountsAndResetRight();
+  lencoder_actual_smooth = 1.0;
+  rencoder_actual_smooth = 1.0;
+
+  // Ignore values
+  int16_t ignored_left = encoders.getCountsAndResetLeft();
+  int16_t ignored_right = encoders.getCountsAndResetRight();
 }
 
-void setup() {
-    Serial.begin(115200);
-    slave.init(I2C_ADDRESS);
-
-    FastLED.addLeds<WS2812, LED_PIN, COLOUR_ORDER>(leds, NUM_LEDS);
-    
-    alive = 0x00;
-    timeout = (double)TIMEOUT_MS;
-    timestamp = micros();
-
-    reset();
-}
-
+// Function to check for timeout and reset if necessary
 void check_timeout(double dt) {
-    if (alive != slave.buffer.alive) {
-        timeout = (double)TIMEOUT_MS;
-        alive = slave.buffer.alive;
-        return;
-    }
+  if (alive != slave.buffer.alive) {
+    timeout = (double) TIMEOUT_MS;
+    alive = slave.buffer.alive;
+    return;
+  }
 
-    timeout -= (dt * 1000.0);
-    if (timeout > 0.0)
-        return;
-
-    reset();
+  timeout -= (dt * 1000.0);
+  if (timeout <= 0.0) reset();
 }
 
+// Function to calculate the time delta
 double delta(uint64_t now) {
-    uint64_t delta_us = now - timestamp;
-    timestamp = now;
-    double dt = (double) delta_us / 1000.0 / 1000.0;
-    if (dt <= 0) dt = 1.0 / 1000.0;  // Ensure dt is never zero or negative
-    return dt;
+  uint64_t delta_us = now - timestamp;
+  timestamp = now;
+  return (double) delta_us / 1000.0 / 1000.0;
 }
 
-int16_t smoothEncoderReading(int16_t new_value, int16_t old_value, float smoothing_factor) {
-    return (int16_t)(smoothing_factor * new_value + (1.0 - smoothing_factor) * old_value);
+// Setup function to initialize the system
+void setup() {
+  Serial.begin(115200); // Initialize serial communication for debugging
+  slave.init(I2C_ADDRESS); // Initialize I2C slave
+
+  // Setup FastLED
+  FastLED.addLeds<WS2812, LED_PIN, COLOUR_ORDER>(leds, NUM_LEDS);
+
+  alive = 0x00;
+  timeout = (double) TIMEOUT_MS;
+  timestamp = micros();
+
+  reset(); // Reset the system state
 }
 
+// Main loop function
 void loop() {
-    uint64_t now = micros();
-    double dt = delta(now);
+  double dt = delta(micros()); // Calculate time delta
 
-    lm_enc_actual = smoothEncoderReading(encoders.getCountsAndResetLeft(), lm_enc_actual, 0.1);
-    rm_enc_actual = smoothEncoderReading(encoders.getCountsAndResetRight(), rm_enc_actual, 0.1);
+  // Read and reset encoder counts
+  int16_t left_counts = encoders.getCountsAndResetLeft();
+  int16_t right_counts = encoders.getCountsAndResetRight();
 
-    double lm_enc_scaled = fabs((double)lm_enc_actual / dt);
-    lencoder_actual_smooth = (ALPHA * lm_enc_scaled) + (NALPHA * lencoder_actual_smooth);
+  // Debug: Print raw encoder counts
+  Serial.print("Left Encoder Counts: ");
+  Serial.print(left_counts);
+  Serial.print(", Right Encoder Counts: ");
+  Serial.println(right_counts);
 
-    double lm_enc_target = fabs((double)slave.buffer.lm_desired);
-    lencoder_target_smooth = (ALPHA * lm_enc_target) + (NALPHA * lencoder_target_smooth);
-    
-    double lmultiplier = max(lencoder_target_smooth / lencoder_actual_smooth, ENCODER_MINIMUM_MULT);
-    lencoder += lm_enc_actual;
+  // Calculate actual velocity from encoder counts in m/s
+  float left_actual_velocity = (left_counts * distance_per_count) / dt;
+  float right_actual_velocity = (right_counts * distance_per_count) / dt;
 
-    double rm_enc_scaled = fabs((double)rm_enc_actual / dt);
-    rencoder_actual_smooth = (ALPHA * rm_enc_scaled) + (NALPHA * rencoder_actual_smooth);
+  // Debug: Print actual velocities
+  Serial.print("Left Actual Velocity (m/s): ");
+  Serial.print(left_actual_velocity);
+  Serial.print(", Right Actual Velocity (m/s): ");
+  Serial.println(right_actual_velocity);
 
-    double rm_enc_target = fabs((double)slave.buffer.rm_desired);
-    rencoder_target_smooth = (ALPHA * rm_enc_target) + (NALPHA * rencoder_target_smooth);
-    
-    double rmultiplier = max(rencoder_target_smooth / rencoder_actual_smooth, ENCODER_MINIMUM_MULT);
-    rencoder += rm_enc_actual;
+  // Convert desired velocities from I2C buffer to m/s
+  float left_desired_velocity = slave.buffer.lm_desired * distance_per_count / dt;
+  float right_desired_velocity = slave.buffer.rm_desired * distance_per_count / dt;
 
-    slave.updateBuffer();
-    check_timeout(dt);
+  // Debug: Print desired velocities
+  Serial.print("Left Desired Velocity (m/s): ");
+  Serial.print(left_desired_velocity);
+  Serial.print(", Right Desired Velocity (m/s): ");
+  Serial.println(right_desired_velocity);
 
-    float lm_output = left_pid.update(slave.buffer.lm_desired, lm_enc_actual, dt);
-    float rm_output = right_pid.update(slave.buffer.rm_desired, rm_enc_actual, dt);
+  // Use PID to calculate velocity output
+  float left_velocity_output = left_pid.update(left_desired_velocity, left_actual_velocity, dt);
+  float right_velocity_output = right_pid.update(right_desired_velocity, right_actual_velocity, dt);
 
-    motors.setSpeeds(lm_output, rm_output);
+  // Debug: Print PID outputs
+  Serial.print("Left PID Output: ");
+  Serial.print(left_velocity_output);
+  Serial.print(", Right PID Output: ");
+  Serial.println(right_velocity_output);
 
-    for (int i = 0; i < NUM_LEDS; i++)
-        leds[i] = CRGB(slave.buffer.rled, slave.buffer.gled, slave.buffer.bled);
-    FastLED.show();
+  // Map velocity output to PWM range
+  float left_pwm_output = (left_velocity_output / max_velocity_left) * 255.0;
+  float right_pwm_output = (right_velocity_output / max_velocity_right) * 255.0;
 
-    lencoder += lm_enc_actual;
-    rencoder += rm_enc_actual;
+  // Ensure PWM output is within valid range before sending to motors
+  left_pwm_output = constrain(left_pwm_output, -255, 255);
+  right_pwm_output = constrain(right_pwm_output, -255, 255);
 
-    slave.buffer.lenc_total = lencoder;
-    slave.buffer.renc_total = rencoder;
+  // Debug: Print PWM outputs
+  Serial.print("Left PWM Output: ");
+  Serial.print(left_pwm_output);
+  Serial.print(", Right PWM Output: ");
+  Serial.println(right_pwm_output);
 
-    slave.finalizeWrites();
+  motors.setSpeeds(left_pwm_output, right_pwm_output); // Set motor speeds
 
-    Serial.print(slave.buffer.lm_desired);
-    Serial.print(",");
-    Serial.print(lm_enc_actual);
-    Serial.print(",");
-    Serial.print(lm_output);
-    Serial.print(",");
-    Serial.print(slave.buffer.rm_desired);
-    Serial.print(",");
-    Serial.print(rm_enc_actual);
-    Serial.print(",");
-    Serial.println(rm_output);
+  // Set and display colors for the LED ring
+  for (int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = CRGB(slave.buffer.rled, slave.buffer.gled, slave.buffer.bled);
+  }
+  FastLED.show();
+
+  // Debug: Print LED values
+  Serial.print("LED Colors - R: ");
+  Serial.print(slave.buffer.rled);
+  Serial.print(", G: ");
+  Serial.print(slave.buffer.gled);
+  Serial.print(", B: ");
+  Serial.println(slave.buffer.bled);
+
+  // Update encoder totals in I2C buffer
+  lencoder += left_counts;
+  rencoder += right_counts;
+  slave.buffer.lenc_total = lencoder;
+  slave.buffer.renc_total = rencoder;
+
+  // Write latest Data struct to I2C connection
+  slave.finalizeWrites();
+
+  delay(100); // Small delay for readability in debugging output
 }
+
