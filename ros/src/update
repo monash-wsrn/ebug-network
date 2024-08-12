@@ -1,0 +1,18 @@
+#!/bin/sh
+
+echo "Updating Git"
+git fetch
+git reset --hard origin/main
+git pull
+
+chmod 755 update
+
+echo "Cleaning Docker"
+docker container prune --force
+docker image prune --force
+docker rmi ebug
+
+echo "Building Container"
+docker build -t ebug .
+
+echo "Completed!"
