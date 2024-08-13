@@ -1,7 +1,7 @@
 import os
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Pose
 from ebug.util.PololuHardwareInterface import PololuHardwareInterface
 
 class RobotController(Node):
@@ -13,9 +13,10 @@ class RobotController(Node):
         # Initialize the I2C bridge
         self.bridge = PololuHardwareInterface(retry_max=5)
 
-        # Subscribe to the /ROBOT_ID/cmd_vel topic
+        # Subscribe and Publish topic
         cmd_vel_topic = f'/{self.robot_id}/cmd_vel'
         self.cmd_vel_sub = self.create_subscription(Twist, cmd_vel_topic, self.cmd_vel_callback, 10)
+        self.odom_pub = self.create_publisher(Pose, f'/{self.robot_id}/odom', 10)
         
         self.get_logger().info(f"Subscribed to {cmd_vel_topic}")
 
@@ -36,6 +37,19 @@ class RobotController(Node):
 
         # Send velocities to Arduino
         self.bridge.write_velocity(linear_velocity, angular_velocity)
+
+    def timer_callback(self):
+        # Read odometry data from the Arduino
+        x, y, theta = self.bridge.read_odometry()
+
+        # Create a Pose message with the odometry data
+        odom_msg = Pose()
+        odom_msg.position.x = x
+        odom_msg.position.y = y
+        odom_msg.orientation.z = theta
+
+        # Publish the odometry data
+        self.odom_pub.publish(odom_msg)
 
 def main(args=None):
     rclpy.init(args=args)
