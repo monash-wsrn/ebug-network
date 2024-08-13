@@ -2,6 +2,8 @@ import os
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist, Pose
+from nav_msgs.msg import Odometry
+from tf_transformations import quaternion_from_euler
 from ebug.util.PololuHardwareInterface import PololuHardwareInterface
 
 class RobotController(Node):
@@ -11,12 +13,12 @@ class RobotController(Node):
         self.robot_id = os.getenv('ROBOT_ID', "default")
         
         # Initialize the I2C bridge
-        self.bridge = PololuHardwareInterface(retry_max=5)
+        self.bridge = PololuHardwareInterface(retry_max=5, logger=self.get_logger())
 
-        # Subscribe and Publish topic
+        # Subscribe and Publish topics
         cmd_vel_topic = f'/{self.robot_id}/cmd_vel'
         self.cmd_vel_sub = self.create_subscription(Twist, cmd_vel_topic, self.cmd_vel_callback, 10)
-        self.odom_pub = self.create_publisher(Pose, f'/{self.robot_id}/odom', 10)
+        self.odom_pub = self.create_publisher(Odometry, f'/{self.robot_id}/odom', 10)
 
         # Create a timer that calls timer_callback every 0.1 seconds
         self.timer = self.create_timer(0.1, self.timer_callback)
@@ -48,17 +50,28 @@ class RobotController(Node):
             x, y, theta = odom_data
             self.get_logger().info(f"Odometry data - x: {x}, y: {y}, theta: {theta}")
             
-            # Create a Pose message with the odometry data
-            odom_msg = Pose()
-            odom_msg.position.x = x
-            odom_msg.position.y = y
-            odom_msg.orientation.z = theta
-            
+            # Create an Odometry message
+            odom_msg = Odometry()
+            odom_msg.header.stamp = self.get_clock().now().to_msg()
+            odom_msg.header.frame_id = "odom"
+            odom_msg.child_frame_id = "base_link"
+
+            # Set the position
+            odom_msg.pose.pose.position.x = x
+            odom_msg.pose.pose.position.y = y
+            odom_msg.pose.pose.position.z = 0.0
+
+            # Set the orientation
+            q = quaternion_from_euler(0, 0, theta)
+            odom_msg.pose.pose.orientation.x = q[0]
+            odom_msg.pose.pose.orientation.y = q[1]
+            odom_msg.pose.pose.orientation.z = q[2]
+            odom_msg.pose.pose.orientation.w = q[3]
+
             # Publish the odometry data
             self.odom_pub.publish(odom_msg)
         else:
             self.get_logger().warn("Failed to read odometry data")
-
 
 def main(args=None):
     rclpy.init(args=args)
@@ -71,8 +84,7 @@ def main(args=None):
     finally:
         node.reset_velocities()  # Reset velocities before shutting down
         node.destroy_node()
-
-    rclpy.shutdown()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
