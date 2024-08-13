@@ -92,15 +92,21 @@ class PololuHardwareInterface:
 
     #### HIGH-LEVEL INTERFACE FUNCTIONS ####
 
-    def read_odometry(self, on_error=lambda: print("Error reading odometry")):
+    def read_odometry(self, on_error=lambda: self.log_info("Error reading odometry")):
         """
         Read odometry values from the Arduino.
-
         :param on_error: Error handling function
         :return: Tuple containing the odometry values (x, y, theta)
         """
-        func = lambda: self.read_unpack(24, 12, 'fff')  # Unpack three floating-point values (x, y, theta)
-        return self.safe_smbus(func, self.retry_max, on_error)
+        def func():
+            result = self.read_unpack(12, 12, 'fff')  # Read from address 12, 12 bytes, three floats
+            self.log_info(f"Raw odometry data: {result}")
+            return result
+
+        result = self.safe_smbus(func, self.retry_max, on_error)
+        if result is None:
+            self.log_info("Failed to read odometry after maximum retries")
+        return result
 
     def write_motors(self, left, right, on_error=lambda: print("Error writing to motors")):
         """

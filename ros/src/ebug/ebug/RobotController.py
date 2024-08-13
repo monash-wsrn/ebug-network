@@ -17,6 +17,9 @@ class RobotController(Node):
         cmd_vel_topic = f'/{self.robot_id}/cmd_vel'
         self.cmd_vel_sub = self.create_subscription(Twist, cmd_vel_topic, self.cmd_vel_callback, 10)
         self.odom_pub = self.create_publisher(Pose, f'/{self.robot_id}/odom', 10)
+
+        # Create a timer that calls timer_callback every 0.1 seconds
+        self.timer = self.create_timer(0.1, self.timer_callback)
         
         self.get_logger().info(f"Subscribed to {cmd_vel_topic}")
 
@@ -40,16 +43,22 @@ class RobotController(Node):
 
     def timer_callback(self):
         # Read odometry data from the Arduino
-        x, y, theta = self.bridge.read_odometry()
+        odom_data = self.bridge.read_odometry()
+        if odom_data:
+            x, y, theta = odom_data
+            self.get_logger().info(f"Odometry data - x: {x}, y: {y}, theta: {theta}")
+            
+            # Create a Pose message with the odometry data
+            odom_msg = Pose()
+            odom_msg.position.x = x
+            odom_msg.position.y = y
+            odom_msg.orientation.z = theta
+            
+            # Publish the odometry data
+            self.odom_pub.publish(odom_msg)
+        else:
+            self.get_logger().warn("Failed to read odometry data")
 
-        # Create a Pose message with the odometry data
-        odom_msg = Pose()
-        odom_msg.position.x = x
-        odom_msg.position.y = y
-        odom_msg.orientation.z = theta
-
-        # Publish the odometry data
-        self.odom_pub.publish(odom_msg)
 
 def main(args=None):
     rclpy.init(args=args)

@@ -169,14 +169,13 @@ slave.buffer.theta = theta;
 slave.finalizeWrites();
 
 // Print out the odometry for debugging
-#ifdef DEBUG
 Serial.print("Position: (");
 Serial.print(x);
 Serial.print(", ");
 Serial.print(y);
 Serial.print(") Orientation: ");
 Serial.println(theta);
-#endif
+
 
 // Small delay for stability
 delay(100);
