@@ -39,7 +39,9 @@ setup(
 
             'PseudoMovementController = ebug.PseudoMovementController:main',
 
-            'PyGameDisplay = ebug.PyGameDisplay:main'
+            'PyGameDisplay = ebug.PyGameDisplay:main',
+
+            'tf_publisher = ebug.tf_publisher:main'
 
         ],
     },
