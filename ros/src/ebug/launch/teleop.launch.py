@@ -1,10 +1,11 @@
 import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
-    PKG_SHARE = os.getenv('PKG_SHARE', '/path/to/your/package/share')  # Update this path
+    PKG_SHARE = FindPackageShare(package='ebug').find('ebug')
 
     return LaunchDescription([
         # Launch the RobotController node

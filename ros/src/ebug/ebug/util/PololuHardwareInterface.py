@@ -100,7 +100,7 @@ class PololuHardwareInterface:
         """
         def func():
             result = self.read_unpack(12, 12, 'fff')  # Read from address 12, 12 bytes, three floats
-            self.log_info(f"Raw odometry data: {result}")
+            # self.log_info(f"Raw odometry data: {result}")
             return result
 
         result = self.safe_smbus(func, self.retry_max, on_error)

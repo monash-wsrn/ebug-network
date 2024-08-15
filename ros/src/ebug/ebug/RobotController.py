@@ -89,8 +89,8 @@ class RobotController(Node):
             # Create and publish the Odometry message
             odom_msg = Odometry()
             odom_msg.header.stamp = self.get_clock().now().to_msg()
-            odom_msg.header.frame_id = "odom"
-            odom_msg.child_frame_id = "base_link"
+            odom_msg.header.frame_id = f"{self.robot_id}/odom"
+            odom_msg.child_frame_id = self.robot_id
             odom_msg.pose.pose.position.x = self.x
             odom_msg.pose.pose.position.y = self.y
             odom_msg.pose.pose.position.z = 0.0
@@ -104,7 +104,20 @@ class RobotController(Node):
             odom_msg.twist.twist.linear.x = self.current_linear_velocity
             odom_msg.twist.twist.linear.y = 0.0  # Assuming no lateral velocity for differential drive
             odom_msg.twist.twist.angular.z = self.current_angular_velocity
+
+            odom_msg.pose.covariance = [0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                    0.0, 0.1, 0.0, 0.0, 0.0, 0.0,
+                                    0.0, 0.0, 0.1, 0.0, 0.0, 0.0,
+                                    0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
+                                    0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
+                                    0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
+            odom_msg.twist.covariance = odom_msg.pose.covariance
+
             self.odom_pub.publish(odom_msg)
+
+            
+
+            self.get_logger().info(f"Odometry: x={self.x}, y={self.y}, theta={self.theta}")
 
         else:
             self.get_logger().warn("Failed to read odometry or gyroscope data")
