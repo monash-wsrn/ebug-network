@@ -24,6 +24,11 @@
   <depend>grid_map_rviz_plugin</depend>
   <depend>grid_map_visualization</depend>
 
+  <depend>cv_bridge</depend>
+  <depend>python3-opencv</depend>
+  <depend>apriltag_ros</depend>
+  <depend>python3-qt5-bindings</depend>
+
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
   <depend>tf2_py</depend>

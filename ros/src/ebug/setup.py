@@ -41,7 +41,7 @@ setup(
 
             'PyGameDisplay = ebug.PyGameDisplay:main',
 
-            'tf_publisher = ebug.tf_publisher:main'
+            'DetectionGUI = ebug.DetectionGUI:main'
 
         ],
     },

@@ -115,10 +115,6 @@ class RobotController(Node):
 
             self.odom_pub.publish(odom_msg)
 
-            
-
-            self.get_logger().info(f"Odometry: x={self.x}, y={self.y}, theta={self.theta}")
-
         else:
             self.get_logger().warn("Failed to read odometry or gyroscope data")
 

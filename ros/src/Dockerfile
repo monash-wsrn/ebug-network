@@ -44,6 +44,14 @@ RUN apt-get update && apt-get install -y --fix-missing \
 # Install smbus2 via pip
 RUN pip install smbus2
 
+# Install PyQt5 and OpenCV
+RUN apt-get update && apt-get install -y \
+    python3-pyqt5 \
+    python3-opencv 
+
+# Install cv_bridge
+RUN apt-get install -y ros-humble-cv-bridge
+
 ENV ROS_DOMAIN_ID=${DOMAIN_ID:-13}
 ENV DISPLAY="host.docker.internal:0.0"
 ENV SDL_AUDIODRIVER="dsp"
