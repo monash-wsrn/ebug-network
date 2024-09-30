@@ -30,6 +30,7 @@ class RobotController(Node):
         # Initialize variables to store the current velocities
         self.current_linear_velocity = 0.0
         self.current_angular_velocity = 0.0
+        self.last_cmd = Twist()
 
         # Initialize odometry variables
         self.x = 0.0
@@ -54,22 +55,25 @@ class RobotController(Node):
 
     def cmd_vel_callback(self, msg):
         # Store the current velocities
+        self.last_cmd = msg
         self.current_linear_velocity = msg.linear.x
         self.current_angular_velocity = msg.angular.z
 
         # Log the received velocities
         self.get_logger().info(f"Received Twist - Linear: {self.current_linear_velocity} m/s, Angular: {self.current_angular_velocity} rad/s")
 
-        # Send velocities to Arduino
-        self.bridge.write_velocity(self.current_linear_velocity, self.current_angular_velocity)
+    
+    def send_command(self):
+        self.bridge.write_velocity(self.last_cmd.linear.x, self.last_cmd.angular.z)
 
     def timer_callback(self):
         # Read odometry data from the Arduino
+        self.send_command()
         odom_data = self.bridge.read_odometry()
         gyro_data = self.bridge.read_gyroscope()
 
         if odom_data and gyro_data:
-            x_delta, y_delta, theta_delta = odom_data
+            x_delta, y_delta, theta_delta, linear_vel, angular_vel = odom_data
             wx, wy, wz = gyro_data
 
             # Update odometry based on the deltas from the Arduino
@@ -101,9 +105,9 @@ class RobotController(Node):
             odom_msg.pose.pose.orientation.w = q[3]
 
             # Use the current velocities from cmd_vel for the twist
-            odom_msg.twist.twist.linear.x = self.current_linear_velocity
+            odom_msg.twist.twist.linear.x = linear_vel
             odom_msg.twist.twist.linear.y = 0.0  # Assuming no lateral velocity for differential drive
-            odom_msg.twist.twist.angular.z = self.current_angular_velocity
+            odom_msg.twist.twist.angular.z = angular_vel
 
             odom_msg.pose.covariance = [0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
                                     0.0, 0.1, 0.0, 0.0, 0.0, 0.0,
