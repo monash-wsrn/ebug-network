@@ -5,17 +5,17 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     # This node is the central controller (i.e., Boids Algorithm)
-    Boids = Node(
-        package = 'ebug',
-        executable = 'BoidsService',
-        name = 'BoidsService',
-    )
+    # Boids = Node(
+    #     package = 'ebug',
+    #     executable = 'BoidsService',
+    #     name = 'BoidsService',
+    # )
 
-    Disco = Node(
-        package = 'ebug',
-        executable = 'DiscoService',
-        name = 'DiscoService',
-    )
+    # Disco = Node(
+    #     package = 'ebug',
+    #     executable = 'DiscoService',
+    #     name = 'DiscoService',
+    # )
 
     Debug = Node(
         package = 'ebug',
@@ -32,7 +32,7 @@ def generate_launch_description():
     StaticTransformAprilTag1 = Node(
         package = 'tf2_ros',
         executable = 'static_transform_publisher',  # -135 (135)
-        arguments = ['--x', '1.08', '--y', '-0.7', '--z', '0', '--yaw', '2.35619', '--pitch', '0.0', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_1']
+        arguments = ['--x', '2.3', '--y', '1.1', '--z', '0', '--yaw', '2.35619', '--pitch', '0.0', '--roll', '1.5708', '--frame-id', 'map', '--child-frame-id', 'apriltag_1']
     )
 
     StaticTransformAprilTag2 = Node(
@@ -59,7 +59,7 @@ def generate_launch_description():
         StaticTransformAprilTag1,
         StaticTransformAprilTag2,
         StaticTransformAprilTag3,
-        Boids,
-        Disco,
+        # Boids,
+        # Disco,
         Debug,
     ])

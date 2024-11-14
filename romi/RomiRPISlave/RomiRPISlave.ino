@@ -1,11 +1,7 @@
 #include <PololuRPiSlave.h>
 #include <Romi32U4.h>
-#include <FastLED.h>
 
 #define I2C_ADDRESS 0x14
-#define LED_PIN 22
-#define NUM_LEDS 16
-#define COLOUR_ORDER GRB
 
 struct Data {
     float linear_velocity;
@@ -18,6 +14,9 @@ struct Data {
     float y;
     float theta;
 };
+
+// Global variable - retains value through dropouts
+bool initial_startup = true;
 
 // Robot parameters
 const float wheel_diameter = 0.07;
@@ -55,8 +54,6 @@ PololuRPiSlave<struct Data, 5> slave;
 Romi32U4Motors motors;
 Romi32U4Encoders encoders;
 
-// LED ring
-CRGB leds[NUM_LEDS];
 
 // Odometry variables
 float x = 0.0, y = 0.0, theta = 0.0;
@@ -124,10 +121,17 @@ void setup() {
     
     delay(1000);
     
-    left_encoder_prev = encoders.getCountsLeft();
-    right_encoder_prev = encoders.getCountsRight();
+    if (initial_startup) {
+        x = 0.0;
+        y = 0.0;
+        theta = 0.0;
+        left_encoder_prev = encoders.getCountsLeft();
+        right_encoder_prev = encoders.getCountsRight();
+        initial_startup = false;  // Will stay false through dropouts
+        Serial.println("Initial startup reset performed");
+    }
     
-    FastLED.addLeds<WS2812, LED_PIN, COLOUR_ORDER>(leds, NUM_LEDS);
+    
 }
 
 void loop() {
@@ -163,11 +167,6 @@ void loop() {
         // Calculate desired velocities from ROS commands
         float left_desired = left_desired_velocity(slave.buffer.linear_velocity, slave.buffer.angular_velocity);
         float right_desired = right_desired_velocity(slave.buffer.linear_velocity, slave.buffer.angular_velocity);
-
-        Serial.print("Desired L,R: ");
-        Serial.print(left_desired);
-        Serial.print(",");
-        Serial.println(right_desired);
         
         // Apply PID with feed-forward
         int16_t left_command = velocityPIDFF(left_desired, left_filtered_velocity, dt, left_integral, left_prev_error);
@@ -177,35 +176,46 @@ void loop() {
         float desired_velocity = (left_desired + right_desired) / 2.0;
         float actual_velocity = (left_filtered_velocity + right_filtered_velocity) / 2.0;
         float command_value = (left_command + right_command) / 2.0;
-
-        Serial.print("Motors L,R: ");
-        Serial.print(left_command);
-        Serial.print(",");
-        Serial.println(right_command);
         
         // Set motor speeds
         motors.setSpeeds(left_command, right_command);
         
-        // Update odometry
+        // Calculate distance moved by each wheel since last update
         float left_distance = left_delta * distance_per_count;
         float right_distance = right_delta * distance_per_count;
+
+        // Calculate change in orientation and forward distance
         float delta_theta = (right_distance - left_distance) / baseline;
         float distance = (left_distance + right_distance) / 2.0;
-        
+
+        // Update orientation first
         theta += delta_theta;
-        x += distance * cos(theta);
-        y += distance * sin(theta);
-        
-        // Update LED ring
-        for (int i = 0; i < NUM_LEDS; i++) {
-            leds[i] = CRGB(slave.buffer.rled, slave.buffer.gled, slave.buffer.bled);
-        }
-        FastLED.show();
-        
-        // Update odometry in I2C buffer
+
+        // Normalize theta between -PI and PI
+        while (theta > PI) theta -= 2*PI;
+        while (theta < -PI) theta += 2*PI;
+
+        // Use average orientation during the move
+        float theta_mid = theta - delta_theta/2.0;
+
+        // Update position
+        x += distance * cos(theta_mid);
+        y += distance * sin(theta_mid);
+
+        // Send POSITION to ROS through I2C buffer
         slave.buffer.x = x;
         slave.buffer.y = y;
         slave.buffer.theta = theta;
+
+        // Debug print
+        Serial.print("Position x,y,theta: ");
+        Serial.print(x, 6);
+        Serial.print(",");
+        Serial.print(y, 6);
+        Serial.print(",");
+        Serial.println(theta, 6);
+        
+  
         
         // Update previous values
         left_encoder_prev = left_encoder;

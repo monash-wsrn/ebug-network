@@ -77,9 +77,11 @@ class RobotController(Node):
             wx, wy, wz = gyro_data
 
             # Update odometry based on the deltas from the Arduino
-            self.x += x_delta
-            self.y += y_delta
-            self.theta += theta_delta
+            self.x = x_delta
+            self.y = y_delta
+            self.theta = theta_delta
+
+            
 
             # Create and publish the IMU message
             imu_msg = Imu()
