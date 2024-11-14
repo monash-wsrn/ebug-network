@@ -124,7 +124,6 @@ void setup() {
 
 void loop() {
     slave.updateBuffer();
-    
 
     if (slave.buffer.reset_cmd == 1) {
         x = 0.0;
@@ -141,23 +140,11 @@ void loop() {
     }
 
     static uint64_t lastTime = 0;
-    static uint64_t lastCommandTime = 0;
     uint64_t now = millis();
     float dt = (now - lastTime) / 1000.0;
-
-    // Add command timeout check
-    if (now - lastCommandTime > 500) {  // 500ms timeout
-        slave.buffer.linear_velocity = 0;
-        slave.buffer.angular_velocity = 0;
-        motors.setSpeeds(0, 0);  // Stop motors
-        Serial.println("Command timeout - stopping motors");
-    }
     
     if (dt >= 0.02) {  // Ensure minimum 20ms between updates
-    
-        if (slave.buffer.linear_velocity != 0 || slave.buffer.angular_velocity != 0) {
-            lastCommandTime = now;
-        }
+
         Serial.print("CMD Lin,Ang: ");
         Serial.print(slave.buffer.linear_velocity);
         Serial.print(",");
