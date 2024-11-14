@@ -16,6 +16,10 @@ class RobotController(Node):
         # Initialize the I2C bridge
         self.bridge = PololuHardwareInterface(retry_max=5)
 
+        # Reset odometry at startup
+        self.bridge.reset_odometry()
+        self.get_logger().info("Reset odometry at startup")
+
         # Subscribe and Publish topics
         cmd_vel_topic = f'/{self.robot_id}/cmd_vel'
         self.cmd_vel_sub = self.create_subscription(Twist, cmd_vel_topic, self.cmd_vel_callback, 10)
