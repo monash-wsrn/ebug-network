@@ -92,9 +92,9 @@ def create_robot_nodes(ROBOT_ID, PKG_SHARE):
 
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
-    CAM_ID = 'cam_0'
+    CAM_ID = 'cam_1'
     PKG_SHARE = FindPackageShare(package='ebug').find('ebug')
-    VIDEO_DEVICE = '/dev/video0'
+    VIDEO_DEVICE = '/dev/video2'
 
     camera_nodes = create_camera_composable_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE)
     robot_nodes = create_robot_nodes(ROBOT_ID, PKG_SHARE)

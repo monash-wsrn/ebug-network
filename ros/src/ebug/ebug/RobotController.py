@@ -53,9 +53,7 @@ class RobotController(Node):
     def reset_odometry(self):
         """Reset the odometry to start from zero."""
         self.get_logger().info("Resetting odometry to zero")
-        self.x = 0.0
-        self.y = 0.0
-        self.theta = 0.0
+        self.bridge.reset_odometry()  # Send reset command to Arduino
 
     def cmd_vel_callback(self, msg):
         # Store the current velocities

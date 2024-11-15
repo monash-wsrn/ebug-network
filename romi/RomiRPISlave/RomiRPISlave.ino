@@ -78,7 +78,12 @@ int16_t velocityPIDFF(float target_velocity, float actual_velocity, float dt, fl
     float Kf = PID_VALUES[range][3];
 
     float error = target_velocity - actual_velocity;
-    integral = constrain(integral + error * dt, -100, 100);
+    // Clear integral when stopping
+    if (abs(target_velocity) < 0.01) {  // If stop command
+        integral = 0;
+    } else {
+        integral = constrain(integral + error * dt, -50, 50);
+    }
     float derivative = (error - prev_error) / dt;
     prev_error = error;
 

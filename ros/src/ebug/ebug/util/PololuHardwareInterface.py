@@ -142,11 +142,12 @@ class PololuHardwareInterface:
         func = lambda: self.write_pack(7, 'B', self.alive)  # Pack the heartbeat as a single byte
         return self.safe_smbus(func, self.retry_max, on_error)
 
-    def reset_odometry(self, on_error=lambda: print("Error resetting odometry")):
-        """Reset odometry values on Arduino"""
-        def func():
-            # Write to a specific reset address/register
-            self.write_pack(9, 'B', 1)  # Using address 10 for reset command
+    def reset_odometry(self, on_error=None):
+        """Send reset command to Arduino."""
+        if on_error is None:
+            on_error = lambda: self.log_info("Failed to reset odometry")
+            
+        func = lambda: self.write_pack(24, 'B', 1)  # Send reset_cmd = 1 
         return self.safe_smbus(func, self.retry_max, on_error)
 
     def write_velocity(self, linear_velocity, angular_velocity, on_error=lambda: print("Error writing velocity to motors")):
