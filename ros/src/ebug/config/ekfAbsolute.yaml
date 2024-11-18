@@ -9,7 +9,7 @@
         # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
         # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
         # filter will generate new output. Defaults to 1 / frequency if not specified.
-        sensor_timeout: 0.05
+        sensor_timeout: 0.2
 
         # ekf_localization_node and ukf_localization_node both use a 3D omnidirectional motion model. If this parameter is
         # set to true, no 3D information will be used in your state estimate. Use this if you are operating in a planar
@@ -93,7 +93,7 @@
 
         # If you have high-frequency data or are running with a low frequency parameter value, then you may want to increase
         # the size of the subscription queue so that more measurements are fused.
-        odom0_queue_size: 1
+        odom0_queue_size: 10
 
         # [ADVANCED] When measuring one pose variable with two sensors, a situation can arise in which both sensors under-
         # report their covariances. This can lead to the filter rapidly jumping back and forth between each measurement as they
@@ -104,6 +104,8 @@
         # integrated as usual. NOTE: this only applies to sensors that provide pose measurements; setting differential to true
         # for twist measurements has no effect.
         odom0_differential: true
+        odom0_pose_rejection_threshold: 5.0
+        odom0_twist_rejection_threshold: 5.0
 
         # [ADVANCED] When the node starts, if this parameter is true, then the first measurement is treated as a "zero point"
         # for all future measurements. While you can achieve the same effect with the differential paremeter, the key
@@ -125,9 +127,16 @@
                        false, false, false,
                        false, false, false,
                        false, false, false]
-        pose0_differential: false
+        pose0_differential: true
         pose0_relative: false
-        pose0_queue_size: 1
+        pose0_queue_size: 10
+        pose0_rejection_threshold: 5.0 
+        pose0_covariance: [0.005, 0.0,  0.0,  0.0,  0.0,  0.0,    
+                        0.0,  0.005, 0.0,  0.0,  0.0,  0.0,    
+                        0.0,  0.0,  0.99, 0.0,  0.0,  0.0,    
+                        0.0,  0.0,  0.0,  0.99, 0.0,  0.0,    
+                        0.0,  0.0,  0.0,  0.0,  0.99, 0.0,    
+                        0.0,  0.0,  0.0,  0.0,  0.0,  0.99]   
       
 
         # # [ADVANCED] The process noise covariance matrix can be difficult to tune, and can vary for each application, so it is
@@ -140,21 +149,21 @@
         # # unspecified.
         # # Note: the specification of covariance matrices can be cumbersome, so all matrix parameters in this package support
         # # both full specification or specification of only the diagonal values.
-        # process_noise_covariance: [0.05, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.05, 0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.06, 0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.03, 0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.03, 0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.06, 0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.025, 0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.025, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.04, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.01, 0.0,    0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.01, 0.0,    0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.02, 0.0,    0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.01, 0.0,    0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.01, 0.0,
-        #                            0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.015]
+        process_noise_covariance: [0.01, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.01, 0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.01, 0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.01, 0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.01, 0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.01, 0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.025, 0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.025, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.04, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.01, 0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.01, 0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.02, 0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.01, 0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.01, 0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.015]
 
         # # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
         # # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
