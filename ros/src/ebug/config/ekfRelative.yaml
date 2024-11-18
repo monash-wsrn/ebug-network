@@ -96,7 +96,7 @@
                    0.0, 0.0,  0.99, 0.0,  0.0,  0.0,    # Z (unused)
                    0.0, 0.0,  0.0,  0.99, 0.0,  0.0,    # roll (unused)
                    0.0, 0.0,  0.0,  0.0,  0.99, 0.0,    # pitch (unused)
-                   0.0, 0.0,  0.0,  0.0,  0.0,  0.05]   # yaw 
+                   0.0, 0.0,  0.0,  0.0,  0.0,  0.01]   # yaw 
 
 
 
@@ -132,17 +132,21 @@
         imu0_config: [false, false, false,
               false,  false,  true,
               false, false, false,
-              false,  false,  true,
+              false,  false,  false,
               false,  false,  false]
+        # For IMU orientation (yaw)
+        imu0_covariance: [0.1, 0.0, 0.0,
+                        0.0, 0.1, 0.0,  
+                        0.0, 0.0, 0.05]   # Lower covariance = trust more
               
         
         imu0_differential: false
         imu0_relative: false
         imu0_queue_size: 10
-        imu0_remove_gravitational_acceleration: true
-        imu0_pose_rejection_threshold: 1.0
+        imu0_pose_rejection_threshold: 5.0
         imu0_angular_velocity_rejection_threshold: 0.3
-        reset_on_time_jump: true
+        # reset_on_time_jump: true
+        # imu0_remove_gravitational_acceleration: true
 
 
         # [ADVANCED] If your data is subject to outliers, use these threshold settings, expressed as Mahalanobis distances, to

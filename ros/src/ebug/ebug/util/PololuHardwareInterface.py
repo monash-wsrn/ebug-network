@@ -18,7 +18,12 @@ class PololuHardwareInterface:
         # Initialize the gyroscope
         self.bus.write_byte_data(0x6b, 0x16, 0x38)  # Set gyroscope to active mode
         self.bus.write_byte_data(0x6b, 0x11, 0x60)  # Set gyroscope sensitivity to 245dps
-        self.G_GAIN = 0.00875  # Sensitivity gain
+        self.G_GAIN = 0.00875  # Sensitivity gain for the gyroscope
+        self.calibration_samples = 100
+        self.gyro_bias = {'x': 0, 'y': 0, 'z': 0}
+        self.is_calibrated = False
+        self.calibration_readings = {'x': [], 'y': [], 'z': []}
+        self.calibrate_gyro()
 
         self.time_prev = time.time()  # Record the initial time
 
@@ -58,6 +63,32 @@ class PololuHardwareInterface:
         data_array = list(struct.pack(format, *data))  # Pack the data into a byte array
         self.bus.write_i2c_block_data(20, address, data_array)  # Write the byte array to the I2C bus
         time.sleep(0.0002)  # Delay for 0.2 milliseconds
+    
+    def calibrate_gyro(self):
+        """Collect samples for gyro bias estimation"""
+        self.log_info("Starting gyro calibration...")
+        
+        for _ in range(self.calibration_samples):
+            result = self.read_gryo_internal()
+            if result:
+                gx, gy, gz = result
+                self.calibration_readings['x'].append(gx)
+                self.calibration_readings['y'].append(gy)
+                self.calibration_readings['z'].append(gz)
+                time.sleep(0.01)  # Short delay between readings
+
+        if len(self.calibration_readings['z']) >= self.calibration_samples:
+            # Calculate average bias
+            self.gyro_bias['x'] = sum(self.calibration_readings['x']) / self.calibration_samples
+            self.gyro_bias['y'] = sum(self.calibration_readings['y']) / self.calibration_samples
+            self.gyro_bias['z'] = sum(self.calibration_readings['z']) / self.calibration_samples
+            
+            self.is_calibrated = True
+            self.log_info(f"Gyro calibrated. Bias: x={self.gyro_bias['x']:.3f}, y={self.gyro_bias['y']:.3f}, z={self.gyro_bias['z']:.3f}")
+            return True
+        
+        self.log_info("Calibration failed to collect enough samples")
+        return False
 
     def read_gryo_internal(self):
         """
@@ -178,7 +209,7 @@ class PololuHardwareInterface:
 
         :param on_error: Error handling function
         :return: Tuple containing angular velocities for x, y, and z axes in radians per second
-        """
+        """ 
         func = lambda: self.read_gryo_internal()
         result = self.safe_smbus(func, self.retry_max, on_error)
 
@@ -187,9 +218,9 @@ class PololuHardwareInterface:
 
         gx, gy, gz = result
         # Apply the sensitivity gain and correct for constant offset
-        wx = math.radians(gx * self.G_GAIN - 4)
-        wy = math.radians(gy * self.G_GAIN + 8)
-        wz = math.radians(gz * self.G_GAIN + 5)
+        wx = math.radians((gx - self.gyro_bias['x']) * self.G_GAIN)
+        wy = math.radians((gy - self.gyro_bias['y']) * self.G_GAIN)
+        wz = math.radians((gz - self.gyro_bias['z']) * self.G_GAIN)
 
         return (wx, wy, wz)  # Return angular velocities in radians per second
 

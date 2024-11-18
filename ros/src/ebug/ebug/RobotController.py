@@ -1,6 +1,7 @@
 import os
 import math
 import rclpy
+import time
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
@@ -14,6 +15,11 @@ class RobotController(Node):
         
         # Initialize hardware interface
         self.bridge = PololuHardwareInterface(retry_max=5)
+        if not self.bridge.is_calibrated:
+            self.get_logger().error("IMU calibration failed!")
+        # else:
+        #     self.get_logger().info("IMU calibrated successfully")
+
         self.bridge.reset_odometry()
         self.get_logger().info("Reset odometry at startup")
 
@@ -84,7 +90,7 @@ class RobotController(Node):
 
         imu_msg = Imu()
         imu_msg.header.stamp = current_time.to_msg()
-        imu_msg.header.frame_id = "base_link"
+        imu_msg.header.frame_id = self.robot_id
         q = self.quaternion_from_euler(0, 0, self.imu_orientation)
         imu_msg.orientation.x = q[0]
         imu_msg.orientation.y = q[1]
