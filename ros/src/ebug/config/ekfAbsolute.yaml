@@ -104,8 +104,8 @@
         # integrated as usual. NOTE: this only applies to sensors that provide pose measurements; setting differential to true
         # for twist measurements has no effect.
         odom0_differential: true
-        odom0_pose_rejection_threshold: 5.0
-        odom0_twist_rejection_threshold: 5.0
+        # odom0_pose_rejection_threshold: 1.0
+        # odom0_twist_rejection_threshold: 1.0
 
         # [ADVANCED] When the node starts, if this parameter is true, then the first measurement is treated as a "zero point"
         # for all future measurements. While you can achieve the same effect with the differential paremeter, the key
@@ -127,16 +127,16 @@
                        false, false, false,
                        false, false, false,
                        false, false, false]
-        pose0_differential: true
+        pose0_differential: false
         pose0_relative: false
-        pose0_queue_size: 10
-        pose0_rejection_threshold: 5.0 
+        pose0_queue_size: 1
+        # pose0_rejection_threshold: 8.0 
         pose0_covariance: [0.005, 0.0,  0.0,  0.0,  0.0,  0.0,    
                         0.0,  0.005, 0.0,  0.0,  0.0,  0.0,    
                         0.0,  0.0,  0.99, 0.0,  0.0,  0.0,    
                         0.0,  0.0,  0.0,  0.99, 0.0,  0.0,    
                         0.0,  0.0,  0.0,  0.0,  0.99, 0.0,    
-                        0.0,  0.0,  0.0,  0.0,  0.0,  0.99]   
+                        0.0,  0.0,  0.0,  0.0,  0.0,  0.005]   
       
 
         # # [ADVANCED] The process noise covariance matrix can be difficult to tune, and can vary for each application, so it is
