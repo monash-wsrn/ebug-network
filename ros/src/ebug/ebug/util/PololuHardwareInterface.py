@@ -189,7 +189,7 @@ class PololuHardwareInterface:
         :param angular_velocity: Desired angular velocity 
         :param on_error: Error handling function
         """
-        self.log_info(f"Sending linear velocity: {linear_velocity}, angular velocity: {angular_velocity}")
+        # self.log_info(f"Sending linear velocity: {linear_velocity}, angular velocity: {angular_velocity}")
         func = lambda: self.write_pack(0, 'ff', linear_velocity, angular_velocity)  # Pack the velocities as two floats
         return self.safe_smbus(func, self.retry_max, on_error)
 

@@ -53,32 +53,31 @@ def create_camera_composable_nodes(ROBOT_ID, CAM_ID, PKG_SHARE, VIDEO_DEVICE):
 
 def generate_launch_description():
     ROBOT_ID = os.getenv('ROBOT_ID', "default")
-    CAMERA_IDS = os.getenv('CAMERAS', 'cam_0').split(',')
+    CAMERA_IDS = ['cam_0']  # Changed from os.getenv('CAMERAS', 'cam_0').split(',')
     PKG_SHARE = FindPackageShare(package='ebug').find('ebug')
 
     # Create camera nodes for all cameras
     COMPOSABLE_NODES = []
     camera_transforms = []
-    VIDX = 0  # Video device index
-    for cam_id in CAMERA_IDS:
-        COMPOSABLE_NODES.extend(
-            create_camera_composable_nodes(
-                ROBOT_ID,
-                cam_id,
-                PKG_SHARE,
-                f'/dev/video{VIDX}'
-            )
+    # Single camera setup (front camera)
+    COMPOSABLE_NODES.extend(
+        create_camera_composable_nodes(
+            ROBOT_ID,
+            'cam_0',
+            PKG_SHARE,
+            '/dev/video0'
         )
-        camera_transforms.append(
-            Node(
-                package='tf2_ros',
-                executable='static_transform_publisher',
-                arguments=['0', '0', '0.1', '0', '0', '0', 
-                          f'{ROBOT_ID}', f'{ROBOT_ID}/{cam_id}'],
-                name=f'static_transform_base_to_{cam_id}'
-            )
+    )
+    camera_transforms.append(
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            arguments=['0', '0', '0.1', '0', '0', '0', 
+                        f'{ROBOT_ID}', f'{ROBOT_ID}/cam_0'],
+            name=f'static_transform_base_to_cam0'
         )
-        VIDX += 2
+    )
+        
 
     robot_nodes = [
         Node(

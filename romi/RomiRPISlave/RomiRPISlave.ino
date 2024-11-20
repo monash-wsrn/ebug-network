@@ -21,6 +21,8 @@ const float wheel_diameter = 0.07;
 const float encoder_resolution = 1440;
 const float distance_per_count = (PI * wheel_diameter) / encoder_resolution;
 const float baseline = 0.142;
+const float WATCHDOG_TIMEOUT = 500; // ms
+unsigned long last_command_time = 0;
 
 // Define velocity ranges and their corresponding PID values
 const int NUM_RANGES = 3;  // Can easily add more ranges
@@ -33,9 +35,9 @@ const float VELOCITY_THRESHOLDS[NUM_RANGES] = {
 
 const float PID_VALUES[NUM_RANGES][4] = {
     // Kp,   Ki,   Kd,   Kf    (for velocities 0 - 0.17)
-    {1.2,   0.1,  0.05,  1.0},  // Original working values
-    // For velocities 0.15 - 0.24
-    {0.9,   0.0,  0.03,  1.0},  
+    {0.8,   0.04,  0.03,  1.00},  // Original working values
+    // For velocities 0.17 - 0.24
+    {0.7,   0.02,  0.05,  1.05},  
     // For velocities 0.24 - 0.42
     {0.8,   0.1,  0.05, 0.9}  
 };
@@ -79,10 +81,11 @@ int16_t velocityPIDFF(float target_velocity, float actual_velocity, float dt, fl
 
     float error = target_velocity - actual_velocity;
     // Clear integral when stopping
-    if (abs(target_velocity) < 0.01) {  // If stop command
+    if (abs(target_velocity) < 0.01 || 
+        (target_velocity * actual_velocity < 0)) {  // If stop command
         integral = 0;
     } else {
-        integral = constrain(integral + error * dt, -50, 50);
+        integral = constrain(integral + error * dt, -20, 20);
     }
     float derivative = (error - prev_error) / dt;
     prev_error = error;
@@ -91,6 +94,10 @@ int16_t velocityPIDFF(float target_velocity, float actual_velocity, float dt, fl
     float ff_output = Kf * target_velocity;
     
     float total_output = pid_output + ff_output;
+    if (!isfinite(total_output)) {
+        Serial.println("PID overflow!");
+        total_output = 0;
+    }
     return velocityToMotorCommand(total_output);
 }
 
@@ -101,6 +108,10 @@ int16_t velocityToMotorCommand(float velocity) {
     
     int16_t command = (int16_t)((velocity / max_velocity) * max_power);
     if (abs(command) < deadzone) command = 0;
+    if (command > 32767 || command < -32768) {
+        Serial.println("Motor command overflow!");
+        command = 0;
+    }
     return constrain(command, -max_power, max_power);
 }
 
@@ -129,6 +140,24 @@ void setup() {
 
 void loop() {
     slave.updateBuffer();
+    // Check for overflow in I2C buffer commands
+    const float MAX_VALID_COMMAND = 1.0;  // Maximum reasonable command value
+    
+    if (slave.buffer.linear_velocity < -MAX_VALID_COMMAND || 
+        slave.buffer.linear_velocity > MAX_VALID_COMMAND) {
+        Serial.print("Command overflow detected: ");
+        Serial.println(slave.buffer.linear_velocity);
+        slave.buffer.linear_velocity = 0;
+        slave.buffer.angular_velocity = 0;
+        motors.setSpeeds(0, 0);
+        delay(100);  // Brief pause to avoid rapid oscillations
+        return;
+    }
+
+    // Update last_command_time when we get valid commands
+    if (abs(slave.buffer.linear_velocity) > 0.001 || abs(slave.buffer.angular_velocity) > 0.001) {
+        last_command_time = millis();
+    }
 
     if (slave.buffer.reset_cmd == 1) {
         x = 0.0;
@@ -144,6 +173,22 @@ void loop() {
         Serial.println("Odometry reset by ROS command");
     }
 
+    // Watchdog for command timeout
+    unsigned long current_time = millis();
+    if (current_time - last_command_time > WATCHDOG_TIMEOUT) {
+        motors.setSpeeds(0, 0);
+        // Serial.println("Command timeout!");
+        return;
+    }
+
+    // Validate velocities
+    if (isnan(slave.buffer.linear_velocity) || isnan(slave.buffer.angular_velocity) ||
+        isinf(slave.buffer.linear_velocity) || isinf(slave.buffer.angular_velocity)) {
+        motors.setSpeeds(0, 0);
+        Serial.println("Invalid velocity!");
+        return;
+    }
+
     static uint64_t lastTime = 0;
     uint64_t now = millis();
     float dt = (now - lastTime) / 1000.0;
@@ -154,6 +199,7 @@ void loop() {
         Serial.print(slave.buffer.linear_velocity);
         Serial.print(",");
         Serial.println(slave.buffer.angular_velocity);
+        
 
         // Get encoder counts
         int16_t left_encoder = encoders.getCountsLeft();
@@ -216,12 +262,19 @@ void loop() {
 
         // Debug print
         Serial.print("Position x,y,theta: ");
-        Serial.print(x, 6);
-        Serial.print(",");
-        Serial.print(y, 6);
-        Serial.print(",");
-        Serial.println(theta, 6);
+        Serial.print(x, 3); Serial.print(",");
+        Serial.print(y, 3); Serial.print(",");
+        Serial.print(theta, 3); Serial.print(" | ");
         
+        // Wheel velocities
+        Serial.print("Vel L,R: ");
+        Serial.print(left_filtered_velocity, 3); Serial.print(",");
+        Serial.print(right_filtered_velocity, 3); Serial.print(" | ");
+        
+        // PID values
+        Serial.print("Target L,R: ");
+        Serial.print(left_desired, 3); Serial.print(",");
+        Serial.println(right_desired, 3);
   
         
         // Update previous values
