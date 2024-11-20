@@ -14,11 +14,14 @@ import math
 # CAM_3 = (0, 0, 3PI/2) RPY Radians (LEFT)
 
 CAM_OFFSET = 0.025
+# CAM_ROTATION = [
+#     0.0,                    # Camera 0: Forward
+#     math.pi / 2.0,          # Camera 1: Right
+#     math.pi,                # Camera 2: Behind
+#     3.0 * math.pi / 2.0     # Camera 3: Left
+# ]
 CAM_ROTATION = [
-    0.0,                    # Camera 0: Forward
-    math.pi / 2.0,          # Camera 1: Right
-    math.pi,                # Camera 2: Behind
-    3.0 * math.pi / 2.0     # Camera 3: Left
+    0.0                  # Camera 0: Forward
 ]
 
 """
@@ -41,41 +44,44 @@ class TransformConverter(Node):
     def listener_callback(self, tf_det:TFMessage):
         for t in tf_det.transforms:
             try:
-                # Look up transform from map to tag
+                # Camera measurements
+                cam_z = t.transform.translation.z + CAM_OFFSET
+                cam_x = t.transform.translation.x
+                
+                # Get tag position
                 tag_in_map = self.tf_buffer.lookup_transform(
                     'map',
-                    t.child_frame_id,  # apriltag_1
+                    t.child_frame_id,
                     rclpy.time.Time())
-
-                cam_id = int(t.header.frame_id[-1])
-                distance = t.transform.translation.z + CAM_OFFSET
-                roll, pitch, _ = quat2rpy(t.transform.rotation)
-
-                orientation = CAM_ROTATION[cam_id] - roll
-                rotation = (math.pi * 2.0) - pitch
-
-                # Robot's position relative to tag
-                robot_x = math.cos(rotation) * distance
-                robot_y = math.sin(rotation) * distance
-
-                # Tag's position in map
+                
+                # Get orientation from quaternion
+                roll, pitch, yaw = quat2rpy(t.transform.rotation)
+                
+                # If camera sees tag upside down (-180°)
+                # and we know tag is at 135°, then robot must be facing opposite
+                # Using roll because that's the dominant rotation we see
+                tag_angle = 2.35619  # 135° in radians
+                
+                # Robot's orientation from camera view
+                robot_angle = tag_angle + (roll - math.pi)  # Adjust by camera's roll
+                
+                # Debug angle calculation
+                self.get_logger().info(f"\n2. Angle Calculation:")
+                self.get_logger().info(f"- Tag angle: {math.degrees(tag_angle):.1f}°")
+                self.get_logger().info(f"- Roll adjustment: {math.degrees(roll - math.pi):.1f}°")
+                self.get_logger().info(f"- Calculated robot angle: {math.degrees(robot_angle):.1f}°")
+                
                 tag_x = tag_in_map.transform.translation.x
                 tag_y = tag_in_map.transform.translation.y
+                # Calculate position using measured angles
+                robot_x = tag_x + (cam_z * math.cos(robot_angle))
+                robot_y = tag_y - (cam_z * math.sin(robot_angle))
 
-                msg = PoseWithCovarianceStamped()
-                msg.header = t.header
-                msg.header.frame_id = "map"
-
-                # Calculate robot's global position
-                msg.pose.pose.position.x = tag_x - robot_x
-                msg.pose.pose.position.y = tag_y - robot_y
-                msg.pose.pose.position.z = 0.0
-
-                qx, qy, qz, qw = rpy2quat(0.0, orientation, 0.0)
-                msg.pose.pose.orientation.x = qx
-                msg.pose.pose.orientation.y = qy
-                msg.pose.pose.orientation.z = qz
-                msg.pose.pose.orientation.w = qw
+                self.get_logger().info(f"\n3. Position Calculation:")
+                self.get_logger().info(f"- Tag position: ({tag_x:.3f}, {tag_y:.3f})")
+                self.get_logger().info(f"- cos(robot_angle): {math.cos(robot_angle):.3f}")
+                self.get_logger().info(f"- sin(robot_angle): {math.sin(robot_angle):.3f}")
+                self.get_logger().info(f"- Final robot position: ({robot_x:.3f}, {robot_y:.3f})")
 
                 msg.pose.covariance = mat6diag(1e-6 * abs(distance * 10))
                 self.publisher.publish(msg)

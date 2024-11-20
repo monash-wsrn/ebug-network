@@ -9,7 +9,7 @@
         # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
         # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
         # filter will generate new output. Defaults to 1 / frequency if not specified.
-        sensor_timeout: 0.2
+        sensor_timeout: 0.1
 
         # ekf_localization_node and ukf_localization_node both use a 3D omnidirectional motion model. If this parameter is
         # set to true, no 3D information will be used in your state estimate. Use this if you are operating in a planar
@@ -135,8 +135,8 @@
               false,  false,  false,
               false,  false,  false]
         # For IMU orientation (yaw)
-        imu0_covariance: [0.1, 0.0, 0.0,
-                        0.0, 0.1, 0.0,  
+        imu0_covariance: [0.05, 0.0, 0.0,
+                        0.0, 0.05, 0.0,  
                         0.0, 0.0, 0.01]   # Lower covariance = trust more
               
         

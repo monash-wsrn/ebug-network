@@ -131,12 +131,12 @@
         pose0_relative: false
         pose0_queue_size: 1
         # pose0_rejection_threshold: 8.0 
-        pose0_covariance: [0.005, 0.0,  0.0,  0.0,  0.0,  0.0,    
-                        0.0,  0.005, 0.0,  0.0,  0.0,  0.0,    
+        pose0_covariance: [0.05, 0.0,  0.0,  0.0,  0.0,  0.0,    
+                        0.0,  0.05, 0.0,  0.0,  0.0,  0.0,    
                         0.0,  0.0,  0.99, 0.0,  0.0,  0.0,    
                         0.0,  0.0,  0.0,  0.99, 0.0,  0.0,    
                         0.0,  0.0,  0.0,  0.0,  0.99, 0.0,    
-                        0.0,  0.0,  0.0,  0.0,  0.0,  0.005]   
+                        0.0,  0.0,  0.0,  0.0,  0.0,  0.01]   
       
 
         # # [ADVANCED] The process noise covariance matrix can be difficult to tune, and can vary for each application, so it is

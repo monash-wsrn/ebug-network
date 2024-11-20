@@ -34,9 +34,9 @@ class RobotController(Node):
         # IMU integration variables
         self.imu_orientation = 0.0
         self.last_imu_time = None
-        self.imu_orientation_covariance = [0.01, 0.0, 0.0,
-                                         0.0, 0.01, 0.0,
-                                         0.0, 0.0, 0.01]
+        # self.imu_orientation_covariance = [0.01, 0.0, 0.0,
+        #                                  0.0, 0.01, 0.0,
+        #                                  0.0, 0.0, 0.01]
 
         # Set up ROS publishers/subscribers
         cmd_vel_topic = f'/{self.robot_id}/cmd_vel'
@@ -96,7 +96,7 @@ class RobotController(Node):
         imu_msg.orientation.y = q[1]
         imu_msg.orientation.z = q[2]
         imu_msg.orientation.w = q[3]
-        imu_msg.orientation_covariance = self.imu_orientation_covariance
+        # imu_msg.orientation_covariance = self.imu_orientation_covariance
         imu_msg.angular_velocity.x = wx
         imu_msg.angular_velocity.y = wy
         imu_msg.angular_velocity.z = wz
@@ -126,14 +126,14 @@ class RobotController(Node):
         odom_msg.twist.twist.angular.z = angular_vel
 
         # Set covariance
-        covariance = [0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
-                     0.0, 0.1, 0.0, 0.0, 0.0, 0.0,
-                     0.0, 0.0, 0.1, 0.0, 0.0, 0.0,
-                     0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
-                     0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
-                     0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
-        odom_msg.pose.covariance = covariance
-        odom_msg.twist.covariance = covariance
+        # covariance = [0.1, 0.0, 0.0, 0.0, 0.0, 0.0,
+        #              0.0, 0.1, 0.0, 0.0, 0.0, 0.0,
+        #              0.0, 0.0, 0.1, 0.0, 0.0, 0.0,
+        #              0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
+        #              0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
+        #              0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
+        # odom_msg.pose.covariance = covariance
+        # odom_msg.twist.covariance = covariance
         
         return odom_msg
 
