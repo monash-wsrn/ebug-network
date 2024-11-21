@@ -1,4 +1,3 @@
-
 import rclpy
 from rclpy.node import Node
 from tf2_ros import Buffer, TransformListener
@@ -60,29 +59,28 @@ class TransformConverter(Node):
                 tag_y = tag_in_map.transform.translation.y
                 _, _, tag_yaw = quat2rpy(tag_in_map.transform.rotation)
 
-                
                      
-                # Robot's orientation from camera view
-                robot_angle = normalise_angle(tag_yaw - cam_roll + cam_pitch)  # Adjust by camera's roll
-                
-                
-                
+                # Robot's position from camera view
+                position_angle = normalise_angle(tag_yaw - cam_roll)
                 
                 # Calculate position using measured angles
-                dx = cam_z * math.cos(robot_angle) + cam_x * math.sin(robot_angle)
-                dy = cam_z * math.sin(robot_angle) + cam_x * math.cos(robot_angle)
+                dx = cam_z * math.cos(position_angle) - cam_x * math.sin(position_angle)
+                dy = cam_z * math.sin(position_angle) + cam_x * math.cos(position_angle) 
                 # Calculate robot position
                 robot_x = tag_x - dx
                 robot_y = tag_y - dy
+                tag_angle_correction = math.atan2(math.sin(cam_pitch), math.cos(cam_roll))
+                robot_angle = normalise_angle(tag_yaw - tag_angle_correction)
+
                 # Debug angle calculation
-                # self.get_logger().info(f"- Tag yaw: {math.degrees(tag_yaw):.1f}°")
-                # self.get_logger().info(f"- Roll: {math.degrees(cam_roll):.1f}°")
-                # self.get_logger().info(f"- Calculated robot angle: {math.degrees(robot_angle):.1f}°")
+                self.get_logger().info(f"- Tag yaw: {math.degrees(tag_yaw):.1f}°")
+                self.get_logger().info(f"- tag angle correction: {math.degrees(tag_angle_correction):.1f}°")
+                self.get_logger().info(f"- Calculated robot angle: {math.degrees(robot_angle):.1f}°")
                 self.get_logger().info(f"- Calculated tag position: ({tag_x:.3f}, {tag_y:.3f})")
                 self.get_logger().info(f"- Calculated change position: ({dx:.3f}, {dy:.3f})")
                 self.get_logger().info(f"- Final robot position: ({robot_x:.3f}, {robot_y:.3f})")
 
-                 # Create and publish pose message
+                # Create and publish pose message
                 msg = PoseWithCovarianceStamped()
                 msg.header.stamp = self.get_clock().now().to_msg()
                 msg.header.frame_id = 'map'
@@ -148,7 +146,6 @@ def rpy2quat(roll, pitch, yaw):
     qw = math.cos(roll/2.0) * math.cos(pitch/2.0) * math.cos(yaw/2.0) + math.sin(roll/2.0) * math.sin(pitch/2.0) * math.sin(yaw/2.0)
     return [qx, qy, qz, qw]
                 
-
 
 def main():
     rclpy.init()
