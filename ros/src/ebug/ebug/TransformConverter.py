@@ -44,46 +44,42 @@ class TransformConverter(Node):
     def listener_callback(self, tf_det:TFMessage):
         for t in tf_det.transforms:
             try:
-                # Camera measurements
-                cam_z = t.transform.translation.z + CAM_OFFSET
-                cam_x = t.transform.translation.x
-                
                 # Get tag position
                 tag_in_map = self.tf_buffer.lookup_transform(
                     'map',
                     t.child_frame_id,
                     rclpy.time.Time())
                 
-                # Get orientation from quaternion
-                roll, pitch, yaw = quat2rpy(t.transform.rotation)
-                
-                # If camera sees tag upside down (-180°)
-                # and we know tag is at 135°, then robot must be facing opposite
-                # Using roll because that's the dominant rotation we see
-                tag_angle = 2.35619  # 135° in radians
-                
-                # Robot's orientation from camera view
-                robot_angle = tag_angle + (roll)  # Adjust by camera's roll
-                
-                # Debug angle calculation
-                self.get_logger().info(f"\n2. Angle Calculation:")
-                self.get_logger().info(f"- Tag angle: {math.degrees(tag_angle):.1f}°")
-                self.get_logger().info(f"- Roll adjustment: {math.degrees(roll - math.pi):.1f}°")
-                self.get_logger().info(f"- Calculated robot angle: {math.degrees(robot_angle):.1f}°")
-                
+                # Camera measurements
+                cam_z = t.transform.translation.z + CAM_OFFSET
+                cam_x = t.transform.translation.x
+                cam_roll, cam_pitch, _  = quat2rpy(t.transform.rotation)
+
+                # Tag measurements
                 tag_x = tag_in_map.transform.translation.x
                 tag_y = tag_in_map.transform.translation.y
+                _, _, tag_yaw = quat2rpy(tag_in_map.transform.rotation)
+
+                
+                     
+                # Robot's orientation from camera view
+                robot_angle = normalise_angle(tag_yaw - cam_roll + cam_pitch)  # Adjust by camera's roll
+                
+                
+                
+                
                 # Calculate position using measured angles
-                dx = cam_z * math.cos(robot_angle) - cam_x * math.sin(robot_angle)
+                dx = cam_z * math.cos(robot_angle) + cam_x * math.sin(robot_angle)
                 dy = cam_z * math.sin(robot_angle) + cam_x * math.cos(robot_angle)
                 # Calculate robot position
                 robot_x = tag_x - dx
                 robot_y = tag_y - dy
-
-                self.get_logger().info(f"\n3. Position Calculation:")
-                self.get_logger().info(f"- Tag position: ({tag_x:.3f}, {tag_y:.3f})")
-                self.get_logger().info(f"- cos(robot_angle): {math.cos(robot_angle):.3f}")
-                self.get_logger().info(f"- sin(robot_angle): {math.sin(robot_angle):.3f}")
+                # Debug angle calculation
+                # self.get_logger().info(f"- Tag yaw: {math.degrees(tag_yaw):.1f}°")
+                # self.get_logger().info(f"- Roll: {math.degrees(cam_roll):.1f}°")
+                # self.get_logger().info(f"- Calculated robot angle: {math.degrees(robot_angle):.1f}°")
+                self.get_logger().info(f"- Calculated tag position: ({tag_x:.3f}, {tag_y:.3f})")
+                self.get_logger().info(f"- Calculated change position: ({dx:.3f}, {dy:.3f})")
                 self.get_logger().info(f"- Final robot position: ({robot_x:.3f}, {robot_y:.3f})")
 
                  # Create and publish pose message
@@ -111,6 +107,13 @@ class TransformConverter(Node):
             except Exception as e:
                 self.get_logger().warn(f'Transform lookup failed: {str(e)}')
 
+def normalise_angle(angle):
+    """Keep angle between -π and π"""
+    while angle > math.pi:
+        angle -= 2 * math.pi
+    while angle < -math.pi:
+        angle += 2 * math.pi
+    return angle
 
 def mat6diag(v):
     return [(float(v) if i % 7 == 0 else 0.0) for i in range(36)]
