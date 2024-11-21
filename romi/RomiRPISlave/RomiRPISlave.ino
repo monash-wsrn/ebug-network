@@ -37,7 +37,7 @@ const float PID_VALUES[NUM_RANGES][4] = {
     // Kp,   Ki,   Kd,   Kf    (for velocities 0 - 0.17)
     {0.8,   0.04,  0.03,  1.00},  // Original working values
     // For velocities 0.17 - 0.24
-    {0.7,   0.02,  0.05,  1.05},  
+    {0.7,   0.02,  0.05,  1.0},  
     // For velocities 0.24 - 0.42
     {0.8,   0.1,  0.05, 0.9}  
 };
@@ -85,7 +85,7 @@ int16_t velocityPIDFF(float target_velocity, float actual_velocity, float dt, fl
         (target_velocity * actual_velocity < 0)) {  // If stop command
         integral = 0;
     } else {
-        integral = constrain(integral + error * dt, -20, 20);
+        integral = constrain(integral + error * dt, -30, 30);
     }
     float derivative = (error - prev_error) / dt;
     prev_error = error;

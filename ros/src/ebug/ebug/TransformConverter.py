@@ -63,7 +63,7 @@ class TransformConverter(Node):
                 tag_angle = 2.35619  # 135° in radians
                 
                 # Robot's orientation from camera view
-                robot_angle = tag_angle + (roll - math.pi)  # Adjust by camera's roll
+                robot_angle = tag_angle + (roll)  # Adjust by camera's roll
                 
                 # Debug angle calculation
                 self.get_logger().info(f"\n2. Angle Calculation:")
@@ -74,8 +74,11 @@ class TransformConverter(Node):
                 tag_x = tag_in_map.transform.translation.x
                 tag_y = tag_in_map.transform.translation.y
                 # Calculate position using measured angles
-                robot_x = tag_x + (cam_z * math.cos(robot_angle))
-                robot_y = tag_y - (cam_z * math.sin(robot_angle))
+                dx = cam_z * math.cos(robot_angle) - cam_x * math.sin(robot_angle)
+                dy = cam_z * math.sin(robot_angle) + cam_x * math.cos(robot_angle)
+                # Calculate robot position
+                robot_x = tag_x - dx
+                robot_y = tag_y - dy
 
                 self.get_logger().info(f"\n3. Position Calculation:")
                 self.get_logger().info(f"- Tag position: ({tag_x:.3f}, {tag_y:.3f})")
@@ -83,6 +86,25 @@ class TransformConverter(Node):
                 self.get_logger().info(f"- sin(robot_angle): {math.sin(robot_angle):.3f}")
                 self.get_logger().info(f"- Final robot position: ({robot_x:.3f}, {robot_y:.3f})")
 
+                 # Create and publish pose message
+                msg = PoseWithCovarianceStamped()
+                msg.header.stamp = self.get_clock().now().to_msg()
+                msg.header.frame_id = 'map'
+                
+                # Set position
+                msg.pose.pose.position.x = robot_x
+                msg.pose.pose.position.y = robot_y
+                msg.pose.pose.position.z = 0.0
+
+                # Set orientation (quaternion)
+                q = rpy2quat(0.0, 0.0, robot_angle)
+                msg.pose.pose.orientation.x = q[0]
+                msg.pose.pose.orientation.y = q[1]
+                msg.pose.pose.orientation.z = q[2]
+                msg.pose.pose.orientation.w = q[3]
+
+                # Set covariance based on distance
+                distance = math.sqrt(cam_x * cam_x + cam_z * cam_z)
                 msg.pose.covariance = mat6diag(1e-6 * abs(distance * 10))
                 self.publisher.publish(msg)
 

@@ -23,6 +23,7 @@ class PololuHardwareInterface:
         self.gyro_bias = {'x': 0, 'y': 0, 'z': 0}
         self.is_calibrated = False
         self.calibration_readings = {'x': [], 'y': [], 'z': []}
+        time.sleep(0.5)  # Give gyro time to stabilize after power up
         self.calibrate_gyro()
 
         self.time_prev = time.time()  # Record the initial time

@@ -17,8 +17,11 @@ class RobotController(Node):
         self.bridge = PololuHardwareInterface(retry_max=5)
         if not self.bridge.is_calibrated:
             self.get_logger().error("IMU calibration failed!")
-        # else:
-        #     self.get_logger().info("IMU calibrated successfully")
+            return
+        self.get_logger().info("IMU calibrated successfully")
+        self.get_logger().info(f"Gyro bias: x={self.bridge.gyro_bias['x']:.3f}, "
+                          f"y={self.bridge.gyro_bias['y']:.3f}, "
+                          f"z={self.bridge.gyro_bias['z']:.3f}")
 
         self.bridge.reset_odometry()
         self.get_logger().info("Reset odometry at startup")
