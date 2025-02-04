@@ -90,17 +90,17 @@ def generate_launch_description():
                 ('tf_detections', f'/{ROBOT_ID}/tf_detections'),
                 ('pose', f'/{ROBOT_ID}/apriltag_pose')]
         ),
-        Node(
-            package='robot_localization', executable='ekf_node',
-            name='ekf_filter_relative', namespace=ROBOT_ID,
-            parameters=[
-                os.path.join(PKG_SHARE, 'config/ekfRelative.yaml'),
-                {"odom_frame": f"{ROBOT_ID}_odom"},
-                {"base_link_frame": f"{ROBOT_ID}"},
-                {"world_frame": f"{ROBOT_ID}_odom"},
-            ],
-            remappings=[('odometry/filtered', 'ekf_relative')]
-        ),
+        # Node(
+        #     package='robot_localization', executable='ekf_node',
+        #     name='ekf_filter_relative', namespace=ROBOT_ID,
+        #     parameters=[
+        #         os.path.join(PKG_SHARE, 'config/ekfRelative.yaml'),
+        #         {"odom_frame": f"{ROBOT_ID}_odom"},
+        #         {"base_link_frame": f"{ROBOT_ID}"},
+        #         {"world_frame": f"{ROBOT_ID}_odom"},
+        #     ],
+        #     remappings=[('odometry/filtered', 'ekf_relative')]
+        # ),
         Node(
             package='robot_localization', executable='ekf_node',
             name='ekf_filter_absolute', namespace=ROBOT_ID,
@@ -113,7 +113,7 @@ def generate_launch_description():
             remappings=[
                 ('odometry/filtered', 'ekf_absolute'),
                 ('/tf', f'/{ROBOT_ID}/tf_detections'),
-                ('odom0', f'/{ROBOT_ID}/ekf_relative'),  # Use ekf_relative as odom input
+                # ('odom0', f'/{ROBOT_ID}/ekf_relative'),  # Use ekf_relative as odom input
                 ('pose0', f'/{ROBOT_ID}/apriltag_pose')  # Use AprilTag pose as pose input
             ]
         ),

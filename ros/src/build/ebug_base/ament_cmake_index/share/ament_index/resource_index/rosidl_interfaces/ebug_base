@@ -1,8 +1,0 @@
-msg/ControlCommand.idl
-msg/ControlCommand.msg
-msg/RobotPose.idl
-msg/RobotPose.msg
-srv/ComputeTarget.idl
-srv/ComputeTarget.srv
-srv/ComputeTarget_Request.msg
-srv/ComputeTarget_Response.msg
