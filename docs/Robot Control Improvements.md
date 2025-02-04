@@ -73,19 +73,19 @@ export ROS_DOMAIN_ID=13
 ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/ebug03/cmd_vel
 ```
 ### Tips, Debugging and Monitoring 
-It requires 3 seperate terminals to run teleoperation: the **Principal**, a local instance publishing the AprilTags global position, 
+It requires 3 seperate terminals to run teleoperation and localisation: the **Principal**, a local instance publishing the AprilTags global position, 
 the **Teleoperation Launch**, an instance on the eBug that communicates to the network, 
 and the **ROS2 Teleoperation Commands**, a local instance using the ROS2 teleop_twist_keyboard package.
 #### Common Errors ####
 - `sudo bash` is required in your local instances have permisson to communicate with the eBugs.  
 - `export ROS_DOMAIN_ID=13` is required to ensure that the instances are communicating on the same domain.
-- If ssh ubuntu@ebug03 doesn't work, it is recommended to find the eBug's IP address and directly ssh into it.
+- If `ssh ubuntu@ebug03` doesn't work, it is recommended to find the eBug's IP address and directly ssh into it.
 
 #### Monitoring ####
 Monitoring can be performed using another terminal instance connected to the domain. Common commands used: 
 - `ros2 topic list`: Print which topics are published 
 - `ros2 topic echo /ebug03/ekf_absolute --field "pose.pose"`: Print the ekf_absolute poses without the covariances. 
-- `ros2 topic echo /ebug03/imu --field orientation`: Print IMU orientation
+- `ros2 topic echo /ebug03/imu --field orientation`: Print IMU orientation.
 - `ros2 run rqt_image_view rqt_image_view`: Camera view on eBug. 
 - `ros2 topic echo /ebug03/tf_detections`: AprilTag detection on eBug. 
 
@@ -178,7 +178,7 @@ The gyroscope is implemented with the robot and fused with the encoder sensors t
 Unfortunately, the tuning process for the gyroscope was problematic and not implemented correctly, in which it was removed. 
 `EKFrelative.yaml` is responsible for the gyroscope fusion, in which the output would be used as an input for
 the `EKFabsolute.yaml`. Essentially there would be 2 fusions, encoders to gyroscope for the relative poses, and subsequently fused with
-AprilTag localisation. This method should be investigated, but currently the encoders and the AprilTags localisation provide satisfactory results. 
+the AprilTag localisation. This method should be investigated, but currently the encoders and the AprilTags localisation provide satisfactory results. 
 
 To get started with the gyroscope fusion, there are two major changes. 
 - `ekfRelative.yaml`: 
@@ -191,14 +191,13 @@ To get started with the gyroscope fusion, there are two major changes.
 Teleoperation, PID control, and updating the AprilTag detection are basic foundations aimed to improve the user expererience for complex functions such as Boid's algorithm, visualisations, RL Models and multi-robot localisation techniques. It is suggested that these improvements should be carefully integrated into the main branch, and the previous functions, such as Boid's Algorithm, should be compatible with these new changes. Some major issues that should be addressed are: 
 - **Boids Function and Movement**: 
   - Previous iteration sent left and right desired motor signals, and this basis was built as a foundation for all services (*BoidsService.py, DiscoService.py, MovementController.py*). 
-  - To implement the PID controller and ensure that all robot dynamics are handled in the Arduino, the left and right desired motor signals are omitted, and RPI now sends linear and angular velocities, and the Arduino returns the message with orientation x, y, and theta.
+  - To implement the PID controller and ensure that all robot dynamics are handled in the Arduino, the left and right desired motor signals are omitted, and RPI now sends linear and angular velocities, and the Arduino returns the message with the eBug's orientation (x, y, and theta).
   - Essentially, all low level functions such as eBug dynamics and PID control are handled inside the Arduino to save computational power. RPI communicates the movement commands, handles EKF and AprilTag localisation, and publishes the eBug's pose to the network. 
   - Boids Service, Disco Service and the Movement controller should all be intergrated with this new update such that Boid's Algorithm can run with the new updates. 
 - **eBug LEDs**: 
   - The lights have been deactivated temporarily during these updates. 
-
-### eBug Camera
-The current implementation only uses 1 camera with very minimal performance to ensure low computational load. However the previous iteration had better camera implementation with 4 cameras used, polling through each camera at a higher resolution and frame rate. Either method is fine, as both perform quite well. 
+- **eBug Camera**:
+  - The current implementation only uses 1 camera with very minimal performance to ensure low computational load. However the previous iteration had better camera implementation with 4 cameras used, polling through each camera at a higher resolution and frame rate. Either method is fine, as both perform quite well. 
 
 ### Working with Docker Containers 
 VScode allows coding inside Docker instances. In my current workflow, I would have a VSCode that would ssh into the eBug as well as having a ssh terminal into eBug to run bash commands. Once I run the docker container in the terminal, I would use the VSCode remote explorer and open up the Dev Container that is active. In that way, I can make changes inside the docker container, run the bash commands with the Docker Terminal `colcon build` and `source install/setup.bash`, such that I would not need to exit the docker container, make changes in the eBug, rebuild the docker instance and run it. Rebuilding docker instances is required for any new changes and tend to take a very long time (10 to 15 minutes). A flaw with this method is that I haven't found a way to directly commit and push new changes from the Docker container to the Github, which I would constantly copy and paste new changes from the Docker to the eBug files, and then push from there. 
